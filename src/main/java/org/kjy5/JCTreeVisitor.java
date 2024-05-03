@@ -1,7 +1,10 @@
 package org.kjy5;
 
+import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
+import com.github.gumtreediff.tree.TypeSet;
 import com.sun.source.tree.*;
+
 
 public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
     @Override
@@ -73,7 +76,43 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
     @Override
     public Tree visitClass(ClassTree node, Tree tree) {
         System.out.println("visit Class");
-        return null;
+        
+        // Create Tree.
+        var nodeTree = new DefaultTree(TypeSet.type(node.getClass().getSimpleName()), node.getSimpleName().toString());
+        
+        // Add parent.
+        if (tree != null)
+            nodeTree.setParent(tree);
+        
+        // Add modifiers.
+        if (node.getModifiers() != null)
+            nodeTree.addChild(node.getModifiers().accept(this, nodeTree));
+        
+        // Add type parameters.
+        if (node.getTypeParameters() != null)
+            for (var typeParameter : node.getTypeParameters())
+                nodeTree.addChild(typeParameter.accept(this, nodeTree));
+        
+        // Add extends clause.
+        if (node.getExtendsClause() != null)
+            nodeTree.addChild(node.getExtendsClause().accept(this, nodeTree));
+        
+        // Add implements clause.
+        if (node.getImplementsClause() != null)
+            for (var implementsClause : node.getImplementsClause())
+                nodeTree.addChild(implementsClause.accept(this, nodeTree));
+        
+        // Add permits clause.
+        if (node.getPermitsClause() != null)
+            for (var permitsClause : node.getPermitsClause())
+                nodeTree.addChild(permitsClause.accept(this, nodeTree));
+        
+        // Add members.
+        if (node.getMembers() != null)
+            for (var member : node.getMembers())
+                nodeTree.addChild(member.accept(this, nodeTree));
+        
+        return nodeTree;
     }
 
     @Override
@@ -290,7 +329,41 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
     @Override
     public Tree visitCompilationUnit(CompilationUnitTree node, Tree tree) {
         System.out.println("visit Compilation Unit");
-        return null;
+
+        // Create Tree.
+        var nodeTree = new DefaultTree(TypeSet.type(node.getClass().getSimpleName()));
+
+        // Add parent.
+        if (tree != null)
+            nodeTree.setParent(tree);
+
+        // Add modules.
+        if (node.getModule() != null)
+            nodeTree.addChild(node.getModule().accept(this, nodeTree));
+
+
+        // Add package annotations.
+        if (node.getPackageAnnotations() != null)
+            for (var annotation : node.getPackageAnnotations())
+                nodeTree.addChild(node.getModule().accept(this, nodeTree));
+
+        // Add package.
+        if (node.getPackageName() != null)
+            nodeTree.addChild(node.getPackageName().accept(this, nodeTree));
+
+        // Add imports.
+        if (node.getImports() != null)
+            for (var importTree : node.getImports())
+                nodeTree.addChild(importTree.accept(this, nodeTree));
+
+        // Add type declarations.
+        if (node.getTypeDecls() != null)
+            for (var typeDecl : node.getTypeDecls()) {
+                var typeDeclTree = typeDecl.accept(this, nodeTree);
+                nodeTree.addChild(typeDecl.accept(this, nodeTree));
+            }
+
+        return nodeTree;
     }
 
     @Override
