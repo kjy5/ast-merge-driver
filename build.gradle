@@ -11,6 +11,9 @@ repositories {
 
 application {
     mainClass = 'org.kjy5.Main'
+    
+    // Enable preview features.
+    applicationDefaultJvmArgs = ['--enable-preview']
 }
 
 dependencies {
@@ -40,6 +43,11 @@ run {
     jvmArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
 }
 compileJava {
+    // Enable preview features.
+    options.compilerArgs += '--enable-preview'   
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
+    
     options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
     options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED'
     options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
@@ -48,6 +56,11 @@ compileJava {
     options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
 }
 compileTestJava {
+    // Enable preview features.
+    options.compilerArgs += '--enable-preview'   
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
+
     options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
     options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED'
     options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
