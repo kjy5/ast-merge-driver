@@ -4,6 +4,7 @@ import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TypeSet;
 import com.sun.source.tree.*;
+import com.sun.tools.javac.tree.JCTree;
 import javax.lang.model.element.Name;
 
 public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
@@ -14,6 +15,9 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
     // Add parent.
     if (parent != null) tree.setParent(parent);
+
+    // Set source code position.
+    tree.setPos(((JCTree) node).pos);
 
     // Add source node to metadata.
     tree.setMetadata("sourceNode", node);
