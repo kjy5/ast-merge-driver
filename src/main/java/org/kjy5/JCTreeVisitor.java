@@ -55,7 +55,25 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitMethodInvocation(MethodInvocationTree node, Tree tree) {
     System.out.println("visit Method Invocation");
-    return null;
+
+    // Create Tree.
+    var nodeTree = createTree(node, tree);
+
+    // Add type arguments.
+    if (node.getTypeArguments() != null)
+      for (var typeArgument : node.getTypeArguments())
+        nodeTree.addChild(typeArgument.accept(this, nodeTree));
+
+    // Add method select.
+    if (node.getMethodSelect() != null)
+      nodeTree.addChild(node.getMethodSelect().accept(this, nodeTree));
+
+    // Add arguments.
+    if (node.getArguments() != null)
+      for (var argument : node.getArguments()) nodeTree.addChild(argument.accept(this, nodeTree));
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
@@ -67,7 +85,19 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitAssignment(AssignmentTree node, Tree tree) {
     System.out.println("visit Assignment");
-    return null;
+
+    // Create Tree.
+    var nodeTree = createTree(node, tree);
+
+    // Add variable.
+    if (node.getVariable() != null) nodeTree.addChild(node.getVariable().accept(this, nodeTree));
+
+    // Add expression.
+    if (node.getExpression() != null)
+      nodeTree.addChild(node.getExpression().accept(this, nodeTree));
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
@@ -79,7 +109,20 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitBinary(BinaryTree node, Tree tree) {
     System.out.println("visit Binary");
-    return null;
+
+    // Create Tree.
+    var nodeTree = createTree(node, tree);
+
+    // Add left operand.
+    if (node.getLeftOperand() != null)
+      nodeTree.addChild(node.getLeftOperand().accept(this, nodeTree));
+
+    // Add right operand.
+    if (node.getRightOperand() != null)
+      nodeTree.addChild(node.getRightOperand().accept(this, nodeTree));
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
@@ -104,13 +147,44 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitBreak(BreakTree node, Tree tree) {
     System.out.println("visit Break");
-    return null;
+
+    // Create and return tree.
+    if (node.getLabel() != null) return createTree(node, node.getLabel(), tree);
+
+    // Create and return tree without label if null.
+    return createTree(node, tree);
   }
 
   @Override
   public Tree visitCase(CaseTree node, Tree tree) {
     System.out.println("visit Case");
-    return null;
+
+    // Create Tree.
+    var nodeTree = createTree(node, tree);
+
+    // Add expressions.
+    if (node.getExpressions() != null)
+      for (var expression : node.getExpressions())
+        nodeTree.addChild(expression.accept(this, nodeTree));
+
+    // Add labels.
+    if (node.getLabels() != null)
+      for (var label : node.getLabels()) nodeTree.addChild(label.accept(this, nodeTree));
+
+    // Add guard.
+    if (node.getGuard() != null) nodeTree.addChild(node.getGuard().accept(this, nodeTree));
+
+    // Add statements/body.
+    if (node.getCaseKind() == CaseTree.CaseKind.STATEMENT) {
+      if (node.getStatements() != null)
+        for (var statement : node.getStatements())
+          nodeTree.addChild(statement.accept(this, nodeTree));
+    } else {
+      if (node.getBody() != null) nodeTree.addChild(node.getBody().accept(this, nodeTree));
+    }
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
@@ -181,7 +255,16 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitExpressionStatement(ExpressionStatementTree node, Tree tree) {
     System.out.println("visit Expression Statement");
-    return null;
+
+    // Create Tree.
+    var nodeTree = createTree(node, tree);
+
+    // Add expression.
+    if (node.getExpression() != null)
+      nodeTree.addChild(node.getExpression().accept(this, nodeTree));
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
@@ -207,7 +290,23 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitIf(IfTree node, Tree tree) {
     System.out.println("visit If");
-    return null;
+
+    // Create Tree.
+    var nodeTree = createTree(node, tree);
+
+    // Add condition.
+    if (node.getCondition() != null) nodeTree.addChild(node.getCondition().accept(this, nodeTree));
+
+    // Add then statement.
+    if (node.getThenStatement() != null)
+      nodeTree.addChild(node.getThenStatement().accept(this, nodeTree));
+
+    // Add else statement.
+    if (node.getElseStatement() != null)
+      nodeTree.addChild(node.getElseStatement().accept(this, nodeTree));
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
@@ -264,7 +363,16 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitConstantCaseLabel(ConstantCaseLabelTree node, Tree tree) {
     System.out.println("visit Constant Case Label");
-    return null;
+
+    // Create Tree.
+    var nodeTree = createTree(node, tree);
+
+    // Add constant expression.
+    if (node.getConstantExpression() != null)
+      nodeTree.addChild(node.getConstantExpression().accept(this, nodeTree));
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
@@ -390,7 +498,16 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
   @Override
   public Tree visitMemberSelect(MemberSelectTree node, Tree tree) {
     System.out.println("visit Member Select");
-    return null;
+
+    // Create tree.
+    var nodeTree = createTree(node, node.getIdentifier(), tree);
+
+    // Add expression.
+    if (node.getExpression() != null)
+      nodeTree.addChild(node.getExpression().accept(this, nodeTree));
+
+    // Return tree.
+    return nodeTree;
   }
 
   @Override
