@@ -23,7 +23,7 @@ public class Main {
         }
 
         // Process with visitor.
-        JCTree.Visitor visitor = new ParseTreeVisitor();
-        javacTree.accept(visitor);
+        var tree = javacTree.accept(new JCTreeVisitor(), null);
+        System.out.println(tree);
     }
 }
