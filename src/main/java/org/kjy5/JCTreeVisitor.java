@@ -54,8 +54,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitMethodInvocation(MethodInvocationTree node, Tree tree) {
-    System.out.println("visit Method Invocation");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -84,8 +82,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitAssignment(AssignmentTree node, Tree tree) {
-    System.out.println("visit Assignment");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -108,8 +104,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitBinary(BinaryTree node, Tree tree) {
-    System.out.println("visit Binary");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -127,8 +121,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitBlock(BlockTree node, Tree tree) {
-    System.out.println("visit Block");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -146,8 +138,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitBreak(BreakTree node, Tree tree) {
-    System.out.println("visit Break");
-
     // Create and return tree.
     if (node.getLabel() != null) return createTree(node, node.getLabel(), tree);
 
@@ -157,8 +147,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitCase(CaseTree node, Tree tree) {
-    System.out.println("visit Case");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -195,8 +183,7 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitClass(ClassTree node, Tree tree) {
-    System.out.println("visit Class");
-
+    // Create Tree.
     var nodeTree = createTree(node, node.getSimpleName(), tree);
 
     // Add modifiers.
@@ -254,8 +241,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitExpressionStatement(ExpressionStatementTree node, Tree tree) {
-    System.out.println("visit Expression Statement");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -281,16 +266,12 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitIdentifier(IdentifierTree node, Tree tree) {
-    System.out.println("visit Identifier");
-
     // Create and return tree.
     return createTree(node, node.getName(), tree);
   }
 
   @Override
   public Tree visitIf(IfTree node, Tree tree) {
-    System.out.println("visit If");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -329,8 +310,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitLiteral(LiteralTree node, Tree tree) {
-    System.out.println("visit Literal");
-
     // Create and return tree.
     return createTree(node, node.getValue().toString(), tree);
   }
@@ -362,8 +341,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitConstantCaseLabel(ConstantCaseLabelTree node, Tree tree) {
-    System.out.println("visit Constant Case Label");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -389,8 +366,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitMethod(MethodTree node, Tree tree) {
-    System.out.println("visit Method");
-
     // Create Tree.
     var nodeTree = createTree(node, node.getName(), tree);
 
@@ -432,8 +407,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitModifiers(ModifiersTree node, Tree tree) {
-    System.out.println("visit Modifiers");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -476,8 +449,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitParenthesized(ParenthesizedTree node, Tree tree) {
-    System.out.println("visit Parenthesized");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -497,8 +468,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitMemberSelect(MemberSelectTree node, Tree tree) {
-    System.out.println("visit Member Select");
-
     // Create tree.
     var nodeTree = createTree(node, node.getIdentifier(), tree);
 
@@ -524,8 +493,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitSwitch(SwitchTree node, Tree tree) {
-    System.out.println("visit Switch");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -561,8 +528,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitCompilationUnit(CompilationUnitTree node, Tree tree) {
-    System.out.println("visit Compilation Unit");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -615,8 +580,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitArrayType(ArrayTypeTree node, Tree tree) {
-    System.out.println("visit Array Type");
-
     // Create Tree.
     var nodeTree = createTree(node, tree);
 
@@ -635,8 +598,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitPrimitiveType(PrimitiveTypeTree node, Tree tree) {
-    System.out.println("visit Primitive Type");
-
     // Create and return tree.
     return createTree(node, node.getPrimitiveTypeKind().toString(), tree);
   }
@@ -661,8 +622,6 @@ public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitVariable(VariableTree node, Tree tree) {
-    System.out.println("visit Variable");
-
     // Create Tree.
     var nodeTree = createTree(node, node.getName(), tree);
 
