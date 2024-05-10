@@ -43,7 +43,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   // endregion
 
-  // region Visitor methods
+  // region TreeVisitor Overrides.
   @Override
   public Tree visitAnnotatedType(AnnotatedTypeTree node, Tree tree) {
     System.out.println("visit Annotated Type");
