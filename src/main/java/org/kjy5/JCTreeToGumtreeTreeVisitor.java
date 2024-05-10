@@ -33,7 +33,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     // Set label.
     tree.setLabel(label);
 
-    // Return tree.
+    // Return Tree.
     return tree;
   }
 
@@ -74,7 +74,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getArguments() != null)
       for (var argument : node.getArguments()) nodeTree.addChild(argument.accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -96,7 +96,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getExpression() != null)
       nodeTree.addChild(node.getExpression().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -119,7 +119,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getRightOperand() != null)
       nodeTree.addChild(node.getRightOperand().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -136,7 +136,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     // Add isStatic to metadata.
     nodeTree.setMetadata("isStatic", node.isStatic());
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -175,7 +175,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
       if (node.getBody() != null) nodeTree.addChild(node.getBody().accept(this, nodeTree));
     }
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -216,6 +216,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getMembers() != null)
       for (var member : node.getMembers()) nodeTree.addChild(member.accept(this, nodeTree));
 
+    // Return Tree.
     return nodeTree;
   }
 
@@ -252,7 +253,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getExpression() != null)
       nodeTree.addChild(node.getExpression().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -290,7 +291,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getElseStatement() != null)
       nodeTree.addChild(node.getElseStatement().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -352,7 +353,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getConstantExpression() != null)
       nodeTree.addChild(node.getConstantExpression().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -405,7 +406,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getDefaultValue() != null)
       nodeTree.addChild(node.getDefaultValue().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -424,6 +425,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
       for (var annotation : node.getAnnotations())
         nodeTree.addChild(annotation.accept(this, nodeTree));
 
+    // Return Tree.
     return nodeTree;
   }
 
@@ -460,7 +462,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getExpression() != null)
       nodeTree.addChild(node.getExpression().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -472,14 +474,14 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitMemberSelect(MemberSelectTree node, Tree tree) {
-    // Create tree.
+    // Create Tree.
     var nodeTree = createTree(node, node.getIdentifier(), tree);
 
     // Add expression.
     if (node.getExpression() != null)
       nodeTree.addChild(node.getExpression().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -508,7 +510,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getCases() != null)
       for (var caseTree : node.getCases()) nodeTree.addChild(caseTree.accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -541,7 +543,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     // Add package annotations.
     if (node.getPackageAnnotations() != null)
       for (var annotation : node.getPackageAnnotations())
-        nodeTree.addChild(node.getModule().accept(this, nodeTree));
+        nodeTree.addChild(annotation.accept(this, nodeTree));
 
     // Add package.
     if (node.getPackageName() != null)
@@ -555,6 +557,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getTypeDecls() != null)
       for (var typeDecl : node.getTypeDecls()) nodeTree.addChild(typeDecl.accept(this, nodeTree));
 
+    // Return Tree.
     return nodeTree;
   }
 
@@ -590,7 +593,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     // Add type.
     if (node.getType() != null) nodeTree.addChild(node.getType().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 
@@ -643,7 +646,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
     if (node.getInitializer() != null)
       nodeTree.addChild(node.getInitializer().accept(this, nodeTree));
 
-    // Return tree.
+    // Return Tree.
     return nodeTree;
   }
 

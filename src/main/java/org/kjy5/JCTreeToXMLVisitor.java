@@ -1,10 +1,9 @@
 package org.kjy5;
 
 import com.sun.source.tree.*;
+import javax.lang.model.element.Name;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.lang.model.element.Name;
 
 public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
   // region Static Helper Methods.
@@ -45,7 +44,7 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitMethodInvocation(MethodInvocationTree node, Document document) {
-    // Create tree.
+    // Create Element.
     var element = createElement(node, document);
 
     // Add type arguments.
@@ -60,8 +59,8 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
     // Add arguments.
     if (node.getArguments() != null)
       for (var argument : node.getArguments()) element.appendChild(argument.accept(this, document));
-    
-    // Return element.
+
+    // Return Element.
     return element;
   }
 
@@ -72,7 +71,18 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitAssignment(AssignmentTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add variable.
+    if (node.getVariable() != null) element.appendChild(node.getVariable().accept(this, document));
+
+    // Add expression.
+    if (node.getExpression() != null)
+      element.appendChild(node.getExpression().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -82,22 +92,77 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitBinary(BinaryTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add left operand.
+    if (node.getLeftOperand() != null)
+      element.appendChild(node.getLeftOperand().accept(this, document));
+
+    // Add right operand.
+    if (node.getRightOperand() != null)
+      element.appendChild(node.getRightOperand().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
   public Element visitBlock(BlockTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add statements.
+    if (node.getStatements() != null)
+      for (var statement : node.getStatements())
+        element.appendChild(statement.accept(this, document));
+
+    // Add isStatic to element attributes.
+    element.setAttribute("isStatic", String.valueOf(node.isStatic()));
+
+    // Return Element.
+    return element;
   }
 
   @Override
   public Element visitBreak(BreakTree node, Document document) {
-    return null;
+    // Create and return element.
+    if (node.getLabel() != null) return createElement(node, node.getLabel(), document);
+
+    return createElement(node, document);
   }
 
   @Override
   public Element visitCase(CaseTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add expression.
+    if (node.getExpressions() != null)
+      for (var expression : node.getExpressions())
+        element.appendChild(expression.accept(this, document));
+
+    // Add labels.
+    if (node.getLabels() != null)
+      for (var label : node.getLabels()) element.appendChild(label.accept(this, document));
+
+    // Add guard.
+    if (node.getGuard() != null) element.appendChild(node.getGuard().accept(this, document));
+
+    // Add statements/body.
+    if (node.getCaseKind() == CaseTree.CaseKind.STATEMENT) {
+      if (node.getStatements() != null) {
+        for (var statement : node.getStatements())
+          element.appendChild(statement.accept(this, document));
+      }
+    } else {
+      if (node.getBody() != null) {
+        element.appendChild(node.getBody().accept(this, document));
+      }
+    }
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -107,7 +172,37 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitClass(ClassTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, node.getSimpleName(), document);
+
+    // Add modifiers.
+    if (node.getModifiers() != null)
+      element.appendChild(node.getModifiers().accept(this, document));
+
+    // Add type parameters.
+    if (node.getTypeParameters() != null)
+      for (var typeParameter : node.getTypeParameters())
+        element.appendChild(typeParameter.accept(this, document));
+
+    // Add extends clause.
+    if (node.getExtendsClause() != null)
+      element.appendChild(node.getExtendsClause().accept(this, document));
+
+    // Add implements clause.
+    if (node.getImplementsClause() != null)
+      for (var implement : node.getImplementsClause())
+        element.appendChild(implement.accept(this, document));
+
+    // Add permits clause.
+    if (node.getPermitsClause() != null)
+      for (var permit : node.getPermitsClause()) element.appendChild(permit.accept(this, document));
+
+    // Add members.
+    if (node.getMembers() != null)
+      for (var member : node.getMembers()) element.appendChild(member.accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -132,7 +227,15 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitExpressionStatement(ExpressionStatementTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add expression.
+    if (node.getExpression() != null)
+      element.appendChild(node.getExpression().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -152,7 +255,23 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitIf(IfTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add condition.
+    if (node.getCondition() != null)
+      element.appendChild(node.getCondition().accept(this, document));
+
+    // Add then statement.
+    if (node.getThenStatement() != null)
+      element.appendChild(node.getThenStatement().accept(this, document));
+
+    // Add else statement.
+    if (node.getElseStatement() != null)
+      element.appendChild(node.getElseStatement().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -197,7 +316,15 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitConstantCaseLabel(ConstantCaseLabelTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add constant expression.
+    if (node.getConstantExpression() != null)
+      element.appendChild(node.getConstantExpression().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -212,12 +339,66 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitMethod(MethodTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, node.getName(), document);
+
+    // Add modifiers.
+    if (node.getModifiers() != null)
+      element.appendChild(node.getModifiers().accept(this, document));
+
+    // Add return type.
+    if (node.getReturnType() != null)
+      element.appendChild(node.getReturnType().accept(this, document));
+
+    // Add type parameters.
+    if (node.getTypeParameters() != null)
+      for (var typeParameter : node.getTypeParameters())
+        element.appendChild(typeParameter.accept(this, document));
+
+    // Add parameters.
+    if (node.getParameters() != null)
+      for (var parameter : node.getParameters())
+        element.appendChild(parameter.accept(this, document));
+
+    // Add receiver parameter.
+    if (node.getReceiverParameter() != null)
+      element.appendChild(node.getReceiverParameter().accept(this, document));
+
+    // Add throws.
+    if (node.getThrows() != null)
+      for (var thrown : node.getThrows()) element.appendChild(thrown.accept(this, document));
+
+    // Add body.
+    if (node.getBody() != null) element.appendChild(node.getBody().accept(this, document));
+
+    // Add default value.
+    if (node.getDefaultValue() != null)
+      element.appendChild(node.getDefaultValue().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
   public Element visitModifiers(ModifiersTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add flags.
+    if (node.getFlags() != null)
+      for (var flag : node.getFlags()) {
+        var modifier = document.createElement("Modifier");
+        modifier.setAttribute("label", flag.toString());
+        element.appendChild(modifier);
+      }
+
+    // Add annotations.
+    if (node.getAnnotations() != null)
+      for (var annotation : node.getAnnotations())
+        element.appendChild(annotation.accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -242,7 +423,15 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitParenthesized(ParenthesizedTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add expression.
+    if (node.getExpression() != null)
+      element.appendChild(node.getExpression().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -252,7 +441,15 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitMemberSelect(MemberSelectTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, node.getIdentifier(), document);
+
+    // Add expression.
+    if (node.getExpression() != null)
+      element.appendChild(node.getExpression().accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -267,7 +464,19 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitSwitch(SwitchTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add expression.
+    if (node.getExpression() != null)
+      element.appendChild(node.getExpression().accept(this, document));
+
+    // Add cases.
+    if (node.getCases() != null)
+      for (var caseTree : node.getCases()) element.appendChild(caseTree.accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -287,7 +496,32 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitCompilationUnit(CompilationUnitTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+
+    // Add modules.
+    if (node.getModule() != null) element.appendChild(node.getModule().accept(this, document));
+
+    // Add package annotations.
+    if (node.getPackageAnnotations() != null)
+      for (var annotation : node.getPackageAnnotations())
+        element.appendChild(annotation.accept(this, document));
+
+    // Add package.
+    if (node.getPackageName() != null)
+      element.appendChild(node.getPackageName().accept(this, document));
+
+    // Add imports.
+    if (node.getImports() != null)
+      for (var importTree : node.getImports())
+        element.appendChild(importTree.accept(this, document));
+
+    // Add type declarations.
+    if (node.getTypeDecls() != null)
+      for (var typeDecl : node.getTypeDecls()) element.appendChild(typeDecl.accept(this, document));
+
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -312,7 +546,15 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitArrayType(ArrayTypeTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, document);
+    
+    // Add type.
+    if (node.getType() != null)
+      element.appendChild(node.getType().accept(this, document));
+    
+    // Return Element.
+    return element;
   }
 
   @Override
@@ -342,7 +584,27 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitVariable(VariableTree node, Document document) {
-    return null;
+    // Create Element.
+    var element = createElement(node, node.getName(), document);
+    
+    // Add modifiers.
+    if (node.getModifiers() != null)
+      element.appendChild(node.getModifiers().accept(this, document));
+    
+    // Add name expression.
+    if (node.getNameExpression() != null)
+      element.appendChild(node.getNameExpression().accept(this, document));
+    
+    // Add type.
+    if (node.getType() != null)
+      element.appendChild(node.getType().accept(this, document));
+    
+    // Add initializer.
+    if (node.getInitializer() != null)
+      element.appendChild(node.getInitializer().accept(this, document));
+    
+    // Return Element.
+    return element;
   }
 
   @Override
