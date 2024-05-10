@@ -1,15 +1,15 @@
 public class Main {
   public static void main(String[] args) {
-    int day = 4;
+    int day = 9;
 
 
 
     switch (day) {
       case 10:
-        System.out.println("Monday");
+        System.out.println("Moneyday");
         break;
       case 20:
-        System.out.println("Tuesday");
+        System.out.println("2sday");
         break;
       case 4:
         System.out.println("Thursday");
