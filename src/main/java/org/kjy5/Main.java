@@ -1,43 +1,52 @@
 package org.kjy5;
 
-import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
-import com.github.gumtreediff.gen.jdt.JdtTreeGenerator;
-import com.github.gumtreediff.tree.Tree;
+import com.github.gumtreediff.client.Run;
+import com.github.gumtreediff.matchers.Matchers;
 import com.sun.tools.javac.tree.JCTree;
+import java.io.IOException;
 import org.plumelib.javacparse.JavacParse;
 
-import java.io.IOException;
-
+@SuppressWarnings("StringTemplateMigration")
 public class Main {
-    public static void main(String[] args) {
-        String file = "assets/file1.java";
+  public static void main(String[] args) {
+    // Source files.
+    String file1 = "assets/file1.java";
+    String file2 = "assets/file2.java";
 
-        // Parse with JDT.
-        Tree jdtTree;
-        try {
-            jdtTree = new JdtTreeGenerator().generateFrom().file(file).getRoot();
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading file" + e);
-        }
-        System.out.println(jdtTree.toTreeString());
-
-        // Parse with JavaParser.
-        Tree javaparserTree;
-        try {
-            javaparserTree = new JavaParserGenerator().generateFrom().file(file).getRoot();
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading file" + e);
-        }
-        System.out.println(javaparserTree.toTreeString());
-
-        // Parse with Javac-parse.
-        JCTree.JCCompilationUnit javacTree;
-        try {
-            javacTree = JavacParse.parseJavaFile(file);
-            System.out.println(javacTree);
-            System.out.println();
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading file" + e);
-        }
+    // Parse file1 with Javac-parse.
+    JCTree.JCCompilationUnit file1JavacTree;
+    try {
+      file1JavacTree = JavacParse.parseJavaFile(file1);
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading file" + e);
     }
+
+    // Exit if parsing failed.
+    if (file1JavacTree == null) {
+      return;
+    }
+
+    // Parse file2 with Javac-parse.
+    JCTree.JCCompilationUnit file2JavacTree;
+    try {
+      file2JavacTree = JavacParse.parseJavaFile(file2);
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading file" + e);
+    }
+
+    // Exit if parsing failed.
+    if (file2JavacTree == null) {
+      return;
+    }
+
+    // Process with visitor.
+    var file1Tree = file1JavacTree.accept(new JCTreeVisitor(), null);
+    var file2Tree = file2JavacTree.accept(new JCTreeVisitor(), null);
+
+    // Compute mappings.
+    Run.initMatchers();
+    var defaultMatcher = Matchers.getInstance().getMatcher();
+    var mappings = defaultMatcher.match(file1Tree, file2Tree);
+    System.out.println(mappings);
+  }
 }
