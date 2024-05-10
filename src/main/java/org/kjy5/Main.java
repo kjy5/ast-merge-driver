@@ -17,14 +17,25 @@ import org.plumelib.javacparse.JavacParse;
 @SuppressWarnings("StringTemplateMigration")
 public class Main {
   public static void main(String[] args) {
+    // region File path specifications.
     // Source files.
-    var file1 = "assets/file1.java";
-    var file2 = "assets/file2.java";
+    var file0Path = "assets/file0.java";
+    var file1Path = "assets/file1.java";
+    var file2Path = "assets/file2.java";
+
+    // XML output files.
+    var file0XmlPath = "assets/file0.xml";
+    var file1XmlPath = "assets/file1.xml";
+    var file2XmlPath = "assets/file2.xml";
+
+    // endregion
+
+    // region Parse java source code to JCTree.
 
     // Parse file1 with Javac-parse.
     JCTree.JCCompilationUnit file1JavacTree;
     try {
-      file1JavacTree = JavacParse.parseJavaFile(file1);
+      file1JavacTree = JavacParse.parseJavaFile(file1Path);
     } catch (IOException e) {
       throw new RuntimeException("Error reading file " + e);
     }
@@ -37,7 +48,7 @@ public class Main {
     // Parse file2 with Javac-parse.
     JCTree.JCCompilationUnit file2JavacTree;
     try {
-      file2JavacTree = JavacParse.parseJavaFile(file2);
+      file2JavacTree = JavacParse.parseJavaFile(file2Path);
     } catch (IOException e) {
       throw new RuntimeException("Error reading file " + e);
     }
@@ -47,7 +58,10 @@ public class Main {
       return;
     }
 
-    // Process with JCTree to Gumtree Tree Visitor.
+    // endregion
+
+    // region Process with JCTree to Gumtree Tree Visitor.
+
     var file1Tree = file1JavacTree.accept(new JCTreeToGumtreeTreeVisitor(), null);
     var file2Tree = file2JavacTree.accept(new JCTreeToGumtreeTreeVisitor(), null);
 
@@ -56,6 +70,10 @@ public class Main {
     var defaultMatcher = Matchers.getInstance().getMatcher();
     var mappings = defaultMatcher.match(file1Tree, file2Tree);
     System.out.println(mappings);
+
+    // endregion
+
+    // region Process with JCTree to XML Visitor.
 
     // Setup document builder.
     var factory = DocumentBuilderFactory.newInstance();
@@ -67,10 +85,14 @@ public class Main {
     }
 
     // Create DOM documents.
+    var document0 = builder.newDocument();
     var document1 = builder.newDocument();
     var document2 = builder.newDocument();
 
     // Process with JCTree to XML Visitor.
+    var file0Xml = file1JavacTree.accept(new JCTreeToXMLVisitor(), document0);
+    document0.appendChild(file0Xml);
+
     var file1Xml = file1JavacTree.accept(new JCTreeToXMLVisitor(), document1);
     document1.appendChild(file1Xml);
 
@@ -85,11 +107,19 @@ public class Main {
     } catch (Exception e) {
       throw new RuntimeException("Error creating transformer " + e);
     }
+    DOMSource source0 = new DOMSource(document0);
     DOMSource source1 = new DOMSource(document1);
     DOMSource source2 = new DOMSource(document2);
 
+    // Write to file0.xml.
+    var result0 = new StreamResult(file0XmlPath);
+    try {
+      transformer.transform(source0, result0);
+    } catch (TransformerException e) {
+      throw new RuntimeException("Error transforming DOM 0 to XML " + e);
+    }
+
     // Write to file1.xml.
-    var file1XmlPath = "assets/file1.xml";
     var result1 = new StreamResult(file1XmlPath);
     try {
       transformer.transform(source1, result1);
@@ -98,7 +128,6 @@ public class Main {
     }
 
     // Write to file2.xml.
-    var file2XmlPath = "assets/file2.xml";
     var result2 = new StreamResult(file2XmlPath);
     try {
       transformer.transform(source2, result2);
@@ -106,6 +135,9 @@ public class Main {
       throw new RuntimeException("Error transforming DOM 2 to XML " + e);
     }
 
-    System.out.println("XML files written to " + file1XmlPath + " and " + file2XmlPath);
+    System.out.println(
+        "XML files written to " + file0XmlPath + ", " + file1XmlPath + ", and " + file2XmlPath);
+
+    // endregion
   }
 }

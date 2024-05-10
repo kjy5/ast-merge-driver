@@ -1,12 +1,12 @@
 public class Main {
   public static void main(String[] args) {
-    int weekday = 4;
+    int day = 4;
     int next = 9;
-    switch (weekday) {
+    switch (day) {
       case 1:
         System.out.println("Monday");
         if(1==1){
-            weekday = 5;
+            day = 5;
         }
         break;
       case 2:
