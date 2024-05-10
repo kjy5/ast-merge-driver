@@ -271,7 +271,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitIdentifier(IdentifierTree node, Tree tree) {
-    // Create and return tree.
+    // Create and return Tree.
     return createTree(node, node.getName(), tree);
   }
 
@@ -315,7 +315,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitLiteral(LiteralTree node, Tree tree) {
-    // Create and return tree.
+    // Create and return Tree.
     return createTree(node, node.getValue().toString(), tree);
   }
 
@@ -605,7 +605,7 @@ public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
 
   @Override
   public Tree visitPrimitiveType(PrimitiveTypeTree node, Tree tree) {
-    // Create and return tree.
+    // Create and return Tree.
     return createTree(node, node.getPrimitiveTypeKind().toString(), tree);
   }
 

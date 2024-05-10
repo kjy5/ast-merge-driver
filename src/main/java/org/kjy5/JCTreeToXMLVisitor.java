@@ -66,6 +66,7 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitAssert(AssertTree node, Document document) {
+    System.out.println("visit Assert");
     return null;
   }
 
@@ -87,6 +88,7 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitCompoundAssignment(CompoundAssignmentTree node, Document document) {
+    System.out.println("visit Compound Assignment");
     return null;
   }
 
@@ -167,6 +169,7 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitCatch(CatchTree node, Document document) {
+    System.out.println("visit Catch");
     return null;
   }
 
@@ -207,21 +210,25 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitConditionalExpression(ConditionalExpressionTree node, Document document) {
+    System.out.println("visit Conditional Expression");
     return null;
   }
 
   @Override
   public Element visitContinue(ContinueTree node, Document document) {
+    System.out.println("visit Continue");
     return null;
   }
 
   @Override
   public Element visitDoWhileLoop(DoWhileLoopTree node, Document document) {
+    System.out.println("visit Do While Loop");
     return null;
   }
 
   @Override
   public Element visitErroneous(ErroneousTree node, Document document) {
+    System.out.println("visit Erroneous");
     return null;
   }
 
@@ -240,17 +247,20 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitEnhancedForLoop(EnhancedForLoopTree node, Document document) {
+    System.out.println("visit Enhanced For Loop");
     return null;
   }
 
   @Override
   public Element visitForLoop(ForLoopTree node, Document document) {
+    System.out.println("visit For Loop");
     return null;
   }
 
   @Override
   public Element visitIdentifier(IdentifierTree node, Document document) {
-    return null;
+    // Create and return Element.
+    return createElement(node, node.getName(), document);
   }
 
   @Override
@@ -276,41 +286,50 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitImport(ImportTree node, Document document) {
+    System.out.println("visit Import");
     return null;
   }
 
   @Override
   public Element visitArrayAccess(ArrayAccessTree node, Document document) {
+    System.out.println("visit Array Access");
     return null;
   }
 
   @Override
   public Element visitLabeledStatement(LabeledStatementTree node, Document document) {
+    System.out.println("visit Labeled Statement");
     return null;
   }
 
   @Override
   public Element visitLiteral(LiteralTree node, Document document) {
-    return null;
+    // Create and return Element.
+    return createElement(node, node.getValue().toString(), document);
   }
 
+  @SuppressWarnings("preview")
   @Override
   public Element visitStringTemplate(StringTemplateTree node, Document document) {
+    System.out.println("visit String Template");
     return null;
   }
 
   @Override
   public Element visitAnyPattern(AnyPatternTree node, Document document) {
+    System.out.println("visit Any Pattern");
     return null;
   }
 
   @Override
   public Element visitBindingPattern(BindingPatternTree node, Document document) {
+    System.out.println("visit Binding Pattern");
     return null;
   }
 
   @Override
   public Element visitDefaultCaseLabel(DefaultCaseLabelTree node, Document document) {
+    System.out.println("visit Default Case Label");
     return null;
   }
 
@@ -329,11 +348,13 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitPatternCaseLabel(PatternCaseLabelTree node, Document document) {
+    System.out.println("visit Pattern Case Label");
     return null;
   }
 
   @Override
   public Element visitDeconstructionPattern(DeconstructionPatternTree node, Document document) {
+    System.out.println("visit Deconstruction Pattern");
     return null;
   }
 
@@ -403,21 +424,25 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitNewArray(NewArrayTree node, Document document) {
+    System.out.println("visit New Array");
     return null;
   }
 
   @Override
   public Element visitNewClass(NewClassTree node, Document document) {
+    System.out.println("visit New Class");
     return null;
   }
 
   @Override
   public Element visitLambdaExpression(LambdaExpressionTree node, Document document) {
+    System.out.println("visit Lambda Expression");
     return null;
   }
 
   @Override
   public Element visitPackage(PackageTree node, Document document) {
+    System.out.println("visit Package");
     return null;
   }
 
@@ -436,6 +461,7 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitReturn(ReturnTree node, Document document) {
+    System.out.println("visit Return");
     return null;
   }
 
@@ -454,11 +480,13 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitMemberReference(MemberReferenceTree node, Document document) {
+    System.out.println("visit Member Reference");
     return null;
   }
 
   @Override
   public Element visitEmptyStatement(EmptyStatementTree node, Document document) {
+    System.out.println("visit Empty Statement");
     return null;
   }
 
@@ -481,16 +509,19 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitSwitchExpression(SwitchExpressionTree node, Document document) {
+    System.out.println("visit Switch Expression");
     return null;
   }
 
   @Override
   public Element visitSynchronized(SynchronizedTree node, Document document) {
+    System.out.println("visit Synchronized");
     return null;
   }
 
   @Override
   public Element visitThrow(ThrowTree node, Document document) {
+    System.out.println("visit Throw");
     return null;
   }
 
@@ -526,21 +557,25 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitTry(TryTree node, Document document) {
+    System.out.println("visit Try");
     return null;
   }
 
   @Override
   public Element visitParameterizedType(ParameterizedTypeTree node, Document document) {
+    System.out.println("visit Parameterized Type");
     return null;
   }
 
   @Override
   public Element visitUnionType(UnionTypeTree node, Document document) {
+    System.out.println("visit Union Type");
     return null;
   }
 
   @Override
   public Element visitIntersectionType(IntersectionTypeTree node, Document document) {
+    System.out.println("visit Intersection Type");
     return null;
   }
 
@@ -559,26 +594,31 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitTypeCast(TypeCastTree node, Document document) {
+    System.out.println("visit Type Cast");
     return null;
   }
 
   @Override
   public Element visitPrimitiveType(PrimitiveTypeTree node, Document document) {
-    return null;
+    // Create and return Element.
+    return createElement(node, node.getPrimitiveTypeKind().toString(), document);
   }
 
   @Override
   public Element visitTypeParameter(TypeParameterTree node, Document document) {
+    System.out.println("visit Type Parameter");
     return null;
   }
 
   @Override
   public Element visitInstanceOf(InstanceOfTree node, Document document) {
+    System.out.println("visit Instance Of");
     return null;
   }
 
   @Override
   public Element visitUnary(UnaryTree node, Document document) {
+    System.out.println("visit Unary");
     return null;
   }
 
@@ -609,51 +649,61 @@ public class JCTreeToXMLVisitor implements TreeVisitor<Element, Document> {
 
   @Override
   public Element visitWhileLoop(WhileLoopTree node, Document document) {
+    System.out.println("visit While Loop");
     return null;
   }
 
   @Override
   public Element visitWildcard(WildcardTree node, Document document) {
+    System.out.println("visit Wildcard");
     return null;
   }
 
   @Override
   public Element visitModule(ModuleTree node, Document document) {
+    System.out.println("visit Module");
     return null;
   }
 
   @Override
   public Element visitExports(ExportsTree node, Document document) {
+    System.out.println("visit Exports");
     return null;
   }
 
   @Override
   public Element visitOpens(OpensTree node, Document document) {
+    System.out.println("visit Opens");
     return null;
   }
 
   @Override
   public Element visitProvides(ProvidesTree node, Document document) {
+    System.out.println("visit Provides");
     return null;
   }
 
   @Override
   public Element visitRequires(RequiresTree node, Document document) {
+    System.out.println("visit Requires");
     return null;
   }
 
   @Override
   public Element visitUses(UsesTree node, Document document) {
+    System.out.println("visit Uses");
     return null;
   }
 
   @Override
   public Element visitOther(Tree node, Document document) {
+    System.out.println("visit Other");
     return null;
   }
 
   @Override
   public Element visitYield(YieldTree node, Document document) {
+    System.out.println("visit Yield");
     return null;
   }
   // endregion

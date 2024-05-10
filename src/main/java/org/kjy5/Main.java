@@ -77,35 +77,35 @@ public class Main {
     var file2Xml = file2JavacTree.accept(new JCTreeToXMLVisitor(), document2);
     document2.appendChild(file2Xml);
 
-//    // Write to XML files.
-//    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-//    Transformer transformer;
-//    try {
-//      transformer = transformerFactory.newTransformer();
-//    } catch (Exception e) {
-//      throw new RuntimeException("Error creating transformer " + e);
-//    }
-//    DOMSource source1 = new DOMSource(document1);
-//    DOMSource source2 = new DOMSource(document2);
-//
-//    // Write to file1.xml.
-//    var file1XmlPath = "assets/file1.xml";
-//    var result1 = new StreamResult(file1XmlPath);
-//    try {
-//      transformer.transform(source1, result1);
-//    } catch (TransformerException e) {
-//      throw new RuntimeException("Error transforming DOM 1 to XML " + e);
-//    }
-//
-//    // Write to file2.xml.
-//    var file2XmlPath = "assets/file2.xml";
-//    var result2 = new StreamResult(file2XmlPath);
-//    try {
-//      transformer.transform(source2, result2);
-//    } catch (TransformerException e) {
-//      throw new RuntimeException("Error transforming DOM 2 to XML " + e);
-//    }
-//
-//    System.out.println("XML files written to " + file1XmlPath + " and " + file2XmlPath);
+    // Write to XML files.
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    Transformer transformer;
+    try {
+      transformer = transformerFactory.newTransformer();
+    } catch (Exception e) {
+      throw new RuntimeException("Error creating transformer " + e);
+    }
+    DOMSource source1 = new DOMSource(document1);
+    DOMSource source2 = new DOMSource(document2);
+
+    // Write to file1.xml.
+    var file1XmlPath = "assets/file1.xml";
+    var result1 = new StreamResult(file1XmlPath);
+    try {
+      transformer.transform(source1, result1);
+    } catch (TransformerException e) {
+      throw new RuntimeException("Error transforming DOM 1 to XML " + e);
+    }
+
+    // Write to file2.xml.
+    var file2XmlPath = "assets/file2.xml";
+    var result2 = new StreamResult(file2XmlPath);
+    try {
+      transformer.transform(source2, result2);
+    } catch (TransformerException e) {
+      throw new RuntimeException("Error transforming DOM 2 to XML " + e);
+    }
+
+    System.out.println("XML files written to " + file1XmlPath + " and " + file2XmlPath);
   }
 }
