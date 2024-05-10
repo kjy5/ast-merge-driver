@@ -4,13 +4,13 @@ public class Main {
     int next = 9;
     switch (weekday) {
       case 1:
-        System.out.println("Monday");
+        System.out.println("Moneyday");
         if(1==1){
             weekday = 5;
         }
         break;
       case 2:
-        System.out.println("Tuesday");
+        System.out.println("Chewsday");
         break;
       case 3:
         System.out.println("Wednesday");
