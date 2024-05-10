@@ -31,6 +31,19 @@ public class Main {
     // endregion
 
     // region Parse java source code to JCTree.
+    
+    // Parse file0 with Javac-parse.
+    JCTree.JCCompilationUnit file0JavacTree;
+    try {
+      file0JavacTree = JavacParse.parseJavaFile(file0Path);
+    } catch (IOException e) {
+      throw new RuntimeException("Error reading file " + e);
+    }
+    
+    // Exit if parsing failed.
+    if (file0JavacTree == null) {
+      return;
+    }
 
     // Parse file1 with Javac-parse.
     JCTree.JCCompilationUnit file1JavacTree;
@@ -90,7 +103,7 @@ public class Main {
     var document2 = builder.newDocument();
 
     // Process with JCTree to XML Visitor.
-    var file0Xml = file1JavacTree.accept(new JCTreeToXMLVisitor(), document0);
+    var file0Xml = file0JavacTree.accept(new JCTreeToXMLVisitor(), document0);
     document0.appendChild(file0Xml);
 
     var file1Xml = file1JavacTree.accept(new JCTreeToXMLVisitor(), document1);
