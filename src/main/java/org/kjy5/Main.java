@@ -40,8 +40,8 @@ public class Main {
     }
 
     // Process with visitor.
-    var file1Tree = file1JavacTree.accept(new JCTreeVisitor(), null);
-    var file2Tree = file2JavacTree.accept(new JCTreeVisitor(), null);
+    var file1Tree = file1JavacTree.accept(new JCTreeToGumtreeTreeVisitor(), null);
+    var file2Tree = file2JavacTree.accept(new JCTreeToGumtreeTreeVisitor(), null);
 
     // Compute mappings.
     Run.initMatchers();

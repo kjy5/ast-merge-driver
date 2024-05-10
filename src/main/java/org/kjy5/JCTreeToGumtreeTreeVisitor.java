@@ -7,7 +7,7 @@ import com.sun.source.tree.*;
 import com.sun.tools.javac.tree.JCTree;
 import javax.lang.model.element.Name;
 
-public class JCTreeVisitor implements TreeVisitor<Tree, Tree> {
+public class JCTreeToGumtreeTreeVisitor implements TreeVisitor<Tree, Tree> {
   // region Static Helper Methods.
   private static Tree createTree(com.sun.source.tree.Tree node, Tree parent) {
     // Create default tree.
