@@ -32,6 +32,7 @@ public class Main {
 
     // region Serialize parsed files to XML
     var fileBaseXmlSerializer = new JavaParserToXMLSerializer(fileBaseParsing);
+    fileBaseXmlSerializer.getXmlDocument().writeToFile(fileBaseXmlPath);
     // endregion
   }
 }

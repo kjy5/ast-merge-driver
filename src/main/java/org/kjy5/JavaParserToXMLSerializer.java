@@ -27,15 +27,17 @@ public class JavaParserToXMLSerializer {
 
   // endregion
 
+  // region Serialization methods
   /**
-   * Recursive depth-first method that serializes nodes into json
+   * Recursive depth-first method that serializes nodes into XML
    *
    * @param nodeName nullable String. If null, it is the root object, otherwise it is the property
    *     key for the object
    * @param node the current node to be serialized
    * @param xmlDocument the XML document for writing the XML
+   * @return the XML element representing the node
    */
-  private void serialize(String nodeName, Node node, XMLDocument xmlDocument) {
+  private Element serialize(String nodeName, Node node, XMLDocument xmlDocument) {
     requireNonNull(node);
     BaseNodeMetaModel nodeMetaModel =
         JavaParserMetaModel.getNodeMetaModel(node.getClass())
@@ -50,25 +52,40 @@ public class JavaParserToXMLSerializer {
     // Write non-meta properties.
     writeNonMetaProperties(node, element);
 
+    // Write meta properties.
     for (PropertyMetaModel propertyMetaModel : nodeMetaModel.getAllPropertyMetaModels()) {
-      String name = propertyMetaModel.getName();
-      Object value = propertyMetaModel.getValue(node);
-      if (value != null) {
-        if (propertyMetaModel.isNodeList()) {
-          NodeList<Node> list = (NodeList<Node>) value;
-          xmlDocument.writeStartArray(name);
-          for (Node n : list) {
-            serialize(null, n, xmlDocument);
-          }
-          xmlDocument.writeEnd();
-        } else if (propertyMetaModel.isNode()) {
-          serialize(name, (Node) value, xmlDocument);
-        } else {
-          xmlDocument.write(name, value.toString());
+      // Get property name and value.
+      var name = propertyMetaModel.getName();
+      var value = propertyMetaModel.getValue(node);
+
+      // Skip if value is null.
+      if (value == null) {
+        continue;
+      }
+
+      if (propertyMetaModel.isNodeList()) {
+        // Handle node list.
+        @SuppressWarnings("unchecked")
+        NodeList<Node> list = (NodeList<Node>) value;
+
+        // Create element for list.
+        var listElement = xmlDocument.createChildElement(name, element);
+
+        // Populate list element.
+        for (Node n : list) {
+          listElement.appendChild(serialize(null, n, xmlDocument));
         }
+      } else if (propertyMetaModel.isNode()) {
+        // Handle single node.
+        element.appendChild(serialize(name, (Node) value, xmlDocument));
+      } else {
+        // Otherwise, treat it as an attribute.
+        element.setAttribute(name, value.toString());
       }
     }
-    xmlDocument.writeEnd();
+
+    // Return Element.
+    return element;
   }
 
   /***
@@ -123,12 +140,22 @@ public class JavaParserToXMLSerializer {
         tokenRange.getEnd().getText());
   }
 
+  // endregion
+
+  // region Getters
+  public XMLDocument getXmlDocument() {
+    return xmlDocument;
+  }
+
+  // endregion
+
+  // region XML enums
   /** excludes properties from meta model (except comment) */
   public enum XMLNode {
     RANGE("range"),
     TOKEN_RANGE("tokenRange"),
     COMMENT(decapitalize(JavaParserMetaModel.commentMetaModel.getTypeName())),
-    CLASS("!");
+    CLASS("Class");
     final String propertyKey;
 
     XMLNode(String p) {
@@ -183,4 +210,5 @@ public class JavaParserToXMLSerializer {
       return this.propertyKey;
     }
   }
+  // endregion
 }
