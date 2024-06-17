@@ -1,39 +1,39 @@
 package org.kjy5;
 
 import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.serialization.JavaParserJsonSerializer;
-import jakarta.json.Json;
+import com.github.javaparser.ast.CompilationUnit;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Paths;
 
 public class Main {
   public static void main() {
-    // region File path specifications.
+    // region File path specifications
     // Source files.
-    var file0Path = "assets/file0.java";
-    var file1Path = "assets/file1.java";
-    var file2Path = "assets/file2.java";
+    var fileBasePath = "assets/file_base.java";
+    var fileLeftPath = "assets/file_left.java";
+    var fileRightPath = "assets/file_right.java";
 
     // XML output files.
-    var file0XmlPath = "assets/file0.xml";
-    var file1XmlPath = "assets/file1.xml";
-    var file2XmlPath = "assets/file2.xml";
+    var fileBaseXmlPath = "assets/file_base.xml";
+    var fileLeftXmlPath = "assets/file_left.xml";
+    var fileRightXmlPath = "assets/file_right.xml";
     // endregion
 
-    // Parse the source files.
-    var jsonSerializer = new JavaParserJsonSerializer();
-    var stringWriter = new StringWriter();
-    var jsonGeneratorFactory = Json.createGeneratorFactory(null);
-    var jsonGenerator = jsonGeneratorFactory.createGenerator(stringWriter);
+    // region Parse source files
+    CompilationUnit fileBaseParsing, fileLeftParsing, fileRightParsing;
     try {
-      var file0Parse = StaticJavaParser.parse(Paths.get(file0Path));
-      jsonSerializer.serialize(file0Parse, jsonGenerator);
+      fileBaseParsing = StaticJavaParser.parse(Paths.get(fileBasePath));
+      fileLeftParsing = StaticJavaParser.parse(Paths.get(fileLeftPath));
+      fileRightParsing = StaticJavaParser.parse(Paths.get(fileRightPath));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    jsonGenerator.close();
-    var file0Json = stringWriter.toString();
-    System.out.println(file0Json);
+    // endregion
+
+    // region Serialize parsed files to XML
+    var fileBaseXmlDocument = new XMLDocument();
+    var fileBaseXmlRootElement = fileBaseParsing.accept(new JavaToXMLVisitor(), fileBaseXmlDocument);
+    fileBaseXmlDocument.appendElement(fileBaseXmlRootElement);
+    // endregion
   }
 }
