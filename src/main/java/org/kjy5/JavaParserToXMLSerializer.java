@@ -68,6 +68,11 @@ public class JavaParserToXMLSerializer {
         @SuppressWarnings("unchecked")
         NodeList<Node> list = (NodeList<Node>) value;
 
+        // Skip if list is empty.
+        if (list.isEmpty()) {
+          continue;
+        }
+
         // Create element for list.
         var listElement = xmlDocument.createChildElement(name, element);
 
