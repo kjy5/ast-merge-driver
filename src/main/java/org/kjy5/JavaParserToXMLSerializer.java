@@ -84,8 +84,17 @@ public class JavaParserToXMLSerializer {
         // Handle single node.
         element.appendChild(serialize(name, (Node) value, xmlDocument));
       } else {
-        // Otherwise, treat it as an attribute.
-        element.setAttribute(name, value.toString());
+        // Otherwise, treat it as content.
+        switch (name) {
+          case "value":
+          case "identifier":
+            element.setTextContent(value.toString());
+            break;
+          default:
+            // Otherwise, use attribute.
+            element.setAttribute(name, value.toString());
+            break;
+        }
       }
     }
 

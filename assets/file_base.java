@@ -1,7 +1,17 @@
+/**
+ * This is a simple Java program.
+ */
 public class Main {
+  /**
+   * This is the main method which makes use of the switch case.
+   * @param args Unused.
+   */
   public static void main(String[] args) {
+    // Switching on day.
     int day = 4;
+    
     int next = 9;
+    
     switch (day) {
       case 1:
         System.out.println("Monday");
