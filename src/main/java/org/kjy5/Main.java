@@ -33,6 +33,12 @@ public class Main {
     // region Serialize parsed files to XML
     var fileBaseXmlSerializer = new JavaParserToXMLSerializer(fileBaseParsing);
     fileBaseXmlSerializer.getXmlDocument().writeToFile(fileBaseXmlPath);
+
+    var fileLeftXmlSerializer = new JavaParserToXMLSerializer(fileLeftParsing);
+    fileLeftXmlSerializer.getXmlDocument().writeToFile(fileLeftXmlPath);
+
+    var fileRightXmlSerializer = new JavaParserToXMLSerializer(fileRightParsing);
+    fileRightXmlSerializer.getXmlDocument().writeToFile(fileRightXmlPath);
     // endregion
   }
 }
