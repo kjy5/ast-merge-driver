@@ -50,26 +50,33 @@ public class XMLDocument {
   // endregion
 
   // region Document manipulation methods
+
   /**
-   * Appends an element to the document.
+   * Add a root element to the document.
    *
-   * @param element The element to append.
-   * @return The appended element.
+   * @param rootElement The root element to add.
    */
-  public Element appendElement(Element element) {
-    return (Element) document.appendChild(element);
+  public void addRootElement(Element rootElement) {
+    document.appendChild(rootElement);
   }
 
   /**
-   * Create a blank element with the name of the node.
+   * Create a blank element with the name of the node or "node" if one is not provided.
    *
    * @param nodeName The name of the node.
    * @return The created element.
    */
   public Element createElement(String nodeName) {
-    return appendElement(document.createElement(Optional.ofNullable(nodeName).orElse("Node")));
+    return document.createElement(Optional.ofNullable(nodeName).orElse("node"));
   }
 
+  /**
+   * Create a child element with the name of the node or "Node" if one is not provided.
+   *
+   * @param nodeName The name of the node.
+   * @param parentElement The parent element to add the child to.
+   * @return The created element.
+   */
   public Element createChildElement(String nodeName, Element parentElement) {
     return (Element) parentElement.appendChild(createElement(nodeName));
   }

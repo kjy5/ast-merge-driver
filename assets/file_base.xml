@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<node Class="com.github.javaparser.ast.CompilationUnit">
+    <imports/>
+    <types>
+        <node Class="com.github.javaparser.ast.body.ClassOrInterfaceDeclaration" isInterface="false">
+            <extendedTypes/>
+            <implementedTypes/>
+            <permittedTypes/>
+            <typeParameters/>
+            <members>
+                <node Class="com.github.javaparser.ast.body.MethodDeclaration">
+                    <body Class="com.github.javaparser.ast.stmt.BlockStmt">
+                        <statements>
+                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                <expression Class="com.github.javaparser.ast.expr.VariableDeclarationExpr">
+                                    <annotations/>
+                                    <modifiers/>
+                                    <variables>
+                                        <node Class="com.github.javaparser.ast.body.VariableDeclarator">
+                                            <initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr"
+                                                         value="4"/>
+                                            <name Class="com.github.javaparser.ast.expr.SimpleName" identifier="day"/>
+                                            <type Class="com.github.javaparser.ast.type.PrimitiveType" type="INT">
+                                                <annotations/>
+                                            </type>
+                                        </node>
+                                    </variables>
+                                </expression>
+                            </node>
+                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                <expression Class="com.github.javaparser.ast.expr.VariableDeclarationExpr">
+                                    <annotations/>
+                                    <modifiers/>
+                                    <variables>
+                                        <node Class="com.github.javaparser.ast.body.VariableDeclarator">
+                                            <initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr"
+                                                         value="9"/>
+                                            <name Class="com.github.javaparser.ast.expr.SimpleName" identifier="next"/>
+                                            <type Class="com.github.javaparser.ast.type.PrimitiveType" type="INT">
+                                                <annotations/>
+                                            </type>
+                                        </node>
+                                    </variables>
+                                </expression>
+                            </node>
+                            <node Class="com.github.javaparser.ast.stmt.SwitchStmt">
+                                <entries>
+                                    <node Class="com.github.javaparser.ast.stmt.SwitchEntry" isDefault="false"
+                                          type="STATEMENT_GROUP">
+                                        <labels>
+                                            <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr" value="1"/>
+                                        </labels>
+                                        <statements>
+                                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+                                                    <arguments>
+                                                        <node Class="com.github.javaparser.ast.expr.StringLiteralExpr"
+                                                              value="Monday"/>
+                                                    </arguments>
+                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                          identifier="println"/>
+                                                    <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+                                                        <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                              identifier="out"/>
+                                                        <scope Class="com.github.javaparser.ast.expr.NameExpr">
+                                                            <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                  identifier="System"/>
+                                                        </scope>
+                                                    </scope>
+                                                </expression>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.IfStmt">
+                                                <condition Class="com.github.javaparser.ast.expr.BinaryExpr"
+                                                           operator="EQUALS">
+                                                    <left Class="com.github.javaparser.ast.expr.IntegerLiteralExpr"
+                                                          value="1"/>
+                                                    <right Class="com.github.javaparser.ast.expr.IntegerLiteralExpr"
+                                                           value="1"/>
+                                                </condition>
+                                                <thenStmt Class="com.github.javaparser.ast.stmt.BlockStmt">
+                                                    <statements>
+                                                        <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                            <expression
+                                                                    Class="com.github.javaparser.ast.expr.AssignExpr"
+                                                                    operator="ASSIGN">
+                                                                <target Class="com.github.javaparser.ast.expr.NameExpr">
+                                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                          identifier="day"/>
+                                                                </target>
+                                                                <value Class="com.github.javaparser.ast.expr.IntegerLiteralExpr"
+                                                                       value="5"/>
+                                                            </expression>
+                                                        </node>
+                                                    </statements>
+                                                </thenStmt>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.BreakStmt"/>
+                                        </statements>
+                                    </node>
+                                    <node Class="com.github.javaparser.ast.stmt.SwitchEntry" isDefault="false"
+                                          type="STATEMENT_GROUP">
+                                        <labels>
+                                            <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr" value="2"/>
+                                        </labels>
+                                        <statements>
+                                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+                                                    <arguments>
+                                                        <node Class="com.github.javaparser.ast.expr.StringLiteralExpr"
+                                                              value="Tuesday"/>
+                                                    </arguments>
+                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                          identifier="println"/>
+                                                    <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+                                                        <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                              identifier="out"/>
+                                                        <scope Class="com.github.javaparser.ast.expr.NameExpr">
+                                                            <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                  identifier="System"/>
+                                                        </scope>
+                                                    </scope>
+                                                </expression>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.BreakStmt"/>
+                                        </statements>
+                                    </node>
+                                    <node Class="com.github.javaparser.ast.stmt.SwitchEntry" isDefault="false"
+                                          type="STATEMENT_GROUP">
+                                        <labels>
+                                            <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr" value="3"/>
+                                        </labels>
+                                        <statements>
+                                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+                                                    <arguments>
+                                                        <node Class="com.github.javaparser.ast.expr.StringLiteralExpr"
+                                                              value="Wednesday"/>
+                                                    </arguments>
+                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                          identifier="println"/>
+                                                    <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+                                                        <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                              identifier="out"/>
+                                                        <scope Class="com.github.javaparser.ast.expr.NameExpr">
+                                                            <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                  identifier="System"/>
+                                                        </scope>
+                                                    </scope>
+                                                </expression>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.BreakStmt"/>
+                                        </statements>
+                                    </node>
+                                    <node Class="com.github.javaparser.ast.stmt.SwitchEntry" isDefault="false"
+                                          type="STATEMENT_GROUP">
+                                        <labels>
+                                            <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr" value="4"/>
+                                        </labels>
+                                        <statements>
+                                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+                                                    <arguments>
+                                                        <node Class="com.github.javaparser.ast.expr.StringLiteralExpr"
+                                                              value="Thursday"/>
+                                                    </arguments>
+                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                          identifier="println"/>
+                                                    <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+                                                        <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                              identifier="out"/>
+                                                        <scope Class="com.github.javaparser.ast.expr.NameExpr">
+                                                            <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                  identifier="System"/>
+                                                        </scope>
+                                                    </scope>
+                                                </expression>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.BreakStmt"/>
+                                        </statements>
+                                    </node>
+                                    <node Class="com.github.javaparser.ast.stmt.SwitchEntry" isDefault="false"
+                                          type="STATEMENT_GROUP">
+                                        <labels>
+                                            <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr" value="5"/>
+                                        </labels>
+                                        <statements>
+                                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+                                                    <arguments>
+                                                        <node Class="com.github.javaparser.ast.expr.StringLiteralExpr"
+                                                              value="Friday"/>
+                                                    </arguments>
+                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                          identifier="println"/>
+                                                    <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+                                                        <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                              identifier="out"/>
+                                                        <scope Class="com.github.javaparser.ast.expr.NameExpr">
+                                                            <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                  identifier="System"/>
+                                                        </scope>
+                                                    </scope>
+                                                </expression>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.BreakStmt"/>
+                                        </statements>
+                                    </node>
+                                    <node Class="com.github.javaparser.ast.stmt.SwitchEntry" isDefault="false"
+                                          type="STATEMENT_GROUP">
+                                        <labels>
+                                            <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr" value="6"/>
+                                        </labels>
+                                        <statements>
+                                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+                                                    <arguments>
+                                                        <node Class="com.github.javaparser.ast.expr.StringLiteralExpr"
+                                                              value="Saturday"/>
+                                                    </arguments>
+                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                          identifier="println"/>
+                                                    <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+                                                        <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                              identifier="out"/>
+                                                        <scope Class="com.github.javaparser.ast.expr.NameExpr">
+                                                            <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                  identifier="System"/>
+                                                        </scope>
+                                                    </scope>
+                                                </expression>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.BreakStmt"/>
+                                        </statements>
+                                    </node>
+                                    <node Class="com.github.javaparser.ast.stmt.SwitchEntry" isDefault="false"
+                                          type="STATEMENT_GROUP">
+                                        <labels>
+                                            <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr" value="7"/>
+                                        </labels>
+                                        <statements>
+                                            <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+                                                <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+                                                    <arguments>
+                                                        <node Class="com.github.javaparser.ast.expr.StringLiteralExpr"
+                                                              value="Sunday"/>
+                                                    </arguments>
+                                                    <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                          identifier="println"/>
+                                                    <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+                                                        <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                              identifier="out"/>
+                                                        <scope Class="com.github.javaparser.ast.expr.NameExpr">
+                                                            <name Class="com.github.javaparser.ast.expr.SimpleName"
+                                                                  identifier="System"/>
+                                                        </scope>
+                                                    </scope>
+                                                </expression>
+                                            </node>
+                                            <node Class="com.github.javaparser.ast.stmt.BreakStmt"/>
+                                        </statements>
+                                    </node>
+                                </entries>
+                                <selector Class="com.github.javaparser.ast.expr.NameExpr">
+                                    <name Class="com.github.javaparser.ast.expr.SimpleName" identifier="day"/>
+                                </selector>
+                            </node>
+                        </statements>
+                    </body>
+                    <type Class="com.github.javaparser.ast.type.VoidType">
+                        <annotations/>
+                    </type>
+                    <modifiers>
+                        <node Class="com.github.javaparser.ast.Modifier" keyword="PUBLIC"/>
+                        <node Class="com.github.javaparser.ast.Modifier" keyword="STATIC"/>
+                    </modifiers>
+                    <name Class="com.github.javaparser.ast.expr.SimpleName" identifier="main"/>
+                    <parameters>
+                        <node Class="com.github.javaparser.ast.body.Parameter" isVarArgs="false">
+                            <annotations/>
+                            <modifiers/>
+                            <name Class="com.github.javaparser.ast.expr.SimpleName" identifier="args"/>
+                            <type Class="com.github.javaparser.ast.type.ArrayType" origin="TYPE">
+                                <componentType Class="com.github.javaparser.ast.type.ClassOrInterfaceType">
+                                    <name Class="com.github.javaparser.ast.expr.SimpleName" identifier="String"/>
+                                    <annotations/>
+                                </componentType>
+                                <annotations/>
+                            </type>
+                            <varArgsAnnotations/>
+                        </node>
+                    </parameters>
+                    <thrownExceptions/>
+                    <typeParameters/>
+                    <annotations/>
+                </node>
+            </members>
+            <modifiers>
+                <node Class="com.github.javaparser.ast.Modifier" keyword="PUBLIC"/>
+            </modifiers>
+            <name Class="com.github.javaparser.ast.expr.SimpleName" identifier="Main"/>
+            <annotations/>
+        </node>
+    </types>
+</node>

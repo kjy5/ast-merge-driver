@@ -22,7 +22,7 @@ public class JavaParserToXMLSerializer {
   // region Constructors
   public JavaParserToXMLSerializer(Node parsingRoot) {
     xmlDocument = new XMLDocument();
-    serialize(null, parsingRoot, xmlDocument);
+    xmlDocument.addRootElement(serialize(null, parsingRoot, xmlDocument));
   }
 
   // endregion
@@ -50,7 +50,7 @@ public class JavaParserToXMLSerializer {
     element.setAttribute(XMLNode.CLASS.propertyKey, node.getClass().getName());
 
     // Write non-meta properties.
-    writeNonMetaProperties(node, element);
+    //    writeNonMetaProperties(node, element);
 
     // Write meta properties.
     for (PropertyMetaModel propertyMetaModel : nodeMetaModel.getAllPropertyMetaModels()) {
