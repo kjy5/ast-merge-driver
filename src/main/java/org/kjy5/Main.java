@@ -31,9 +31,7 @@ public class Main {
     // endregion
 
     // region Serialize parsed files to XML
-    var fileBaseXmlDocument = new XMLDocument();
-    var fileBaseXmlRootElement = fileBaseParsing.accept(new JavaToXMLVisitor(), fileBaseXmlDocument);
-    fileBaseXmlDocument.appendElement(fileBaseXmlRootElement);
+    var fileBaseXmlSerializer = new JavaParserToXMLSerializer(fileBaseParsing);
     // endregion
   }
 }

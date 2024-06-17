@@ -1,6 +1,6 @@
 package org.kjy5;
 
-import com.github.javaparser.ast.Node;
+import java.util.Optional;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,11 +45,11 @@ public class XMLDocument {
   /**
    * Create a blank element with the name of the node.
    *
-   * @param node The node to create an element for.
+   * @param nodeName The name of the node.
    * @return The created element.
    */
-  public Element createElement(Node node) {
-    return appendElement(document.createElement(node.getClass().getSimpleName()));
+  public Element createElement(String nodeName) {
+    return appendElement(document.createElement(Optional.ofNullable(nodeName).orElse("")));
   }
   // endregion
 }
