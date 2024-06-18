@@ -31,13 +31,13 @@ public class Main {
     // endregion
 
     // region Serialize parsed files to XML
-    var fileBaseXmlSerializer = new JavaParserToXMLSerializer(fileBaseParsing);
+    var fileBaseXmlSerializer = new JavaParserToXML(fileBaseParsing);
     fileBaseXmlSerializer.getXmlDocument().writeToFile(fileBaseXmlPath);
 
-    var fileLeftXmlSerializer = new JavaParserToXMLSerializer(fileLeftParsing);
+    var fileLeftXmlSerializer = new JavaParserToXML(fileLeftParsing);
     fileLeftXmlSerializer.getXmlDocument().writeToFile(fileLeftXmlPath);
 
-    var fileRightXmlSerializer = new JavaParserToXMLSerializer(fileRightParsing);
+    var fileRightXmlSerializer = new JavaParserToXML(fileRightParsing);
     fileRightXmlSerializer.getXmlDocument().writeToFile(fileRightXmlPath);
     // endregion
   }

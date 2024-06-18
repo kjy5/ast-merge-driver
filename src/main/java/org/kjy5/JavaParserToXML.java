@@ -1,6 +1,5 @@
 package org.kjy5;
 
-import static com.github.javaparser.utils.Utils.decapitalize;
 import static java.util.Objects.requireNonNull;
 
 import com.github.javaparser.Range;
@@ -10,19 +9,20 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.metamodel.BaseNodeMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
 import com.github.javaparser.metamodel.PropertyMetaModel;
+import org.kjy5.Common.*;
 import org.w3c.dom.Element;
 
 @SuppressWarnings("StringTemplateMigration")
-public class JavaParserToXMLSerializer {
+public class JavaParserToXML {
   // region Fields
   private final XMLDocument xmlDocument;
 
   // endregion
 
   // region Constructors
-  public JavaParserToXMLSerializer(Node parsingRoot) {
+  public JavaParserToXML(Node parsingRoot) {
     xmlDocument = new XMLDocument();
-    xmlDocument.addRootElement(serialize(null, parsingRoot, xmlDocument));
+    xmlDocument.setRootElement(serialize(null, parsingRoot, xmlDocument));
   }
 
   // endregion
@@ -163,66 +163,4 @@ public class JavaParserToXMLSerializer {
 
   // endregion
 
-  // region XML enums
-  /** excludes properties from meta model (except comment) */
-  public enum XMLNode {
-    RANGE("range"),
-    TOKEN_RANGE("tokenRange"),
-    COMMENT(decapitalize(JavaParserMetaModel.commentMetaModel.getTypeName())),
-    CLASS("Class");
-    final String propertyKey;
-
-    XMLNode(String p) {
-      this.propertyKey = p;
-    }
-
-    public String toString() {
-      return this.propertyKey;
-    }
-  }
-
-  public enum XMLRange {
-    BEGIN_LINE("beginLine"),
-    BEGIN_COLUMN("beginColumn"),
-    END_LINE("endLine"),
-    END_COLUMN("endColumn");
-    final String propertyKey;
-
-    XMLRange(String p) {
-      this.propertyKey = p;
-    }
-
-    public String toString() {
-      return this.propertyKey;
-    }
-  }
-
-  public enum XMLTokenRange {
-    BEGIN_TOKEN("beginToken"),
-    END_TOKEN("endToken");
-    final String propertyKey;
-
-    XMLTokenRange(String p) {
-      this.propertyKey = p;
-    }
-
-    public String toString() {
-      return this.propertyKey;
-    }
-  }
-
-  public enum XMLToken {
-    TEXT("text"),
-    KIND("kind");
-    final String propertyKey;
-
-    XMLToken(String p) {
-      this.propertyKey = p;
-    }
-
-    public String toString() {
-      return this.propertyKey;
-    }
-  }
-  // endregion
 }

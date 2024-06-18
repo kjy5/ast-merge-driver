@@ -1,5 +1,6 @@
 package org.kjy5;
 
+import java.io.IOException;
 import java.util.Optional;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -10,6 +11,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 public class XMLDocument {
   // region Fields
@@ -23,15 +25,6 @@ public class XMLDocument {
 
   // region Constructors
   public XMLDocument() {
-    // Setup to create a new document.
-    var documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder documentBuilder;
-    try {
-      documentBuilder = documentBuilderFactory.newDocumentBuilder();
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException(e);
-    }
-
     // Setup writer.
     var transformerFactory = TransformerFactory.newInstance();
     try {
@@ -41,10 +34,34 @@ public class XMLDocument {
     }
 
     // Create a new document.
-    document = documentBuilder.newDocument();
+    document = makeDocumentBuilder().newDocument();
 
     // Create a new DOM source.
     domSource = new DOMSource(document);
+  }
+
+  /**
+   * Create a new XML document from a source XML.
+   *
+   * @param sourcePath The path to the source XML.
+   */
+  public XMLDocument(String sourcePath) {
+    try {
+      document = makeDocumentBuilder().parse(sourcePath);
+    } catch (SAXException | IOException e) {
+      throw new RuntimeException(e);
+    }
+    transformer = null;
+    domSource = null;
+  }
+
+  private DocumentBuilder makeDocumentBuilder() {
+    var documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    try {
+      return documentBuilderFactory.newDocumentBuilder();
+    } catch (ParserConfigurationException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   // endregion
@@ -52,11 +69,20 @@ public class XMLDocument {
   // region Document manipulation methods
 
   /**
+   * Get the root element of the document.
+   *
+   * @return The root element.
+   */
+  public Element getRootElement() {
+    return document.getDocumentElement();
+  }
+
+  /**
    * Add a root element to the document.
    *
    * @param rootElement The root element to add.
    */
-  public void addRootElement(Element rootElement) {
+  public void setRootElement(Element rootElement) {
     document.appendChild(rootElement);
   }
 
