@@ -69,12 +69,13 @@ public class XMLToJavaParser {
         // Get the node as an element.
         Element childElement = (Element) childNode;
         var name = childElement.getTagName();
+        System.out.println(name);
 
         Optional<PropertyMetaModel> optionalPropertyMetaModel =
             nodeMetaModel.getAllPropertyMetaModels().stream()
                 .filter(mm -> mm.getName().equals(name))
                 .findFirst();
-        if (!optionalPropertyMetaModel.isPresent()) {
+        if (optionalPropertyMetaModel.isEmpty()) {
           deferredElements.put(name, childElement);
           continue;
         }
@@ -93,6 +94,7 @@ public class XMLToJavaParser {
           } else if (type == boolean.class) {
             parameters.put(name, Boolean.parseBoolean(value));
           } else if (Enum.class.isAssignableFrom(type)) {
+            // noinspection unchecked,rawtypes
             parameters.put(name, Enum.valueOf((Class<? extends Enum>) type, value));
           } else {
             throw new IllegalStateException("Don't know how to convert: " + type);
@@ -121,7 +123,7 @@ public class XMLToJavaParser {
     }
   }
 
-  private NodeList deserializeNodeList(Element nodeListElements) {
+  private NodeList<?> deserializeNodeList(Element nodeListElements) {
     var childNodes = nodeListElements.getChildNodes();
     var deserializedNodes = new NodeList<>();
 
@@ -252,13 +254,19 @@ public class XMLToJavaParser {
    * @see com.github.javaparser.ParserConfiguration#ParserConfiguration()
    */
   private void setSymbolResolverIfCompilationUnit(Node node) {
-    if (node instanceof CompilationUnit
-        && StaticJavaParser.getConfiguration().getSymbolResolver().isPresent()) {
-      CompilationUnit cu = (CompilationUnit) node;
+    if (node instanceof CompilationUnit cu
+        && StaticJavaParser.getParserConfiguration().getSymbolResolver().isPresent()) {
       cu.setData(
-          Node.SYMBOL_RESOLVER_KEY, StaticJavaParser.getConfiguration().getSymbolResolver().get());
+          Node.SYMBOL_RESOLVER_KEY,
+          StaticJavaParser.getParserConfiguration().getSymbolResolver().get());
     }
   }
 
+  // endregion
+
+  // region Getters
+  public Node getAstRoot() {
+    return astRoot;
+  }
   // endregion
 }

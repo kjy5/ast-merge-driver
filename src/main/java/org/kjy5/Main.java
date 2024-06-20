@@ -12,11 +12,13 @@ public class Main {
     var fileBasePath = "assets/file_base.java";
     var fileLeftPath = "assets/file_left.java";
     var fileRightPath = "assets/file_right.java";
+    var fileMergedPath = "assets/file_merged.java";
 
     // XML output files.
     var fileBaseXmlPath = "assets/file_base.xml";
     var fileLeftXmlPath = "assets/file_left.xml";
     var fileRightXmlPath = "assets/file_right.xml";
+    var fileMergedXmlPath = "assets/file_merged.xml";
     // endregion
 
     // region Parse source files
@@ -39,6 +41,12 @@ public class Main {
 
     var fileRightXmlSerializer = new JavaParserToXML(fileRightParsing);
     fileRightXmlSerializer.getXmlDocument().writeToFile(fileRightXmlPath);
+    // endregion
+
+    // region Deserialize XML files to Java
+    XMLDocument mergedXMLDocument = new XMLDocument(fileMergedXmlPath);
+    var fileMergeXmlDeserializer = new XMLToJavaParser(mergedXMLDocument);
+    System.out.println(fileMergeXmlDeserializer.getAstRoot());
     // endregion
   }
 }
