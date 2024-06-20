@@ -153,7 +153,7 @@ public class JavaParserToXML {
     List<Comment> orphanComments = new LinkedList<>();
     getOrphanCommentsBeforeThisChildNode(node, orphanComments);
     for (Comment comment : orphanComments) {
-      element.appendChild(serialize("comment", comment, xmlDocument));
+      element.appendChild(serialize("orphan", comment, xmlDocument));
     }
 
     // Return Element.

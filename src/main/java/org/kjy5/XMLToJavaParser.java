@@ -11,6 +11,7 @@ import com.github.javaparser.metamodel.BaseNodeMetaModel;
 import com.github.javaparser.metamodel.PropertyMetaModel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.kjy5.Common.*;
 import org.w3c.dom.Element;
@@ -109,7 +110,10 @@ public class XMLToJavaParser {
       }
 
       for (String name : deferredElements.keySet()) {
-        if (!readNonMetaProperties(name, deferredElements.get(name), node)) {
+        // Handle orphan comments.
+        if (Objects.equals(name, "orphan")) {
+          node.addOrphanComment((Comment) deserialize(deferredElements.get(name)));
+        } else if (!readNonMetaProperties(name, deferredElements.get(name), node)) {
           throw new IllegalStateException(
               "Unknown propertyKey: " + nodeMetaModel.getQualifiedClassName() + "." + name);
         }

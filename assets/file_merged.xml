@@ -324,9 +324,9 @@
 <comment Class="com.github.javaparser.ast.comments.BlockComment">
 <content>this is atest</content>
 </comment>
-<comment Class="com.github.javaparser.ast.comments.LineComment">
+<orphan Class="com.github.javaparser.ast.comments.LineComment">
 <content>Random comment</content>
-</comment>
+</orphan>
 </node>
 </statements>
 </body>
