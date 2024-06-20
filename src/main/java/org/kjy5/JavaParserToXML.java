@@ -33,10 +33,6 @@ public class JavaParserToXML {
 
   // region Serialization methods
 
-  // This implementation is from Randoop's `Minimize.java` file, and before that from JavaParser's
-  // PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode.  The JavaParser maintainers refuse
-  // to provide such functionality in JavaParser proper.
-
   /**
    * This implementation is from Randoop's `Minimize.java` file, and before that from JavaParser's
    * PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode. The JavaParser maintainers refuse to
@@ -109,7 +105,7 @@ public class JavaParserToXML {
     element.setAttribute(XMLNode.CLASS.propertyKey, node.getClass().getName());
 
     // Write non-meta properties.
-    //    writeNonMetaProperties(node, element, xmlDocument);
+    writeNonMetaProperties(node, element, xmlDocument);
 
     // Write meta properties.
     for (PropertyMetaModel propertyMetaModel : nodeMetaModel.getAllPropertyMetaModels()) {
@@ -148,7 +144,7 @@ public class JavaParserToXML {
         valueElement.setTextContent(value.toString());
       }
     }
-    
+
     // Handle orphan comments.
     List<Comment> orphanComments = new LinkedList<>();
     getOrphanCommentsBeforeThisChildNode(node, orphanComments);
@@ -168,7 +164,7 @@ public class JavaParserToXML {
    */
   protected void writeNonMetaProperties(Node node, Element element, XMLDocument xmlDocument) {
     writeRange(node, element, xmlDocument);
-    writeTokens(node, element, xmlDocument);
+//    writeTokens(node, element, xmlDocument);
   }
 
   protected void writeRange(Node node, Element element, XMLDocument xmlDocument) {
@@ -192,13 +188,13 @@ public class JavaParserToXML {
         xmlDocument.createChildElement(XMLRange.BEGIN_COLUMN.propertyKey, rangeElement);
     beginColumnElement.setTextContent(Integer.toString(range.begin.column));
 
-    var endLineElement =
-        xmlDocument.createChildElement(XMLRange.END_LINE.propertyKey, rangeElement);
-    endLineElement.setTextContent(Integer.toString(range.end.line));
-
-    var endColumnElement =
-        xmlDocument.createChildElement(XMLRange.END_COLUMN.propertyKey, rangeElement);
-    endColumnElement.setTextContent(Integer.toString(range.end.column));
+//    var endLineElement =
+//        xmlDocument.createChildElement(XMLRange.END_LINE.propertyKey, rangeElement);
+//    endLineElement.setTextContent(Integer.toString(range.end.line));
+//
+//    var endColumnElement =
+//        xmlDocument.createChildElement(XMLRange.END_COLUMN.propertyKey, rangeElement);
+//    endColumnElement.setTextContent(Integer.toString(range.end.column));
   }
 
   protected void writeTokens(Node node, Element element, XMLDocument xmlDocument) {

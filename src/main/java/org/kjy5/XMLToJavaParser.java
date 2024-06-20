@@ -158,7 +158,7 @@ public class XMLToJavaParser {
    * @return true if propertyKey is read from json and set to Node instance
    */
   protected boolean readNonMetaProperties(String name, Element element, Node node) {
-    return readRange(name, element, node) || readTokenRange(name, element, node);
+    return readRange(name, element, node); //|| readTokenRange(name, element, node);
   }
 
   protected boolean readRange(String name, Element element, Node node) {
@@ -167,42 +167,33 @@ public class XMLToJavaParser {
       return false;
     }
 
-    // Get the range node.
-    var rangeNode = element.getElementsByTagName(XMLNode.RANGE.propertyKey).item(0);
-
-    // Exit if the range node is not an element.
-    if (rangeNode.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
-      return false;
-    }
-    var rangeElement = (Element) rangeNode;
-
     // Parse the range.
     Position begin =
         new Position(
             Integer.parseInt(
-                rangeElement
+                element
                     .getElementsByTagName(XMLRange.BEGIN_LINE.propertyKey)
                     .item(0)
                     .getTextContent()),
             Integer.parseInt(
-                rangeElement
+                element
                     .getElementsByTagName(XMLRange.BEGIN_COLUMN.propertyKey)
                     .item(0)
                     .getTextContent()));
-    Position end =
-        new Position(
-            Integer.parseInt(
-                rangeElement
-                    .getElementsByTagName(XMLRange.END_LINE.propertyKey)
-                    .item(0)
-                    .getTextContent()),
-            Integer.parseInt(
-                rangeElement
-                    .getElementsByTagName(XMLRange.END_COLUMN.propertyKey)
-                    .item(0)
-                    .getTextContent()));
+//    Position end =
+//        new Position(
+//            Integer.parseInt(
+//                rangeElement
+//                    .getElementsByTagName(XMLRange.END_LINE.propertyKey)
+//                    .item(0)
+//                    .getTextContent()),
+//            Integer.parseInt(
+//                rangeElement
+//                    .getElementsByTagName(XMLRange.END_COLUMN.propertyKey)
+//                    .item(0)
+//                    .getTextContent()));
 
-    node.setRange(new Range(begin, end));
+    node.setRange(new Range(begin, begin));
     return true;
   }
 

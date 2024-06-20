@@ -10,7 +10,7 @@ public class Main {
     // Switching on dayOfTheWeek.
     int dayOfTheWeek = 4;
 
-    int next = 9; // Random variable
+ int next = 9; // Random variable
 
     // Random comment
 

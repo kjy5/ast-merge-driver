@@ -1,78 +1,194 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <node Class="com.github.javaparser.ast.CompilationUnit">
+<range>
+<beginLine>1</beginLine>
+<beginColumn>1</beginColumn>
+</range>
 <types>
 <node Class="com.github.javaparser.ast.body.ClassOrInterfaceDeclaration">
+<range>
+<beginLine>4</beginLine>
+<beginColumn>1</beginColumn>
+</range>
 <isInterface>false</isInterface>
 <members>
 <node Class="com.github.javaparser.ast.body.MethodDeclaration">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>3</beginColumn>
+</range>
 <body Class="com.github.javaparser.ast.stmt.BlockStmt">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>42</beginColumn>
+</range>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>11</beginLine>
+<beginColumn>5</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.VariableDeclarationExpr">
+<range>
+<beginLine>11</beginLine>
+<beginColumn>5</beginColumn>
+</range>
 <variables>
 <node Class="com.github.javaparser.ast.body.VariableDeclarator">
+<range>
+<beginLine>11</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>11</beginLine>
+<beginColumn>24</beginColumn>
+</range>
 <value>4</value>
 </initializer>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>11</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>dayOfTheWeek</identifier>
 </name>
 <type Class="com.github.javaparser.ast.type.PrimitiveType">
+<range>
+<beginLine>11</beginLine>
+<beginColumn>5</beginColumn>
+</range>
 <type>INT</type>
 </type>
 </node>
 </variables>
 </expression>
 <comment Class="com.github.javaparser.ast.comments.LineComment">
+<range>
+<beginLine>10</beginLine>
+<beginColumn>5</beginColumn>
+</range>
 <content>Switching on dayOfTheWeek.</content>
 </comment>
 </node>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>13</beginLine>
+<beginColumn>2</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.VariableDeclarationExpr">
+<range>
+<beginLine>13</beginLine>
+<beginColumn>2</beginColumn>
+</range>
 <variables>
 <node Class="com.github.javaparser.ast.body.VariableDeclarator">
+<range>
+<beginLine>13</beginLine>
+<beginColumn>6</beginColumn>
+</range>
 <initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>13</beginLine>
+<beginColumn>13</beginColumn>
+</range>
 <value>9</value>
 </initializer>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>13</beginLine>
+<beginColumn>6</beginColumn>
+</range>
 <identifier>next</identifier>
 </name>
 <type Class="com.github.javaparser.ast.type.PrimitiveType">
+<range>
+<beginLine>13</beginLine>
+<beginColumn>2</beginColumn>
+</range>
 <type>INT</type>
 </type>
 </node>
 </variables>
 </expression>
 <comment Class="com.github.javaparser.ast.comments.LineComment">
+<range>
+<beginLine>13</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <content>Random variable</content>
 </comment>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchStmt">
+<range>
+<beginLine>18</beginLine>
+<beginColumn>5</beginColumn>
+</range>
 <entries>
 <node Class="com.github.javaparser.ast.stmt.SwitchEntry">
+<range>
+<beginLine>19</beginLine>
+<beginColumn>7</beginColumn>
+</range>
 <isDefault>false</isDefault>
 <labels>
 <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>19</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>1</value>
 </node>
 </labels>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <arguments>
 <node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>28</beginColumn>
+</range>
 <value>Monday</value>
 </node>
 </arguments>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>20</beginColumn>
+</range>
 <identifier>println</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <identifier>out</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>20</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>System</identifier>
 </name>
 </scope>
@@ -80,26 +196,66 @@
 </expression>
 </node>
 <node Class="com.github.javaparser.ast.stmt.IfStmt">
+<range>
+<beginLine>21</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <condition Class="com.github.javaparser.ast.expr.BinaryExpr">
+<range>
+<beginLine>21</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <left Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>21</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>1</value>
 </left>
 <operator>EQUALS</operator>
 <right Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>21</beginLine>
+<beginColumn>15</beginColumn>
+</range>
 <value>1</value>
 </right>
 </condition>
 <thenStmt Class="com.github.javaparser.ast.stmt.BlockStmt">
+<range>
+<beginLine>21</beginLine>
+<beginColumn>17</beginColumn>
+</range>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>22</beginLine>
+<beginColumn>11</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.AssignExpr">
+<range>
+<beginLine>22</beginLine>
+<beginColumn>11</beginColumn>
+</range>
 <operator>ASSIGN</operator>
 <target Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>22</beginLine>
+<beginColumn>11</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>22</beginLine>
+<beginColumn>11</beginColumn>
+</range>
 <identifier>dayOfTheWeek</identifier>
 </name>
 </target>
 <value Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>22</beginLine>
+<beginColumn>26</beginColumn>
+</range>
 <value>5</value>
 </value>
 </expression>
@@ -107,250 +263,578 @@
 </statements>
 </thenStmt>
 </node>
-<node Class="com.github.javaparser.ast.stmt.BreakStmt" />
+<node Class="com.github.javaparser.ast.stmt.BreakStmt">
+<range>
+<beginLine>24</beginLine>
+<beginColumn>9</beginColumn>
+</range>
+</node>
 </statements>
 <type>STATEMENT_GROUP</type>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchEntry">
+<range>
+<beginLine>25</beginLine>
+<beginColumn>7</beginColumn>
+</range>
 <isDefault>false</isDefault>
 <labels>
 <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>25</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>2</value>
 </node>
 </labels>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <arguments>
 <node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>28</beginColumn>
+</range>
 <value>Chewsday</value>
 </node>
 </arguments>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>20</beginColumn>
+</range>
 <identifier>println</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <identifier>out</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>26</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>System</identifier>
 </name>
 </scope>
 </scope>
 </expression>
 </node>
-<node Class="com.github.javaparser.ast.stmt.BreakStmt" />
+<node Class="com.github.javaparser.ast.stmt.BreakStmt">
+<range>
+<beginLine>27</beginLine>
+<beginColumn>9</beginColumn>
+</range>
+</node>
 </statements>
 <type>STATEMENT_GROUP</type>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchEntry">
+<range>
+<beginLine>28</beginLine>
+<beginColumn>7</beginColumn>
+</range>
 <isDefault>false</isDefault>
 <labels>
 <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>28</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>3</value>
 </node>
 </labels>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <arguments>
 <node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>28</beginColumn>
+</range>
 <value>Wednesday</value>
 </node>
 </arguments>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>20</beginColumn>
+</range>
 <identifier>println</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <identifier>out</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>29</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>System</identifier>
 </name>
 </scope>
 </scope>
 </expression>
 </node>
-<node Class="com.github.javaparser.ast.stmt.BreakStmt" />
+<node Class="com.github.javaparser.ast.stmt.BreakStmt">
+<range>
+<beginLine>30</beginLine>
+<beginColumn>9</beginColumn>
+</range>
+</node>
 </statements>
 <type>STATEMENT_GROUP</type>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchEntry">
+<range>
+<beginLine>31</beginLine>
+<beginColumn>7</beginColumn>
+</range>
 <isDefault>false</isDefault>
 <labels>
 <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>31</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>5</value>
 </node>
 </labels>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <arguments>
 <node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>28</beginColumn>
+</range>
 <value>Friday</value>
 </node>
 </arguments>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>20</beginColumn>
+</range>
 <identifier>println</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <identifier>out</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>32</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>System</identifier>
 </name>
 </scope>
 </scope>
 </expression>
 </node>
-<node Class="com.github.javaparser.ast.stmt.BreakStmt" />
+<node Class="com.github.javaparser.ast.stmt.BreakStmt">
+<range>
+<beginLine>33</beginLine>
+<beginColumn>9</beginColumn>
+</range>
+</node>
 </statements>
 <type>STATEMENT_GROUP</type>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchEntry">
+<range>
+<beginLine>34</beginLine>
+<beginColumn>7</beginColumn>
+</range>
 <isDefault>false</isDefault>
 <labels>
 <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>34</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>4</value>
 </node>
 </labels>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <arguments>
 <node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>28</beginColumn>
+</range>
 <value>Thursday</value>
 </node>
 </arguments>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>20</beginColumn>
+</range>
 <identifier>println</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <identifier>out</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>35</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>System</identifier>
 </name>
 </scope>
 </scope>
 </expression>
 </node>
-<node Class="com.github.javaparser.ast.stmt.BreakStmt" />
+<node Class="com.github.javaparser.ast.stmt.BreakStmt">
+<range>
+<beginLine>36</beginLine>
+<beginColumn>9</beginColumn>
+</range>
+</node>
 </statements>
 <type>STATEMENT_GROUP</type>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchEntry">
+<range>
+<beginLine>37</beginLine>
+<beginColumn>7</beginColumn>
+</range>
 <isDefault>false</isDefault>
 <labels>
 <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>37</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>6</value>
 </node>
 </labels>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <arguments>
 <node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>28</beginColumn>
+</range>
 <value>Saturday</value>
 </node>
 </arguments>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>20</beginColumn>
+</range>
 <identifier>println</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <identifier>out</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>38</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>System</identifier>
 </name>
 </scope>
 </scope>
 </expression>
 </node>
-<node Class="com.github.javaparser.ast.stmt.BreakStmt" />
+<node Class="com.github.javaparser.ast.stmt.BreakStmt">
+<range>
+<beginLine>39</beginLine>
+<beginColumn>9</beginColumn>
+</range>
+</node>
 </statements>
 <type>STATEMENT_GROUP</type>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchEntry">
+<range>
+<beginLine>40</beginLine>
+<beginColumn>7</beginColumn>
+</range>
 <isDefault>false</isDefault>
 <labels>
 <node Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<range>
+<beginLine>40</beginLine>
+<beginColumn>12</beginColumn>
+</range>
 <value>7</value>
 </node>
 </labels>
 <statements>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <arguments>
 <node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>28</beginColumn>
+</range>
 <value>Sunday</value>
 </node>
 </arguments>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>20</beginColumn>
+</range>
 <identifier>println</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>16</beginColumn>
+</range>
 <identifier>out</identifier>
 </name>
 <scope Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>41</beginLine>
+<beginColumn>9</beginColumn>
+</range>
 <identifier>System</identifier>
 </name>
 </scope>
 </scope>
 </expression>
 </node>
-<node Class="com.github.javaparser.ast.stmt.BreakStmt" />
+<node Class="com.github.javaparser.ast.stmt.BreakStmt">
+<range>
+<beginLine>42</beginLine>
+<beginColumn>9</beginColumn>
+</range>
+</node>
 </statements>
 <type>STATEMENT_GROUP</type>
 </node>
 </entries>
 <selector Class="com.github.javaparser.ast.expr.NameExpr">
+<range>
+<beginLine>18</beginLine>
+<beginColumn>13</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>18</beginLine>
+<beginColumn>13</beginColumn>
+</range>
 <identifier>dayOfTheWeek</identifier>
 </name>
 </selector>
 <comment Class="com.github.javaparser.ast.comments.BlockComment">
+<range>
+<beginLine>17</beginLine>
+<beginColumn>5</beginColumn>
+</range>
 <content>this is atest</content>
 </comment>
 <orphan Class="com.github.javaparser.ast.comments.LineComment">
+<range>
+<beginLine>15</beginLine>
+<beginColumn>5</beginColumn>
+</range>
 <content>Random comment</content>
 </orphan>
 </node>
 </statements>
 </body>
-<type Class="com.github.javaparser.ast.type.VoidType" />
+<type Class="com.github.javaparser.ast.type.VoidType">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>17</beginColumn>
+</range>
+</type>
 <modifiers>
 <node Class="com.github.javaparser.ast.Modifier">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>3</beginColumn>
+</range>
 <keyword>PUBLIC</keyword>
 </node>
 <node Class="com.github.javaparser.ast.Modifier">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>10</beginColumn>
+</range>
 <keyword>STATIC</keyword>
 </node>
 </modifiers>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>22</beginColumn>
+</range>
 <identifier>main</identifier>
 </name>
 <parameters>
 <node Class="com.github.javaparser.ast.body.Parameter">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>27</beginColumn>
+</range>
 <isVarArgs>false</isVarArgs>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>36</beginColumn>
+</range>
 <identifier>args</identifier>
 </name>
 <type Class="com.github.javaparser.ast.type.ArrayType">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>27</beginColumn>
+</range>
 <componentType Class="com.github.javaparser.ast.type.ClassOrInterfaceType">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>27</beginColumn>
+</range>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>9</beginLine>
+<beginColumn>27</beginColumn>
+</range>
 <identifier>String</identifier>
 </name>
 </componentType>
@@ -359,19 +843,35 @@
 </node>
 </parameters>
 <comment Class="com.github.javaparser.ast.comments.JavadocComment">
+<range>
+<beginLine>5</beginLine>
+<beginColumn>3</beginColumn>
+</range>
 <content>* This is the main method which makes use of the switch case. * @param args Unused.</content>
 </comment>
 </node>
 </members>
 <modifiers>
 <node Class="com.github.javaparser.ast.Modifier">
+<range>
+<beginLine>4</beginLine>
+<beginColumn>1</beginColumn>
+</range>
 <keyword>PUBLIC</keyword>
 </node>
 </modifiers>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
+<range>
+<beginLine>4</beginLine>
+<beginColumn>14</beginColumn>
+</range>
 <identifier>Main</identifier>
 </name>
 <comment Class="com.github.javaparser.ast.comments.JavadocComment">
+<range>
+<beginLine>1</beginLine>
+<beginColumn>1</beginColumn>
+</range>
 <content>* This is a simple Java program.</content>
 </comment>
 </node>

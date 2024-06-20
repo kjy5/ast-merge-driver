@@ -2,6 +2,7 @@ package org.kjy5;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -47,10 +48,15 @@ public class Main {
     // region Deserialize XML files to Java
     XMLDocument mergedXMLDocument = new XMLDocument(fileMergedXmlPath);
     var fileMergeXmlDeserializer = new XMLToJavaParser(mergedXMLDocument);
+    var fileMergedNode = fileMergeXmlDeserializer.getAstRoot();
 
+    // Setup LexicalPreservingPrinter
+    LexicalPreservingPrinter.setup(fileMergedNode);
+    
     // Write the deserialized node to a file.
     try {
-      Files.write(Paths.get(fileMergedPath), fileMergeXmlDeserializer.getAstRoot().toString().getBytes());
+      Files.write(
+          Paths.get(fileMergedPath), fileMergedNode.toString().getBytes());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
