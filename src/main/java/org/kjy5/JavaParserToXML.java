@@ -48,7 +48,7 @@ public class JavaParserToXML {
     var element = xmlDocument.createElement(node.getClass().getName());
 
     // Write non-meta properties.
-//    writeNonMetaProperties(node, element, xmlDocument);
+    //    writeNonMetaProperties(node, element, xmlDocument);
 
     // Write meta properties.
     for (PropertyMetaModel propertyMetaModel : nodeMetaModel.getAllPropertyMetaModels()) {
@@ -83,17 +83,8 @@ public class JavaParserToXML {
         element.appendChild(serialize(name, (Node) value, xmlDocument));
       } else {
         // Otherwise, treat it as content.
-        switch (name) {
-          case "value":
-          case "identifier":
-            element.setTextContent(value.toString());
-            break;
-          default:
-            // Otherwise, make new element.
-            var valueElement = xmlDocument.createChildElement(name, element);
-            valueElement.setTextContent(value.toString());
-            break;
-        }
+        var valueElement = xmlDocument.createChildElement(name, element);
+        valueElement.setTextContent(value.toString());
       }
     }
 

@@ -69,7 +69,6 @@ public class XMLToJavaParser {
         // Get the node as an element.
         Element childElement = (Element) childNode;
         var name = childElement.getTagName();
-        System.out.println(name);
 
         Optional<PropertyMetaModel> optionalPropertyMetaModel =
             nodeMetaModel.getAllPropertyMetaModels().stream()
