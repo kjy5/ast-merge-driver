@@ -46,7 +46,7 @@ public class XMLToJavaParser {
    */
   private Node deserialize(Element element) {
     try {
-      String serializedNodeType = element.getTagName();
+      String serializedNodeType = element.getAttribute(XMLNode.CLASS.propertyKey);
       BaseNodeMetaModel nodeMetaModel =
           getNodeMetaModel(Class.forName(serializedNodeType))
               .orElseThrow(
@@ -79,7 +79,7 @@ public class XMLToJavaParser {
           continue;
         }
 
-        // Recurse and handle each property.
+        // Recurse and handle each parameter.
         PropertyMetaModel propertyMetaModel = optionalPropertyMetaModel.get();
         if (propertyMetaModel.isNodeList()) {
           parameters.put(name, deserializeNodeList(childElement));

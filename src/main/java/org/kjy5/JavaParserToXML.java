@@ -45,7 +45,10 @@ public class JavaParserToXML {
             .orElseThrow(() -> new IllegalStateException("Unknown Node: " + node.getClass()));
 
     // Create Element.
-    var element = xmlDocument.createElement(node.getClass().getName());
+    var element = xmlDocument.createElement(nodeName);
+
+    // Set class name as attribute.
+    element.setAttribute(XMLNode.CLASS.propertyKey, node.getClass().getName());
 
     // Write non-meta properties.
     //    writeNonMetaProperties(node, element, xmlDocument);

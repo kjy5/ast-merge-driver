@@ -3,6 +3,7 @@ package org.kjy5;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
@@ -46,7 +47,13 @@ public class Main {
     // region Deserialize XML files to Java
     XMLDocument mergedXMLDocument = new XMLDocument(fileMergedXmlPath);
     var fileMergeXmlDeserializer = new XMLToJavaParser(mergedXMLDocument);
-    System.out.println(fileMergeXmlDeserializer.getAstRoot());
+
+    // Write the deserialized node to a file.
+    try {
+      Files.write(Paths.get(fileMergedPath), fileMergeXmlDeserializer.getAstRoot().toString().getBytes());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     // endregion
   }
 }
