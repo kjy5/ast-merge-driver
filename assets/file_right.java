@@ -6,6 +6,7 @@ public class Main {
    * This is the main method which makes use of the switch case.
    * @param args Unused.
    */
+  // This is a test
   public static void main(String[] args) {
     // Switching on dayOfWeek.
     int dayOfWeek = 4;

@@ -10,9 +10,12 @@ public class Main {
     // Switching on day.
     int day = 4;
     
-    int next = 9;
+    int next = 9; // Random variable
     
-    switch (day) {
+    // Random comment
+    
+     /* this is atest */
+     switch (day) {
       case 1:
         System.out.println("Monday");
         if(1==1){

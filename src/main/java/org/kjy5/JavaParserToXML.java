@@ -38,19 +38,17 @@ public class JavaParserToXML {
    * @return the XML element representing the node
    */
   private Element serialize(String nodeName, Node node, XMLDocument xmlDocument) {
+    // Get node meta model.
     requireNonNull(node);
     BaseNodeMetaModel nodeMetaModel =
         JavaParserMetaModel.getNodeMetaModel(node.getClass())
             .orElseThrow(() -> new IllegalStateException("Unknown Node: " + node.getClass()));
 
     // Create Element.
-    var element = xmlDocument.createElement(nodeName);
-
-    // Add class name.
-    element.setAttribute(XMLNode.CLASS.propertyKey, node.getClass().getName());
+    var element = xmlDocument.createElement(node.getClass().getName());
 
     // Write non-meta properties.
-    //    writeNonMetaProperties(node, element);
+    writeNonMetaProperties(node, element, xmlDocument);
 
     // Write meta properties.
     for (PropertyMetaModel propertyMetaModel : nodeMetaModel.getAllPropertyMetaModels()) {
@@ -91,8 +89,9 @@ public class JavaParserToXML {
             element.setTextContent(value.toString());
             break;
           default:
-            // Otherwise, use attribute.
-            element.setAttribute(name, value.toString());
+            // Otherwise, make new element.
+            var valueElement = xmlDocument.createChildElement(name, element);
+            valueElement.setTextContent(value.toString());
             break;
         }
       }
@@ -108,12 +107,12 @@ public class JavaParserToXML {
    *
    * @see com.github.javaparser.metamodel.BaseNodeMetaModel#getAllPropertyMetaModels()
    */
-  protected void writeNonMetaProperties(Node node, Element element) {
-    writeRange(node, element);
-    writeTokens(node, element);
+  protected void writeNonMetaProperties(Node node, Element element, XMLDocument xmlDocument) {
+    writeRange(node, element, xmlDocument);
+    writeTokens(node, element, xmlDocument);
   }
 
-  protected void writeRange(Node node, Element element) {
+  protected void writeRange(Node node, Element element, XMLDocument xmlDocument) {
     // Skip if no range.
     if (!node.hasRange() || node.getRange().isEmpty()) {
       return;
@@ -122,15 +121,28 @@ public class JavaParserToXML {
     // Get range.
     Range range = node.getRange().get();
 
-    // Write range.
-    element.setAttribute(XMLRange.BEGIN_LINE.propertyKey, Integer.toString(range.begin.line));
-    element.setAttribute(XMLRange.BEGIN_LINE.propertyKey, Integer.toString(range.begin.line));
-    element.setAttribute(XMLRange.BEGIN_COLUMN.propertyKey, Integer.toString(range.begin.column));
-    element.setAttribute(XMLRange.END_LINE.propertyKey, Integer.toString(range.end.line));
-    element.setAttribute(XMLRange.END_COLUMN.propertyKey, Integer.toString(range.end.column));
+    // Create range element.
+    var rangeElement = xmlDocument.createChildElement(XMLNode.RANGE.propertyKey, element);
+
+    // Add properties to range element.
+    var beginLineElement =
+        xmlDocument.createChildElement(XMLRange.BEGIN_LINE.propertyKey, rangeElement);
+    beginLineElement.setTextContent(Integer.toString(range.begin.line));
+
+    var beginColumnElement =
+        xmlDocument.createChildElement(XMLRange.BEGIN_COLUMN.propertyKey, rangeElement);
+    beginColumnElement.setTextContent(Integer.toString(range.begin.column));
+
+    var endLineElement =
+        xmlDocument.createChildElement(XMLRange.END_LINE.propertyKey, rangeElement);
+    endLineElement.setTextContent(Integer.toString(range.end.line));
+
+    var endColumnElement =
+        xmlDocument.createChildElement(XMLRange.END_COLUMN.propertyKey, rangeElement);
+    endColumnElement.setTextContent(Integer.toString(range.end.column));
   }
 
-  protected void writeTokens(Node node, Element element) {
+  protected void writeTokens(Node node, Element element, XMLDocument xmlDocument) {
     // Skip if no token range.
     if (node.getTokenRange().isEmpty()) {
       return;
@@ -139,19 +151,35 @@ public class JavaParserToXML {
     // Get token range.
     TokenRange tokenRange = node.getTokenRange().get();
 
-    // Write token range.
-    element.setAttribute(
-        XMLTokenRange.BEGIN_TOKEN.propertyKey + "." + XMLToken.KIND.propertyKey,
-        Integer.toString(tokenRange.getBegin().getKind()));
-    element.setAttribute(
-        XMLTokenRange.BEGIN_TOKEN.propertyKey + "." + XMLToken.TEXT.propertyKey,
-        tokenRange.getBegin().getText());
-    element.setAttribute(
-        XMLTokenRange.END_TOKEN.propertyKey + "." + XMLToken.KIND.propertyKey,
-        Integer.toString(tokenRange.getEnd().getKind()));
-    element.setAttribute(
-        XMLTokenRange.END_TOKEN.propertyKey + "." + XMLToken.TEXT.propertyKey,
-        tokenRange.getEnd().getText());
+    // Create token range element.
+    var tokenRangeElement =
+        xmlDocument.createChildElement(XMLNode.TOKEN_RANGE.propertyKey, element);
+
+    // Create begin token element.
+    var beginTokenElement =
+        xmlDocument.createChildElement(XMLTokenRange.BEGIN_TOKEN.propertyKey, tokenRangeElement);
+
+    // Add properties to begin token element.
+    var beginTokenKindElement =
+        xmlDocument.createChildElement(XMLToken.KIND.propertyKey, beginTokenElement);
+    beginTokenKindElement.setTextContent(Integer.toString(tokenRange.getBegin().getKind()));
+
+    var beginTokenTextElement =
+        xmlDocument.createChildElement(XMLToken.TEXT.propertyKey, beginTokenElement);
+    beginTokenTextElement.setTextContent(tokenRange.getBegin().getText());
+
+    // Create end token element.
+    var endTokenElement =
+        xmlDocument.createChildElement(XMLTokenRange.END_TOKEN.propertyKey, tokenRangeElement);
+
+    // Add properties to end token element.
+    var endTokenKindElement =
+        xmlDocument.createChildElement(XMLToken.KIND.propertyKey, endTokenElement);
+    endTokenKindElement.setTextContent(Integer.toString(tokenRange.getEnd().getKind()));
+
+    var endTokenTextElement =
+        xmlDocument.createChildElement(XMLToken.TEXT.propertyKey, endTokenElement);
+    endTokenTextElement.setTextContent(tokenRange.getEnd().getText());
   }
 
   // endregion
