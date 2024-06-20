@@ -15,7 +15,7 @@
 <value>4</value>
 </initializer>
 <name Class="com.github.javaparser.ast.expr.SimpleName">
-<identifier>dayOfWeek</identifier>
+<identifier>dayOfTheWeek</identifier>
 </name>
 <type Class="com.github.javaparser.ast.type.PrimitiveType">
 <type>INT</type>
@@ -24,7 +24,7 @@
 </variables>
 </expression>
 <comment Class="com.github.javaparser.ast.comments.LineComment">
-<content>Switching on dayOfWeek.</content>
+<content>Switching on dayOfTheWeek.</content>
 </comment>
 </node>
 <node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
@@ -43,6 +43,9 @@
 </node>
 </variables>
 </expression>
+<comment Class="com.github.javaparser.ast.comments.LineComment">
+<content>Random variable</content>
+</comment>
 </node>
 <node Class="com.github.javaparser.ast.stmt.SwitchStmt">
 <entries>
@@ -93,7 +96,7 @@
 <operator>ASSIGN</operator>
 <target Class="com.github.javaparser.ast.expr.NameExpr">
 <name Class="com.github.javaparser.ast.expr.SimpleName">
-<identifier>dayOfWeek</identifier>
+<identifier>dayOfTheWeek</identifier>
 </name>
 </target>
 <value Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
@@ -315,9 +318,15 @@
 </entries>
 <selector Class="com.github.javaparser.ast.expr.NameExpr">
 <name Class="com.github.javaparser.ast.expr.SimpleName">
-<identifier>dayOfWeek</identifier>
+<identifier>dayOfTheWeek</identifier>
 </name>
 </selector>
+<comment Class="com.github.javaparser.ast.comments.BlockComment">
+<content>this is atest</content>
+</comment>
+<comment Class="com.github.javaparser.ast.comments.LineComment">
+<content>Random comment</content>
+</comment>
 </node>
 </statements>
 </body>
@@ -349,9 +358,8 @@
 </type>
 </node>
 </parameters>
-<comment Class="com.github.javaparser.ast.comments.LineComment">
-<content>THis is a test</content>
-<content>This is a test</content>
+<comment Class="com.github.javaparser.ast.comments.JavadocComment">
+<content>* This is the main method which makes use of the switch case. * @param args Unused.</content>
 </comment>
 </node>
 </members>

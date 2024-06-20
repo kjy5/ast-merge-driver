@@ -1,14 +1,18 @@
 package org.kjy5;
 
+import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static java.util.Objects.requireNonNull;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.metamodel.BaseNodeMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
 import com.github.javaparser.metamodel.PropertyMetaModel;
+import java.util.LinkedList;
+import java.util.List;
 import org.kjy5.Common.*;
 import org.w3c.dom.Element;
 
@@ -28,6 +32,60 @@ public class JavaParserToXML {
   // endregion
 
   // region Serialization methods
+
+  // This implementation is from Randoop's `Minimize.java` file, and before that from JavaParser's
+  // PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode.  The JavaParser maintainers refuse
+  // to provide such functionality in JavaParser proper.
+
+  /**
+   * This implementation is from Randoop's `Minimize.java` file, and before that from JavaParser's
+   * PrettyPrintVisitor.printOrphanCommentsBeforeThisChildNode. The JavaParser maintainers refuse to
+   * provide such functionality in JavaParser proper.
+   *
+   * @param node The node for which comments are to be extracted from.
+   * @param result The list to which the comments are to be added.
+   */
+  private static void getOrphanCommentsBeforeThisChildNode(final Node node, List<Comment> result) {
+    if (node instanceof Comment) {
+      return;
+    }
+
+    Node parent = node.getParentNode().orElse(null);
+    if (parent == null) {
+      return;
+    }
+    List<Node> everything = new LinkedList<>(parent.getChildNodes());
+    sortByBeginPosition(everything);
+    int positionOfTheChild = -1;
+    for (int i = 0; i < everything.size(); i++) {
+      if (everything.get(i) == node) {
+        positionOfTheChild = i;
+      }
+    }
+    if (positionOfTheChild == -1) {
+      throw new AssertionError("I am not a child of my parent.");
+    }
+    int positionOfPreviousChild = -1;
+    for (int i = positionOfTheChild - 1; i >= 0 && positionOfPreviousChild == -1; i--) {
+      if (!(everything.get(i) instanceof Comment)) {
+        positionOfPreviousChild = i;
+      }
+    }
+    for (int i = positionOfPreviousChild + 1; i < positionOfTheChild; i++) {
+      Node nodeToPrint = everything.get(i);
+      if (!(nodeToPrint instanceof Comment)) {
+        throw new RuntimeException(
+            "Expected comment, instead "
+                + nodeToPrint.getClass()
+                + ". Position of previous child: "
+                + positionOfPreviousChild
+                + ", position of child "
+                + positionOfTheChild);
+      }
+      result.add((Comment) nodeToPrint);
+    }
+  }
+
   /**
    * Recursive depth-first method that serializes nodes into XML
    *
@@ -89,6 +147,13 @@ public class JavaParserToXML {
         var valueElement = xmlDocument.createChildElement(name, element);
         valueElement.setTextContent(value.toString());
       }
+    }
+    
+    // Handle orphan comments.
+    List<Comment> orphanComments = new LinkedList<>();
+    getOrphanCommentsBeforeThisChildNode(node, orphanComments);
+    for (Comment comment : orphanComments) {
+      element.appendChild(serialize("comment", comment, xmlDocument));
     }
 
     // Return Element.

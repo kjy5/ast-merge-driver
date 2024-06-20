@@ -6,22 +6,24 @@ public class Main {
    * This is the main method which makes use of the switch case.
    * @param args Unused.
    */
-  // This is a test
   public static void main(String[] args) {
-    // Switching on dayOfWeek.
-    int dayOfWeek = 4;
+    // Switching on day.
+    int day = 4;
 
-    int next = 9;
+    int next = 9; // Random variable
 
-    switch (dayOfWeek) {
+    // Random comment
+
+    /* this is atest */
+    switch (day) {
       case 1:
         System.out.println("Monday");
         if(1==1){
-          dayOfWeek = 5;
+          day = 5;
         }
         break;
       case 2:
-        System.out.println("Chewsday");
+        System.out.println("Tuesday");
         break;
       case 3:
         System.out.println("Wednesday");
