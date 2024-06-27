@@ -12,8 +12,7 @@ public class Main {
         //Random variable
         int next = 9;
         /*this is atest*/
-        switch(//Random comment
-        dayOfTheWeek) {
+        switch(dayOfTheWeek) {
             case 1:
                 System.out.println("Monday");
                 if (1 == 1) {

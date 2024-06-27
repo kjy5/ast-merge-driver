@@ -10,17 +10,28 @@ import java.nio.file.Paths;
 public class Main {
   public static void main() {
     // region File path specifications
+    var folder = "0";
+
+    // Constants for the file paths.
+    var assetsPath = "assets/";
+    var fileBaseName = "/file_base";
+    var fileLeftName = "/file_left";
+    var fileRightName = "/file_right";
+    var fileMergeName = "/file_merged";
+    var javaExtension = ".java";
+    var xmlExtension = ".xml";
+
     // Source files.
-    var fileBasePath = "assets/file_base.java";
-    var fileLeftPath = "assets/file_left.java";
-    var fileRightPath = "assets/file_right.java";
-    var fileMergedPath = "assets/file_merged.java";
+    var fileBasePath = assetsPath + folder + fileBaseName + javaExtension;
+    var fileLeftPath = assetsPath + folder + fileLeftName + javaExtension;
+    var fileRightPath = assetsPath + folder + fileRightName + javaExtension;
+    var fileMergedPath = assetsPath + folder + fileMergeName + javaExtension;
 
     // XML output files.
-    var fileBaseXmlPath = "assets/file_base.xml";
-    var fileLeftXmlPath = "assets/file_left.xml";
-    var fileRightXmlPath = "assets/file_right.xml";
-    var fileMergedXmlPath = "assets/file_merged.xml";
+    var fileBaseXmlPath = assetsPath + folder + fileBaseName + xmlExtension;
+    var fileLeftXmlPath = assetsPath + folder + fileLeftName + xmlExtension;
+    var fileRightXmlPath = assetsPath + folder + fileRightName + xmlExtension;
+    var fileMergedXmlPath = assetsPath + folder + fileMergeName + xmlExtension;
     // endregion
 
     // region Parse source files
@@ -46,6 +57,9 @@ public class Main {
     // endregion
 
     // region Deserialize XML files to Java
+    if (!Files.exists(Paths.get(fileMergedXmlPath))) {
+      return;
+    }
     XMLDocument mergedXMLDocument = new XMLDocument(fileMergedXmlPath);
     var fileMergeXmlDeserializer = new XMLToJavaParser(mergedXMLDocument);
     var fileMergedNode = fileMergeXmlDeserializer.getAstRoot();

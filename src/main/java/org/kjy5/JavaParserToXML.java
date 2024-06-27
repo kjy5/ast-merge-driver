@@ -105,7 +105,7 @@ public class JavaParserToXML {
     element.setAttribute(XMLNode.CLASS.propertyKey, node.getClass().getName());
 
     // Write non-meta properties.
-    writeNonMetaProperties(node, element, xmlDocument);
+//    writeNonMetaProperties(node, element, xmlDocument);
 
     // Write meta properties.
     for (PropertyMetaModel propertyMetaModel : nodeMetaModel.getAllPropertyMetaModels()) {
