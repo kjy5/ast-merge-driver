@@ -253,3 +253,4 @@ bin/
 .vscode/
 
 ### Mac OS ###
+.direnv

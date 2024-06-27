@@ -19,15 +19,12 @@ application {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-
-    // GumTree.
-    implementation 'com.github.gumtreediff:core:4.0.0-beta1'
-    implementation 'com.github.gumtreediff:client:4.0.0-beta1'
-    implementation 'com.github.gumtreediff:gen.jdt:4.0.0-beta1'
-    implementation 'com.github.gumtreediff:gen.javaparser:4.0.0-beta1'
-
-    // Javac-parse.
-    implementation 'org.plumelib:javac-parse:0.1.0'
+    
+    // JavaParser.
+    implementation 'com.github.javaparser:javaparser-core:3.26.0'
+    implementation 'com.github.javaparser:javaparser-core-serialization:3.26.0'
+    implementation 'jakarta.json:jakarta.json-api:2.1.3'
+    implementation 'org.eclipse.parsson:parsson:1.1.6'
 }
 
 test {
@@ -36,48 +33,20 @@ test {
 
 // Configuration for Javac-parse.
 run {
-    jvmArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
-    jvmArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED'
-    jvmArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
-    jvmArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED'
-    jvmArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED'
-    jvmArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
 }
 compileJava {
     // Enable preview features.
     options.compilerArgs += '--enable-preview'   
     sourceCompatibility = '21'
     targetCompatibility = '21'
-    
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
 }
 compileTestJava {
     // Enable preview features.
     options.compilerArgs += '--enable-preview'   
     sourceCompatibility = '21'
     targetCompatibility = '21'
-
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED'
-    options.compilerArgs += '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
 }
 javadoc {
     options {
-        addMultilineStringsOption("-add-exports").setValue([
-                'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
-                'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
-                'jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
-                'jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
-                'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
-                'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
-        ])
     }
 }
