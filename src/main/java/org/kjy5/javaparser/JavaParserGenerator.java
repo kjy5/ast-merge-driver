@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with GumTree.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * Kenneth Yang applied IntelliJ suggested code fixes.
+ *
  * Copyright 2018 Jean-Rémy Falleri <jr.falleri@gmail.com>
+ * Copyright 2024 Kenneth Yang (kjy5@uw.edu)
  */
 
 package org.kjy5.javaparser;
 
 import com.github.gumtreediff.gen.Register;
-import com.github.gumtreediff.utils.Registry;
 import com.github.gumtreediff.gen.SyntaxException;
 import com.github.gumtreediff.gen.TreeGenerator;
 import com.github.gumtreediff.io.LineReader;
@@ -28,24 +30,21 @@ import com.github.gumtreediff.tree.TreeContext;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-
-import java.io.IOException;
 import java.io.Reader;
 
-@Register(id = "java-javaparser", accept = "\\.java$", priority = Registry.Priority.MEDIUM)
+@Register(id = "java-javaparser", accept = "\\.java$")
 public class JavaParserGenerator extends TreeGenerator {
 
-    @Override
-    public TreeContext generate(Reader r) throws IOException {
-        LineReader lr = new LineReader(r);
-        try {
-            CompilationUnit cu = StaticJavaParser.parse(lr);
-            JavaParserVisitor v = new JavaParserVisitor(lr);
-            v.visitPreOrder(cu);
-            return v.getTreeContext();
-        }
-        catch (ParseProblemException e) {
-            throw new SyntaxException(this, r, e);
-        }
+  @Override
+  public TreeContext generate(Reader r) {
+    LineReader lr = new LineReader(r);
+    try {
+      CompilationUnit cu = StaticJavaParser.parse(lr);
+      JavaParserVisitor v = new JavaParserVisitor(lr);
+      v.visitPreOrder(cu);
+      return v.getTreeContext();
+    } catch (ParseProblemException e) {
+      throw new SyntaxException(this, r, e);
     }
+  }
 }

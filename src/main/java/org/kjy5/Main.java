@@ -1,3 +1,10 @@
+/**
+ * Main class for the merge driver.
+ *
+ * <p>Reimplements Spork by Larsén et al. (2022) in Java with JavaParser.
+ *
+ * <p>Copyright 2024 Kenneth Yang (kjy5@uw.edu)
+ */
 package org.kjy5;
 
 import com.github.gumtreediff.client.Run;
@@ -13,9 +20,8 @@ public class Main {
   private static final String BASE_FILE_PATH = "/file_base";
   private static final String LEFT_FILE_PATH = "/file_left";
   private static final String RIGHT_FILE_PATH = "/file_right";
-  private static final String MERGED_FILE_PATH = "/file_merged";
+  //  private static final String MERGED_FILE_PATH = "/file_merged";
   private static final String JAVA_FILE_EXTENSION = ".java";
-  private static final String XML_FILE_EXTENSION = ".xml";
 
   // endregion
 
@@ -34,14 +40,8 @@ public class Main {
     final var fileBasePath = ASSETS_FOLDER_PATH + folder + BASE_FILE_PATH + JAVA_FILE_EXTENSION;
     final var fileLeftPath = ASSETS_FOLDER_PATH + folder + LEFT_FILE_PATH + JAVA_FILE_EXTENSION;
     final var fileRightPath = ASSETS_FOLDER_PATH + folder + RIGHT_FILE_PATH + JAVA_FILE_EXTENSION;
-    final var fileMergedPath = ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH + JAVA_FILE_EXTENSION;
-
-    // XML output files.
-    final var fileBaseXmlPath = ASSETS_FOLDER_PATH + folder + BASE_FILE_PATH + XML_FILE_EXTENSION;
-    final var fileLeftXmlPath = ASSETS_FOLDER_PATH + folder + LEFT_FILE_PATH + XML_FILE_EXTENSION;
-    final var fileRightXmlPath = ASSETS_FOLDER_PATH + folder + RIGHT_FILE_PATH + XML_FILE_EXTENSION;
-    final var fileMergedXmlPath =
-        ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH + XML_FILE_EXTENSION;
+    //    final var fileMergedPath = ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH +
+    // JAVA_FILE_EXTENSION;
     // endregion
 
     // region Create matching between branches.
