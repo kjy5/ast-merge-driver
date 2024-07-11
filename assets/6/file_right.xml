@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<node Class="com.github.javaparser.ast.CompilationUnit">
+    <types>
+        <node Class="com.github.javaparser.ast.body.ClassOrInterfaceDeclaration">
+            <isInterface>false</isInterface>
+            <members>
+                <node Class="com.github.javaparser.ast.body.FieldDeclaration">
+                    <modifiers>
+                        <node Class="com.github.javaparser.ast.Modifier">
+                            <keyword>PRIVATE</keyword>
+                        </node>
+                    </modifiers>
+                    <variables>
+                        <node Class="com.github.javaparser.ast.body.VariableDeclarator">
+                            <initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+                                <value>1</value>
+                            </initializer>
+                            <name Class="com.github.javaparser.ast.expr.SimpleName">
+                                <identifier>one</identifier>
+                            </name>
+                            <type Class="com.github.javaparser.ast.type.PrimitiveType">
+                                <type>INT</type>
+                            </type>
+                        </node>
+                    </variables>
+                </node>
+                <node Class="com.github.javaparser.ast.body.FieldDeclaration">
+                    <modifiers>
+                        <node Class="com.github.javaparser.ast.Modifier">
+                            <keyword>PRIVATE</keyword>
+                        </node>
+                    </modifiers>
+                    <variables>
+                        <node Class="com.github.javaparser.ast.body.VariableDeclarator">
+                            <initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+                                <value>3</value>
+                            </initializer>
+                            <name Class="com.github.javaparser.ast.expr.SimpleName">
+                                <identifier>three</identifier>
+                            </name>
+                            <type Class="com.github.javaparser.ast.type.PrimitiveType">
+                                <type>INT</type>
+                            </type>
+                        </node>
+                    </variables>
+                </node>
+                <node Class="com.github.javaparser.ast.body.FieldDeclaration">
+                    <modifiers>
+                        <node Class="com.github.javaparser.ast.Modifier">
+                            <keyword>PRIVATE</keyword>
+                        </node>
+                    </modifiers>
+                    <variables>
+                        <node Class="com.github.javaparser.ast.body.VariableDeclarator">
+                            <initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+                                <value>2</value>
+                            </initializer>
+                            <name Class="com.github.javaparser.ast.expr.SimpleName">
+                                <identifier>two</identifier>
+                            </name>
+                            <type Class="com.github.javaparser.ast.type.PrimitiveType">
+                                <type>INT</type>
+                            </type>
+                        </node>
+                    </variables>
+                </node>
+            </members>
+            <name Class="com.github.javaparser.ast.expr.SimpleName">
+                <identifier>Test</identifier>
+            </name>
+        </node>
+    </types>
+</node>

@@ -8,9 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
-  public static void main() {
+  public static void main(String[] args) {
     // region File path specifications
-    var folder = "0";
+    var folder = args.length > 0 ? args[0] : "0";
 
     // Constants for the file paths.
     var assetsPath = "assets/";

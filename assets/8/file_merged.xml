@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node Class="com.github.javaparser.ast.CompilationUnit">
+<types>
+<node Class="com.github.javaparser.ast.body.ClassOrInterfaceDeclaration">
+<isInterface>false</isInterface>
+<members>
+<node Class="com.github.javaparser.ast.body.MethodDeclaration">
+<body Class="com.github.javaparser.ast.stmt.BlockStmt">
+<statements>
+<node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<arguments>
+<node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<value>one</value>
+</node>
+</arguments>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>println</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>out</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.NameExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>System</identifier>
+</name>
+</scope>
+</scope>
+</expression>
+</node>
+<node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<expression Class="com.github.javaparser.ast.expr.VariableDeclarationExpr">
+<variables>
+<node Class="com.github.javaparser.ast.body.VariableDeclarator">
+<initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<value>1</value>
+</initializer>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>one</identifier>
+</name>
+<type Class="com.github.javaparser.ast.type.PrimitiveType">
+<type>INT</type>
+</type>
+</node>
+</variables>
+</expression>
+</node>
+<node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<arguments>
+<node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<value>one done</value>
+</node>
+</arguments>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>println</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>out</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.NameExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>System</identifier>
+</name>
+</scope>
+</scope>
+</expression>
+</node>
+</statements>
+</body>
+<type Class="com.github.javaparser.ast.type.VoidType" />
+<modifiers>
+<node Class="com.github.javaparser.ast.Modifier">
+<keyword>PUBLIC</keyword>
+</node>
+</modifiers>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>one</identifier>
+</name>
+</node>
+<node Class="com.github.javaparser.ast.body.MethodDeclaration">
+<body Class="com.github.javaparser.ast.stmt.BlockStmt">
+<statements>
+<node Class="com.github.javaparser.ast.stmt.IfStmt">
+<condition Class="com.github.javaparser.ast.expr.BinaryExpr">
+<left Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<value>1</value>
+</left>
+<operator>EQUALS</operator>
+<right Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<value>1</value>
+</right>
+</condition>
+<thenStmt Class="com.github.javaparser.ast.stmt.BlockStmt">
+<statements>
+<node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<arguments>
+<node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<value>two</value>
+</node>
+</arguments>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>println</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>out</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.NameExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>System</identifier>
+</name>
+</scope>
+</scope>
+</expression>
+</node>
+</statements>
+</thenStmt>
+</node>
+<node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<expression Class="com.github.javaparser.ast.expr.VariableDeclarationExpr">
+<variables>
+<node Class="com.github.javaparser.ast.body.VariableDeclarator">
+<initializer Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<value>2</value>
+</initializer>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>two</identifier>
+</name>
+<type Class="com.github.javaparser.ast.type.PrimitiveType">
+<type>INT</type>
+</type>
+</node>
+</variables>
+</expression>
+</node>
+<node Class="com.github.javaparser.ast.stmt.IfStmt">
+<condition Class="com.github.javaparser.ast.expr.BinaryExpr">
+<left Class="com.github.javaparser.ast.expr.NameExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>two</identifier>
+</name>
+</left>
+<operator>EQUALS</operator>
+<right Class="com.github.javaparser.ast.expr.IntegerLiteralExpr">
+<value>3</value>
+</right>
+</condition>
+<thenStmt Class="com.github.javaparser.ast.stmt.BlockStmt">
+<statements>
+<node Class="com.github.javaparser.ast.stmt.ExpressionStmt">
+<expression Class="com.github.javaparser.ast.expr.MethodCallExpr">
+<arguments>
+<node Class="com.github.javaparser.ast.expr.StringLiteralExpr">
+<value>two done</value>
+</node>
+</arguments>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>println</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.FieldAccessExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>out</identifier>
+</name>
+<scope Class="com.github.javaparser.ast.expr.NameExpr">
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>System</identifier>
+</name>
+</scope>
+</scope>
+</expression>
+</node>
+</statements>
+</thenStmt>
+</node>
+</statements>
+</body>
+<type Class="com.github.javaparser.ast.type.VoidType" />
+<modifiers>
+<node Class="com.github.javaparser.ast.Modifier">
+<keyword>PUBLIC</keyword>
+</node>
+</modifiers>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>two</identifier>
+</name>
+</node>
+</members>
+<name Class="com.github.javaparser.ast.expr.SimpleName">
+<identifier>Test</identifier>
+</name>
+</node>
+</types>
+</node>
