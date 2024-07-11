@@ -1,15 +1,14 @@
 package org.kjy5;
 
 import com.github.gumtreediff.client.Run;
-import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
-import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
-import com.github.gumtreediff.tree.TreeContext;
 import java.io.IOException;
+import java.util.HashMap;
+import org.kjy5.javaparser.JavaParserGenerator;
 
 public class Main {
-  // Constants for the file paths.
+  // region File path constants.
   private static final String ASSETS_FOLDER_PATH = "assets/";
   private static final String BASE_FILE_PATH = "/file_base";
   private static final String LEFT_FILE_PATH = "/file_left";
@@ -17,6 +16,8 @@ public class Main {
   private static final String MERGED_FILE_PATH = "/file_merged";
   private static final String JAVA_FILE_EXTENSION = ".java";
   private static final String XML_FILE_EXTENSION = ".xml";
+
+  // endregion
 
   /**
    * Entry point of the program.
@@ -26,7 +27,7 @@ public class Main {
    * @param args Command line arguments (folder name)
    */
   public static void main(String[] args) {
-    // region File path specifications
+    // region File path specifications.
     final var folder = args.length > 0 ? args[0] : "0";
 
     // Source files.
@@ -39,7 +40,8 @@ public class Main {
     final var fileBaseXmlPath = ASSETS_FOLDER_PATH + folder + BASE_FILE_PATH + XML_FILE_EXTENSION;
     final var fileLeftXmlPath = ASSETS_FOLDER_PATH + folder + LEFT_FILE_PATH + XML_FILE_EXTENSION;
     final var fileRightXmlPath = ASSETS_FOLDER_PATH + folder + RIGHT_FILE_PATH + XML_FILE_EXTENSION;
-    final var fileMergedXmlPath = ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH + XML_FILE_EXTENSION;
+    final var fileMergedXmlPath =
+        ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH + XML_FILE_EXTENSION;
     // endregion
 
     // region Create matching between branches.
@@ -55,16 +57,68 @@ public class Main {
       throw new RuntimeException(e);
     }
 
+    // TODO: Consider mapping from left/right to base to better follow class representative logic.
     // Match the trees.
     Run.initMatchers();
     final var matcher = Matchers.getInstance().getMatcher();
-    final var baseLeftMapping = matcher.match(baseTree, leftTree);
-    final var baseRightMapping = matcher.match(baseTree, rightTree);
-    final var leftRightMapping = matcher.match(leftTree, rightTree);
+    final var baseToLeftMapping = matcher.match(baseTree, leftTree);
+    final var baseToRightMapping = matcher.match(baseTree, rightTree);
+    final var leftToRightMapping = matcher.match(leftTree, rightTree);
+    // endregion
 
-    // Print mappings.
-    System.out.println(baseLeftMapping);
+    // region Create class representative mappings.
+    var classRepresentativeMapping = new HashMap<Tree, Tree>();
 
+    // Base nodes are mapped to themselves.
+    baseTree.preOrder().forEach(node -> classRepresentativeMapping.put(node, node));
+
+    /*
+     * Left nodes are mapped to base if a matching exists, otherwise they're mapped to themselves.
+     */
+    leftTree
+        .preOrder()
+        .forEach(
+            node -> {
+              final var matchedBaseNode = baseToLeftMapping.getSrcForDst(node);
+              if (matchedBaseNode != null) {
+                // A matching exists, map to it.
+                classRepresentativeMapping.put(node, matchedBaseNode);
+              } else {
+                // No matching exists, map to self.
+                classRepresentativeMapping.put(node, node);
+              }
+            });
+
+    /*
+     * Right nodes are mapped to base first if a matching exists, then left, otherwise themselves.
+     * Breadth first ordering is used to ensure parents are mapped before children.
+     * This is used in preventing spurious left-to-right mappings.
+     */
+    rightTree
+        .breadthFirst()
+        .forEach(
+            node -> {
+              final var matchedBaseNode = baseToRightMapping.getSrcForDst(node);
+              if (matchedBaseNode != null) {
+                // A matching exists, map to it.
+                classRepresentativeMapping.put(node, matchedBaseNode);
+              } else {
+                // No base matching, try left.
+                final var matchedLeftNode = leftToRightMapping.getSrcForDst(node);
+                if (matchedLeftNode != null
+                    && !baseToLeftMapping.isSrcMapped(matchedLeftNode)
+                    && classRepresentativeMapping
+                        .get(matchedLeftNode.getParent())
+                        .equals(classRepresentativeMapping.get(node.getParent()))) {
+                  // A matching to left exists, left node is not matched to base, and parents of
+                  // left and right nodes are matched to the same class representative.
+                  classRepresentativeMapping.put(node, matchedLeftNode);
+                } else {
+                  // No matching exists, map to self.
+                  classRepresentativeMapping.put(node, node);
+                }
+              }
+            });
     // endregion
   }
 }
