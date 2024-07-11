@@ -14,10 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with GumTree.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Kenneth Yang applied IntelliJ suggested code fixes.
- *
  * Copyright 2018 Jean-Rémy Falleri <jr.falleri@gmail.com>
- * Copyright 2024 Kenneth Yang (kjy5@uw.edu)
+ * Copyright (c) 2024 Kenneth Yang (kjy5@uw.edu)
  */
 
 package org.kjy5.javaparser;
@@ -32,6 +30,12 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import java.io.Reader;
 
+/**
+ * A generator for JavaParser trees.
+ *
+ * @author Jean-Rémy Falleri
+ * @author Kenneth Yang
+ */
 @Register(id = "java-javaparser", accept = "\\.java$")
 public class JavaParserGenerator extends TreeGenerator {
 

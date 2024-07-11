@@ -18,7 +18,7 @@
  * metadata of the tree and applied IntelliJ suggested code fixes.
  *
  * Copyright 2018 Jean-Rémy Falleri <jr.falleri@gmail.com>
- * Copyright 2024 Kenneth Yang (kjy5@uw.edu)
+ * Copyright (c) 2024 Kenneth Yang (kjy5@uw.edu)
  */
 
 package org.kjy5.javaparser;
@@ -38,6 +38,12 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 
+/**
+ * A visitor for JavaParser trees.
+ *
+ * @author Jean-Rémy Falleri
+ * @author Kenneth Yang
+ */
 public class JavaParserVisitor extends TreeVisitor {
 
   private final Deque<Tree> trees;

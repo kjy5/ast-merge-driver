@@ -13,7 +13,13 @@ import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
 import java.util.HashMap;
 import org.kjy5.javaparser.JavaParserGenerator;
+import org.kjy5.tdm.ChangeSet;
 
+/**
+ * Main class for the merge driver.
+ *
+ * @author Kenneth Yang
+ */
 public class Main {
   // region File path constants.
   private static final String ASSETS_FOLDER_PATH = "assets/";
@@ -119,6 +125,16 @@ public class Main {
                 }
               }
             });
+    // endregion
+
+    // region Create change sets (PCS and content tuples).
+    var baseChangeSet = new ChangeSet(baseTree);
+    var leftChangeSet = new ChangeSet(leftTree);
+    var rightChangeSet = new ChangeSet(rightTree);
+    // endregion
+
+    // region Raw merge (union of all change sets).
+    var rawMerge = new ChangeSet(baseChangeSet, leftChangeSet, rightChangeSet);
     // endregion
   }
 }
