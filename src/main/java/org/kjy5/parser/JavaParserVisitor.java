@@ -21,7 +21,7 @@
  * Copyright (c) 2024 Kenneth Yang (kjy5@uw.edu)
  */
 
-package org.kjy5.javaparser;
+package org.kjy5.parser;
 
 import com.github.gumtreediff.io.LineReader;
 import com.github.gumtreediff.tree.Tree;

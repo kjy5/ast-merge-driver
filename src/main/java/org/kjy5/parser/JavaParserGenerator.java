@@ -18,16 +18,19 @@
  * Copyright (c) 2024 Kenneth Yang (kjy5@uw.edu)
  */
 
-package org.kjy5.javaparser;
+package org.kjy5.parser;
 
 import com.github.gumtreediff.gen.Register;
 import com.github.gumtreediff.gen.SyntaxException;
 import com.github.gumtreediff.gen.TreeGenerator;
 import com.github.gumtreediff.io.LineReader;
+import com.github.gumtreediff.tree.ImmutableTree;
+import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import java.io.IOException;
 import java.io.Reader;
 
 /**
@@ -50,5 +53,22 @@ public class JavaParserGenerator extends TreeGenerator {
     } catch (ParseProblemException e) {
       throw new SyntaxException(this, r, e);
     }
+  }
+
+  /**
+   * Parses a file into an immutable GumTree tree.
+   *
+   * @param path The path to the file.
+   * @return The immutable GumTree tree.
+   */
+  public Tree ParseFileIntoTree(String path) {
+    Tree tree;
+    try {
+      tree = this.generateFrom().file(path).getRoot();
+    } catch (IOException e) {
+      System.err.println("Failed to parse file " + path + " into tree.");
+      throw new RuntimeException(e);
+    }
+    return new ImmutableTree(tree);
   }
 }

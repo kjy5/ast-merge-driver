@@ -4,9 +4,7 @@
 package org.kjy5.tdm;
 
 import com.github.gumtreediff.tree.Tree;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A 3DM change set.
@@ -14,53 +12,79 @@ import java.util.Set;
  * @author Kenneth Yang
  */
 public class ChangeSet {
+  // region Fields.
   public final Set<Pcs> pcsSet;
   public final Set<ContentTuple> contentTupleSet;
+  // endregion
 
-  public ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
-    this.pcsSet = new HashSet<>(pcsSet);
-    this.contentTupleSet = new HashSet<>(contentTupleSet);
-  }
+  // region Internal properties.
+  private final Map<Tree, Tree> classRepresentativesMapping;
 
+  // endregion
+
+  // region Constructors.
   /**
    * Create a 3DM change set from a tree.
    *
    * @param tree The tree to create the change set from.
    */
-  public ChangeSet(Tree tree) {
-    // Initialize with empty content tuple and virtual root.
-    this.contentTupleSet = new HashSet<>();
-    this.pcsSet =
+  public ChangeSet(Tree tree, ClassRepresentatives classRepresentatives) {
+    // Initialize class representatives.
+    this.classRepresentativesMapping = classRepresentatives.getMapping();
+
+    // Initialize an empty content tuple and virtual root.
+    var localContentTupleSet = new HashSet<ContentTuple>();
+    var localPcsSet =
         new HashSet<>(Arrays.asList(new Pcs(null, null, tree), new Pcs(null, tree, null)));
 
     // Traverse the tree and build.
     tree.breadthFirst()
         .forEach(
             node -> {
-              // Add content tuple (if it has content).
-              if (node.hasLabel())
-                this.contentTupleSet.add(new ContentTuple(node, node.getLabel()));
+              // Get class representative.
+              var classRepresentative = getClassRepresentative(node);
 
-              // Short-circuit if node is root.
+              // Add content tuple (if it has content).
+              if (classRepresentative.hasLabel())
+                localContentTupleSet.add(
+                    new ContentTuple(classRepresentative, classRepresentative.getLabel()));
+
+              // TODO: are we supposed to look at node's children or the classRepresentative's
+              // children?
+              // Short-circuit if classRepresentative is root.
               if (node.getChildren().isEmpty()) {
-                this.pcsSet.add(new Pcs(node, null, null));
+                localPcsSet.add(new Pcs(classRepresentative, null, null));
                 return;
               }
 
-              // TODO: Check later if virtual nodes are needed to separate children (i.e.
+              // TODO: Check later if virtual classRepresentatives are needed to separate children
+              // (i.e.
               // parameters, thrown exceptions).
 
               // Start children list (add virtual start).
-              this.pcsSet.add(new Pcs(node, null, node.getChild(0)));
+              localPcsSet.add(
+                  new Pcs(classRepresentative, null, getClassRepresentative(node.getChild(0))));
 
               // Loop through children (except last one which needs virtual end).
-              for (int i = 0; i < node.getChildren().size() - 1; i++) {
-                this.pcsSet.add(new Pcs(node, node.getChild(i), node.getChild(i + 1)));
+              for (int i = 0; i < classRepresentative.getChildren().size() - 1; i++) {
+                localPcsSet.add(
+                    new Pcs(
+                        classRepresentative,
+                        getClassRepresentative(node.getChild(i)),
+                        getClassRepresentative(node.getChild(i + 1))));
               }
 
               // End children list (add virtual end).
-              this.pcsSet.add(new Pcs(node, node.getChild(node.getChildren().size() - 1), null));
+              localPcsSet.add(
+                  new Pcs(
+                      classRepresentative,
+                      getClassRepresentative(node.getChild(node.getChildren().size() - 1)),
+                      null));
             });
+
+    // Set the final change set.
+    this.pcsSet = Collections.unmodifiableSet(localPcsSet);
+    this.contentTupleSet = Collections.unmodifiableSet(localContentTupleSet);
   }
 
   /**
@@ -71,15 +95,32 @@ public class ChangeSet {
    * @param right The right change set.
    */
   public ChangeSet(ChangeSet base, ChangeSet left, ChangeSet right) {
-    // Initialize with base's change set.
-    this(base.pcsSet, base.contentTupleSet);
+    // Initialize base change set.
+    var localPcsSet = new HashSet<>(base.pcsSet);
+    var localContentTupleSet = new HashSet<>(base.contentTupleSet);
 
     // Add left's change set.
-    this.pcsSet.addAll(left.pcsSet);
-    this.contentTupleSet.addAll(left.contentTupleSet);
+    localPcsSet.addAll(left.pcsSet);
+    localContentTupleSet.addAll(left.contentTupleSet);
 
     // Add right's change set.
-    this.pcsSet.addAll(right.pcsSet);
-    this.contentTupleSet.addAll(right.contentTupleSet);
+    localPcsSet.addAll(right.pcsSet);
+    localContentTupleSet.addAll(right.contentTupleSet);
+
+    // Set the final change set (copy over base's class representatives mapping).
+    this.pcsSet = Collections.unmodifiableSet(localPcsSet);
+    this.contentTupleSet = Collections.unmodifiableSet(localContentTupleSet);
+    this.classRepresentativesMapping = base.classRepresentativesMapping;
   }
+
+  // endregion
+
+  // region Helper methods.
+  private Tree getClassRepresentative(Tree node) {
+    var classRepresentative = classRepresentativesMapping.get(node);
+    if (classRepresentative == null)
+      throw new IllegalStateException("Class representative not found for node: " + node);
+    return classRepresentative;
+  }
+  // endregion
 }
