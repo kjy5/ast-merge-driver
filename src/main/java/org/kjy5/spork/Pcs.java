@@ -9,11 +9,9 @@ import java.util.Objects;
 /**
  * A Spork parent-child-successor triple.
  *
- * <p>A null node in the triple is the virtual node.
- *
- * @param parent The parent node (null = virtual root).
- * @param child The child node (null = virtual start of child list).
- * @param successor The successor node (null = virtual end of child list).
+ * @param parent The parent node.
+ * @param child The child node.
+ * @param successor The successor node.
  * @author Kenneth Yang
  */
 public record Pcs(Tree parent, Tree child, Tree successor) {
