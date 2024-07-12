@@ -27,10 +27,11 @@ public class ChangeSet {
    * Create a 3DM change set from a tree.
    *
    * @param tree The tree to create the change set from.
+   * @param classRepresentativesMapping The mapping of nodes to class representatives.
    */
-  public ChangeSet(Tree tree, ClassRepresentatives classRepresentatives) {
+  public ChangeSet(Tree tree, Map<Tree, Tree> classRepresentativesMapping) {
     // Initialize class representatives.
-    this.classRepresentativesMapping = classRepresentatives.getMapping();
+    this.classRepresentativesMapping = classRepresentativesMapping;
 
     // Initialize an empty content tuple and virtual root.
     var localContentTupleSet = new HashSet<ContentTuple>();
@@ -88,29 +89,18 @@ public class ChangeSet {
   }
 
   /**
-   * Create a 3DM change set by taking the union of existing change sets.
+   * Basic constructor for a 3DM change set.
    *
-   * @param base The base change set.
-   * @param left The left change set.
-   * @param right The right change set.
+   * @param pcsSet PCS set to build the change set from.
+   * @param contentTupleSet Content tuple set to build the change set from.
    */
-  public ChangeSet(ChangeSet base, ChangeSet left, ChangeSet right) {
-    // Initialize base change set.
-    var localPcsSet = new HashSet<>(base.pcsSet);
-    var localContentTupleSet = new HashSet<>(base.contentTupleSet);
+  public ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
+    // Ensure immutability.
+    this.pcsSet = Collections.unmodifiableSet(pcsSet);
+    this.contentTupleSet = Collections.unmodifiableSet(contentTupleSet);
 
-    // Add left's change set.
-    localPcsSet.addAll(left.pcsSet);
-    localContentTupleSet.addAll(left.contentTupleSet);
-
-    // Add right's change set.
-    localPcsSet.addAll(right.pcsSet);
-    localContentTupleSet.addAll(right.contentTupleSet);
-
-    // Set the final change set (copy over base's class representatives mapping).
-    this.pcsSet = Collections.unmodifiableSet(localPcsSet);
-    this.contentTupleSet = Collections.unmodifiableSet(localContentTupleSet);
-    this.classRepresentativesMapping = base.classRepresentativesMapping;
+    // Use empty class representatives mapping (it's not used).
+    this.classRepresentativesMapping = new HashMap<>();
   }
 
   // endregion
