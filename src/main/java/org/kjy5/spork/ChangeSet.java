@@ -3,7 +3,10 @@
  */
 package org.kjy5.spork;
 
+import com.github.gumtreediff.tree.DefaultTree;
+import com.github.gumtreediff.tree.ImmutableTree;
 import com.github.gumtreediff.tree.Tree;
+import com.github.gumtreediff.tree.Type;
 import java.util.*;
 
 /**
@@ -35,8 +38,12 @@ public class ChangeSet {
 
     // Initialize an empty content tuple and virtual root.
     var localContentTupleSet = new HashSet<ContentTuple>();
+    final var virtualRoot = makeVirtualRootFor(tree);
     var localPcsSet =
-        new HashSet<>(Arrays.asList(new Pcs(null, null, tree), new Pcs(null, tree, null)));
+        new HashSet<>(
+            Arrays.asList(
+                new Pcs(virtualRoot, makeVirtualChildListStartFor(virtualRoot), tree),
+                new Pcs(virtualRoot, tree, makeVirtualChildListEndFor(virtualRoot))));
 
     // Traverse the tree and build.
     tree.breadthFirst()
@@ -54,20 +61,26 @@ public class ChangeSet {
               // children?
               // Short-circuit if classRepresentative is root.
               if (node.getChildren().isEmpty()) {
-                localPcsSet.add(new Pcs(classRepresentative, null, null));
+                localPcsSet.add(
+                    new Pcs(
+                        classRepresentative,
+                        makeVirtualChildListStartFor(classRepresentative),
+                        makeVirtualChildListEndFor(classRepresentative)));
                 return;
               }
 
               // TODO: Check later if virtual classRepresentatives are needed to separate children
-              // (i.e.
-              // parameters, thrown exceptions).
+              // (i.e. parameters, thrown exceptions).
 
               // Start children list (add virtual start).
               localPcsSet.add(
-                  new Pcs(classRepresentative, null, getClassRepresentative(node.getChild(0))));
+                  new Pcs(
+                      classRepresentative,
+                      makeVirtualChildListStartFor(classRepresentative),
+                      getClassRepresentative(node.getChild(0))));
 
               // Loop through children (except last one which needs virtual end).
-              for (int i = 0; i < classRepresentative.getChildren().size() - 1; i++) {
+              for (int i = 0; i < node.getChildren().size() - 1; i++) {
                 localPcsSet.add(
                     new Pcs(
                         classRepresentative,
@@ -80,7 +93,7 @@ public class ChangeSet {
                   new Pcs(
                       classRepresentative,
                       getClassRepresentative(node.getChild(node.getChildren().size() - 1)),
-                      null));
+                      makeVirtualChildListEndFor(classRepresentative)));
             });
 
     // Set the final change set.
@@ -111,6 +124,18 @@ public class ChangeSet {
     if (classRepresentative == null)
       throw new IllegalStateException("Class representative not found for node: " + node);
     return classRepresentative;
+  }
+
+  private Tree makeVirtualRootFor(Tree child) {
+    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualRoot for " + child));
+  }
+
+  private Tree makeVirtualChildListStartFor(Tree root) {
+    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListStart for " + root));
+  }
+
+  private Tree makeVirtualChildListEndFor(Tree root) {
+    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListEnd for " + root));
   }
   // endregion
 }

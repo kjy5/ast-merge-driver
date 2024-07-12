@@ -55,8 +55,32 @@ public class Merger {
   // endregion
 
   // region Algorithm (helper) methods.
-  Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
+
+  // TODO: Consider using "well formed" criteria for consistency.
+  /**
+   * Get all inconsistent PCSs inside a change set given a PCS.
+   *
+   * @param pcs The PCS to find inconsistencies with.
+   * @param changeSet The change set to search in.
+   * @return The set of inconsistent PCSs.
+   */
+  private Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
     var inconsistentPcs = new HashSet<Pcs>();
+
+    // Loop through change set and find inconsistencies.
+    for (var otherPcs : changeSet.pcsSet) {
+      // Shortcut if the same PCS.
+      if (pcs.equals(otherPcs)) continue;
+
+      // Setup consistency markers.
+      boolean parentFoundParent, parentFoundPredecessor, parentFoundSuccessor;
+      boolean childFoundParent, childFoundPredecessor, childFoundSuccessor;
+      boolean successorFoundParent, successorFoundPredecessor, successorFoundSuccessor;
+
+      // Check parent node.
+
+    }
+
     return Collections.unmodifiableSet(inconsistentPcs);
   }
   // endregion
