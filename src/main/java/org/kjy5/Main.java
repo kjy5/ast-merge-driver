@@ -6,9 +6,9 @@ package org.kjy5;
 import com.github.gumtreediff.client.Run;
 import com.github.gumtreediff.matchers.Matchers;
 import org.kjy5.parser.JavaParserGenerator;
-import org.kjy5.tdm.ChangeSet;
-import org.kjy5.tdm.ClassRepresentatives;
-import org.kjy5.tdm.Merger;
+import org.kjy5.spork.ChangeSet;
+import org.kjy5.spork.ClassRepresentatives;
+import org.kjy5.spork.Merger;
 
 /**
  * Main class for the merge driver.
@@ -65,7 +65,7 @@ public class Main {
     // endregion
 
     // region Create class representative mappings.
-    var classRepresentatives =
+    final var classRepresentatives =
         new ClassRepresentatives(
                 baseTree,
                 leftTree,
@@ -77,13 +77,13 @@ public class Main {
     // endregion
 
     // region Create change sets (PCS and content tuples).
-    var baseChangeSet = new ChangeSet(baseTree, classRepresentatives);
-    var leftChangeSet = new ChangeSet(leftTree, classRepresentatives);
-    var rightChangeSet = new ChangeSet(rightTree, classRepresentatives);
+    final var baseChangeSet = new ChangeSet(baseTree, classRepresentatives);
+    final var leftChangeSet = new ChangeSet(leftTree, classRepresentatives);
+    final var rightChangeSet = new ChangeSet(rightTree, classRepresentatives);
     // endregion
 
     // region Raw merge (union of all change sets).
-    var mergedChangeSet =
+    final var mergedChangeSet =
         new Merger(baseChangeSet, leftChangeSet, rightChangeSet).getMergedChangeSet();
     // endregion
 

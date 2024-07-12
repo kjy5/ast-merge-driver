@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2024 Kenneth Yang (kjy5@uw.edu)
  */
-package org.kjy5.tdm;
+package org.kjy5.spork;
 
 import java.util.HashSet;
 
@@ -30,6 +30,11 @@ public class Merger {
     this.mergedChangeSet = new ChangeSet(mergedPcsSet, mergedContentTupleSet);
   }
 
+  /**
+   * Get the merged change set.
+   *
+   * @return The merged change set.
+   */
   public ChangeSet getMergedChangeSet() {
     return mergedChangeSet;
   }
