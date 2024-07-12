@@ -80,11 +80,14 @@ public class Main {
     final var baseChangeSet = new ChangeSet(baseTree, classRepresentatives);
     final var leftChangeSet = new ChangeSet(leftTree, classRepresentatives);
     final var rightChangeSet = new ChangeSet(rightTree, classRepresentatives);
+    System.out.println(
+        baseChangeSet.pcsSet.size() + leftChangeSet.pcsSet.size() + rightChangeSet.pcsSet.size());
     // endregion
 
     // region Raw merge (union of all change sets).
     final var mergedChangeSet =
         new Merger(baseChangeSet, leftChangeSet, rightChangeSet).getMergedChangeSet();
+    System.out.println(mergedChangeSet.pcsSet.size());
     // endregion
 
   }

@@ -7,7 +7,7 @@ import com.github.gumtreediff.tree.Tree;
 import java.util.*;
 
 /**
- * A 3DM change set.
+ * A Spork change set.
  *
  * @author Kenneth Yang
  */
@@ -24,7 +24,7 @@ public class ChangeSet {
 
   // region Constructors.
   /**
-   * Create a 3DM change set from a tree.
+   * Create a Spork change set from a tree.
    *
    * @param tree The tree to create the change set from.
    * @param classRepresentativesMapping The mapping of nodes to class representatives.
@@ -89,7 +89,7 @@ public class ChangeSet {
   }
 
   /**
-   * Basic constructor for a 3DM change set.
+   * Basic constructor for a Spork change set.
    *
    * @param pcsSet PCS set to build the change set from.
    * @param contentTupleSet Content tuple set to build the change set from.

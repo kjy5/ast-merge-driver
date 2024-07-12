@@ -3,7 +3,9 @@
  */
 package org.kjy5.spork;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Change set merger.
@@ -15,6 +17,14 @@ import java.util.HashSet;
 public class Merger {
   private final ChangeSet mergedChangeSet;
 
+  // region Constructor.
+  /**
+   * Construct and perform Spork merge.
+   *
+   * @param baseChangeSet Base branch change set.
+   * @param leftChangeSet Left branch change set.
+   * @param rightChangeSet Right branch change set.
+   */
   public Merger(ChangeSet baseChangeSet, ChangeSet leftChangeSet, ChangeSet rightChangeSet) {
     // Union the three PCSs.
     var mergedPcsSet = new HashSet<>(baseChangeSet.pcsSet);
@@ -30,6 +40,9 @@ public class Merger {
     this.mergedChangeSet = new ChangeSet(mergedPcsSet, mergedContentTupleSet);
   }
 
+  // endregion
+
+  // region Getters
   /**
    * Get the merged change set.
    *
@@ -38,4 +51,13 @@ public class Merger {
   public ChangeSet getMergedChangeSet() {
     return mergedChangeSet;
   }
+
+  // endregion
+
+  // region Algorithm (helper) methods.
+  Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
+    var inconsistentPcs = new HashSet<Pcs>();
+    return Collections.unmodifiableSet(inconsistentPcs);
+  }
+  // endregion
 }

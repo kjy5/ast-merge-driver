@@ -4,30 +4,42 @@
 package org.kjy5.spork;
 
 import com.github.gumtreediff.tree.Tree;
+import java.util.Objects;
 
 /**
- * A 3DM parent-child-successor triple.
+ * A Spork parent-child-successor triple.
  *
  * <p>A null node in the triple is the virtual node.
  *
+ * @param parent The parent node (null = virtual root).
+ * @param child The child node (null = virtual start of child list).
+ * @param successor The successor node (null = virtual end of child list).
  * @author Kenneth Yang
  */
-public class Pcs {
-  public final Tree parent, child, successor;
+public record Pcs(Tree parent, Tree child, Tree successor) {
 
   /**
-   * Create a PCS triple.
+   * Check for equality.
    *
-   * <p>A null parent is the virtual root, a null child is the virtual start, a null successor is
-   * the virtual end.
-   *
-   * @param parent Parent node (null is virtual)
-   * @param child Child node (null is virtual start)
-   * @param successor Successor node (null is virtual end)
+   * @param other The reference object with which to compare.
+   * @return True if the PCS triples are equal, false otherwise.
    */
-  public Pcs(Tree parent, Tree child, Tree successor) {
-    this.parent = parent;
-    this.child = child;
-    this.successor = successor;
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) return true;
+    if (!(other instanceof Pcs pcs)) return false;
+    return Objects.equals(parent, pcs.parent)
+        && Objects.equals(child, pcs.child)
+        && Objects.equals(successor, pcs.successor);
+  }
+
+  /**
+   * Print the PCS triple.
+   *
+   * @return A string representation of the PCS triple.
+   */
+  @Override
+  public String toString() {
+    return "PCS(" + parent + ", " + child + ", " + successor + ')';
   }
 }
