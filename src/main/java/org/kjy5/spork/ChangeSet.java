@@ -38,12 +38,19 @@ public class ChangeSet {
 
     // Initialize an empty content tuple and virtual root.
     var localContentTupleSet = new HashSet<ContentTuple>();
-    final var virtualRoot = makeVirtualRootFor(tree);
+    final var treeClassRepresentative = classRepresentativesMapping.get(tree);
+    final var virtualRoot = makeVirtualRootFor(treeClassRepresentative);
     var localPcsSet =
         new HashSet<>(
             Arrays.asList(
-                new Pcs(virtualRoot, makeVirtualChildListStartFor(virtualRoot), tree),
-                new Pcs(virtualRoot, tree, makeVirtualChildListEndFor(virtualRoot))));
+                new Pcs(
+                    virtualRoot,
+                    makeVirtualChildListStartFor(virtualRoot),
+                    treeClassRepresentative),
+                new Pcs(
+                    virtualRoot,
+                    treeClassRepresentative,
+                    makeVirtualChildListEndFor(virtualRoot))));
 
     // Traverse the tree and build.
     tree.breadthFirst()

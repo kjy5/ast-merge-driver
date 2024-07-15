@@ -92,7 +92,7 @@ public class Main {
                 + rightChangeSet.contentTupleSet.size()));
     // endregion
 
-    // region Raw merge (union of all change sets).
+    // region Merge.
     final var mergedChangeSet =
         new Merger(baseChangeSet, leftChangeSet, rightChangeSet).getMergedChangeSet();
     System.out.println(
@@ -100,6 +100,12 @@ public class Main {
             + mergedChangeSet.pcsSet.size()
             + "\t\t"
             + mergedChangeSet.contentTupleSet.size());
+    // endregion
+
+    // region Rebuild AST from merged change set.
+    for (var pcs : mergedChangeSet.pcsSet) {
+      System.out.println(pcs);
+    }
     // endregion
   }
 }
