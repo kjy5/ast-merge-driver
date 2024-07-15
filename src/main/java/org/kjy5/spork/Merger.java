@@ -55,6 +55,9 @@ public class Merger {
 
     // Handle inconsistencies.
     for (var pcs : new HashSet<>(this.mergedChangeSet.pcsSet)) {
+      // TODO: Algorithm doesn't say so but we should skip if the PCS is already removed.
+      if (!this.mergedChangeSet.pcsSet.contains(pcs)) continue;
+
       removeSoftPcsInconsistencies(pcs, this.mergedChangeSet, baseChangeSet);
       handleContent(pcs, this.mergedChangeSet, baseChangeSet);
     }
@@ -169,7 +172,7 @@ public class Merger {
         if (parentFoundParent.equals(FAKE_TREE)) parentFoundParent = otherPcs.parent();
 
         // There's an inconsistency if this is a different parent.
-        if (!parentFoundParent.equals(otherPcs.parent())) {
+        else if (!parentFoundParent.equals(otherPcs.parent())) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -182,7 +185,7 @@ public class Merger {
         if (parentFoundPredecessor.equals(FAKE_TREE)) parentFoundPredecessor = otherPcs.child();
 
         // There's an inconsistency if this is a different predecessor.
-        if (!parentFoundPredecessor.equals(otherPcs.child())) {
+        else if (!parentFoundPredecessor.equals(otherPcs.child())) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -195,7 +198,7 @@ public class Merger {
         if (parentFoundSuccessor.equals(FAKE_TREE)) parentFoundSuccessor = otherPcs.successor();
 
         // There's an inconsistency if this is a different successor.
-        if (!parentFoundSuccessor.equals(otherPcs.successor())) {
+        else if (!parentFoundSuccessor.equals(otherPcs.successor())) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -220,7 +223,7 @@ public class Merger {
         if (childFoundPredecessor.equals(FAKE_TREE)) childFoundPredecessor = otherPcs.child();
 
         // There's an inconsistency if this is a different predecessor.
-        if (!childFoundPredecessor.equals(otherPcs.child())) {
+        else if (!childFoundPredecessor.equals(otherPcs.child())) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -267,7 +270,7 @@ public class Merger {
           successorFoundSuccessor = otherPcs.successor();
 
         // There's an inconsistency if this is a different successor.
-        if (!successorFoundSuccessor.equals(otherPcs.successor())) {
+        else if (!successorFoundSuccessor.equals(otherPcs.successor())) {
           inconsistentPcs.add(otherPcs);
         }
       }
