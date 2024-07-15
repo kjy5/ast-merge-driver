@@ -4,7 +4,6 @@
 package org.kjy5.spork;
 
 import com.github.gumtreediff.tree.Tree;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -13,10 +12,10 @@ import java.util.Optional;
  * @param parent The parent node.
  * @param child The child node.
  * @param successor The successor node.
- * @param hardInConsistencyWith The hard inconsistency with another PCS triple.
+ * @param hardInconsistencyWith The hard inconsistency with another PCS triple.
  * @author Kenneth Yang
  */
-public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInConsistencyWith) {
+public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInconsistencyWith) {
 
   /**
    * Construct a PCS triple on required fields.
@@ -39,9 +38,10 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInC
   public boolean equals(Object other) {
     if (this == other) return true;
     if (!(other instanceof Pcs pcs)) return false;
-    return Objects.equals(parent, pcs.parent)
-        && Objects.equals(child, pcs.child)
-        && Objects.equals(successor, pcs.successor);
+    return parent.equals(pcs.parent)
+        && child.equals(pcs.child)
+        && successor.equals(pcs.successor)
+        && hardInconsistencyWith.equals(pcs.hardInconsistencyWith);
   }
 
   /**

@@ -45,16 +45,19 @@ public class Merger {
     mergeContentTupleSet.addAll(rightChangeSet.contentTupleSet);
 
     // Merged change set.
-    var mergeChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
+    this.mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
+
+    System.out.println(
+        "Raw\t\t"
+            + this.mergedChangeSet.pcsSet.size()
+            + "\t\t"
+            + this.mergedChangeSet.contentTupleSet.size());
 
     // Handle inconsistencies.
-    for (var pcs : new HashSet<>(mergeChangeSet.pcsSet)) {
-      removeSoftPcsInconsistencies(pcs, mergeChangeSet, baseChangeSet);
-      handleContent(pcs, mergeChangeSet, baseChangeSet);
+    for (var pcs : new HashSet<>(this.mergedChangeSet.pcsSet)) {
+      removeSoftPcsInconsistencies(pcs, this.mergedChangeSet, baseChangeSet);
+      handleContent(pcs, this.mergedChangeSet, baseChangeSet);
     }
-
-    // Create the final merged change set.
-    this.mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
   }
 
   // endregion
@@ -311,7 +314,7 @@ public class Merger {
    */
   private void hardPcsInconsistency(Pcs pcs, Pcs otherPcs, ChangeSet mergeChangeSet) {
     // Short-circuit if this PCS already has a hard inconsistency.
-    if (pcs.hardInConsistencyWith().isPresent()) return;
+    if (pcs.hardInconsistencyWith().isPresent()) return;
 
     // Mark the PCS as inconsistent with the other PCS and replace the original from the change set.
     var updatedPcs = new Pcs(pcs.parent(), pcs.child(), pcs.successor(), Optional.of(otherPcs));
@@ -319,7 +322,7 @@ public class Merger {
     mergeChangeSet.pcsSet.add(updatedPcs);
 
     // Short-circuit if the other PCS is already inconsistent.
-    if (otherPcs.hardInConsistencyWith().isPresent()) return;
+    if (otherPcs.hardInconsistencyWith().isPresent()) return;
 
     // Mark the other PCS as inconsistent with this PCS and replace the original from the change
     // set.

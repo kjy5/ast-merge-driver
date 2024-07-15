@@ -80,14 +80,26 @@ public class Main {
     final var baseChangeSet = new ChangeSet(baseTree, classRepresentatives);
     final var leftChangeSet = new ChangeSet(leftTree, classRepresentatives);
     final var rightChangeSet = new ChangeSet(rightTree, classRepresentatives);
+    System.out.println("State\tPCSs\tContentTuples");
     System.out.println(
-        baseChangeSet.pcsSet.size() + leftChangeSet.pcsSet.size() + rightChangeSet.pcsSet.size());
+        "Total\t"
+            + (baseChangeSet.pcsSet.size()
+                + leftChangeSet.pcsSet.size()
+                + rightChangeSet.pcsSet.size())
+            + "\t\t"
+            + (baseChangeSet.contentTupleSet.size()
+                + leftChangeSet.contentTupleSet.size()
+                + rightChangeSet.contentTupleSet.size()));
     // endregion
 
     // region Raw merge (union of all change sets).
     final var mergedChangeSet =
         new Merger(baseChangeSet, leftChangeSet, rightChangeSet).getMergedChangeSet();
-    System.out.println(mergedChangeSet.pcsSet.size());
+    System.out.println(
+        "Merged\t"
+            + mergedChangeSet.pcsSet.size()
+            + "\t\t"
+            + mergedChangeSet.contentTupleSet.size());
     // endregion
   }
 }

@@ -13,7 +13,7 @@ import java.util.Optional;
  * @author Kenneth Yang
  */
 public record ContentTuple(
-    Tree node, String content, Optional<ContentTuple> hardInConsistencyWith) {
+    Tree node, String content, Optional<ContentTuple> hardInconsistencyWith) {
 
   /**
    * Construct a content tuple on required fields.
@@ -35,7 +35,9 @@ public record ContentTuple(
   public boolean equals(Object other) {
     if (this == other) return true;
     if (!(other instanceof ContentTuple contentTuple)) return false;
-    return node.equals(contentTuple.node) && content.equals(contentTuple.content);
+    return node.equals(contentTuple.node)
+        && content.equals(contentTuple.content)
+        && hardInconsistencyWith.equals(contentTuple.hardInconsistencyWith);
   }
 
   /**
