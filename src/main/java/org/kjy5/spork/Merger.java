@@ -7,6 +7,7 @@ import com.github.gumtreediff.tree.FakeTree;
 import com.github.gumtreediff.tree.Tree;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -36,17 +37,25 @@ public class Merger {
    */
   public Merger(ChangeSet baseChangeSet, ChangeSet leftChangeSet, ChangeSet rightChangeSet) {
     // Union the three PCSs.
-    var mergedPcsSet = new HashSet<>(baseChangeSet.pcsSet);
-    mergedPcsSet.addAll(leftChangeSet.pcsSet);
-    mergedPcsSet.addAll(rightChangeSet.pcsSet);
+    var mergePcsSet = new HashSet<>(baseChangeSet.pcsSet);
+    mergePcsSet.addAll(leftChangeSet.pcsSet);
+    mergePcsSet.addAll(rightChangeSet.pcsSet);
 
     // Union the three content tuples.
-    var mergedContentTupleSet = new HashSet<>(baseChangeSet.contentTupleSet);
-    mergedContentTupleSet.addAll(leftChangeSet.contentTupleSet);
-    mergedContentTupleSet.addAll(rightChangeSet.contentTupleSet);
+    var mergeContentTupleSet = new HashSet<>(baseChangeSet.contentTupleSet);
+    mergeContentTupleSet.addAll(leftChangeSet.contentTupleSet);
+    mergeContentTupleSet.addAll(rightChangeSet.contentTupleSet);
+
+    // Merged change set.
+    var mergeChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
+
+    // Handle inconsistencies.
+    for (var pcs : new HashSet<>(mergeChangeSet.pcsSet)) {
+      removeSoftPcsInconsistencies(pcs, mergeChangeSet, baseChangeSet);
+    }
 
     // Create the final merged change set.
-    this.mergedChangeSet = new ChangeSet(mergedPcsSet, mergedContentTupleSet);
+    this.mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
   }
 
   // endregion
@@ -63,7 +72,32 @@ public class Merger {
 
   // endregion
 
-  // region Algorithm (helper) methods.
+  // region Algorithm methods.
+
+  private void removeSoftPcsInconsistencies(
+      Pcs pcs, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
+    // Get all inconsistent PCSs.
+    var inconsistentPcs = getAllInconsistentPcs(pcs, mergeChangeSet);
+
+    // Short-circuit if there are no inconsistencies.
+    if (inconsistentPcs.isEmpty()) return;
+
+    // Short-circuit if this pcs is in the base change set (remove it from the merge change set).
+    if (baseChangeSet.pcsSet.contains(pcs)) {
+      mergeChangeSet.pcsSet.remove(pcs);
+      return;
+    }
+
+    // Remove all inconsistent PCSs from the merge change set if they were in the base change set.
+    for (var otherPcs : inconsistentPcs) {
+      if (baseChangeSet.pcsSet.contains(otherPcs)) {
+        mergeChangeSet.pcsSet.remove(otherPcs);
+      } else {
+        // Otherwise, mark the PCS as a hard inconsistency.
+        hardPcsInconsistency(pcs, otherPcs, mergeChangeSet);
+      }
+    }
+  }
 
   // TODO: Consider using "well formed" criteria for consistency.
 
@@ -245,6 +279,33 @@ public class Merger {
     }
 
     return Collections.unmodifiableSet(inconsistentPcs);
+  }
+
+  /**
+   * Register PCS and other has a hard inconsistency.
+   *
+   * @param pcs The PCS to mark as inconsistent.
+   * @param otherPcs The PCS to mark as inconsistent with.
+   * @param mergeChangeSet The change set these PCSs are in.
+   */
+  private void hardPcsInconsistency(Pcs pcs, Pcs otherPcs, ChangeSet mergeChangeSet) {
+    // Short-circuit if this PCS already has a hard inconsistency.
+    if (pcs.hardInConsistencyWith().isPresent()) return;
+
+    // Mark the PCS as inconsistent with the other PCS and replace the original from the change set.
+    var updatedPcs = new Pcs(pcs.parent(), pcs.child(), pcs.successor(), Optional.of(otherPcs));
+    mergeChangeSet.pcsSet.remove(pcs);
+    mergeChangeSet.pcsSet.add(updatedPcs);
+
+    // Short-circuit if the other PCS is already inconsistent.
+    if (otherPcs.hardInConsistencyWith().isPresent()) return;
+
+    // Mark the other PCS as inconsistent with this PCS and replace the original from the change
+    // set.
+    var updatedOtherPcs =
+        new Pcs(otherPcs.parent(), otherPcs.child(), otherPcs.successor(), Optional.of(pcs));
+    mergeChangeSet.pcsSet.remove(otherPcs);
+    mergeChangeSet.pcsSet.add(updatedOtherPcs);
   }
   // endregion
 }

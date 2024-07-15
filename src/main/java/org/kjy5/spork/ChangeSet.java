@@ -108,9 +108,9 @@ public class ChangeSet {
    * @param contentTupleSet Content tuple set to build the change set from.
    */
   public ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
-    // Ensure immutability.
-    this.pcsSet = Collections.unmodifiableSet(pcsSet);
-    this.contentTupleSet = Collections.unmodifiableSet(contentTupleSet);
+    // TODO: Revert back to immutable sets later (mutable now to follow algorithm better).
+    this.pcsSet = pcsSet;
+    this.contentTupleSet = contentTupleSet;
 
     // Use empty class representatives mapping (it's not used).
     this.classRepresentativesMapping = new HashMap<>();
