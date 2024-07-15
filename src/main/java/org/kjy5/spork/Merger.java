@@ -5,10 +5,8 @@ package org.kjy5.spork;
 
 import com.github.gumtreediff.tree.FakeTree;
 import com.github.gumtreediff.tree.Tree;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Change set merger.
@@ -52,6 +50,7 @@ public class Merger {
     // Handle inconsistencies.
     for (var pcs : new HashSet<>(mergeChangeSet.pcsSet)) {
       removeSoftPcsInconsistencies(pcs, mergeChangeSet, baseChangeSet);
+      handleContent(pcs, mergeChangeSet, baseChangeSet);
     }
 
     // Create the final merged change set.
@@ -72,7 +71,7 @@ public class Merger {
 
   // endregion
 
-  // region Algorithm methods.
+  // region Spork-3DM methods.
 
   private void removeSoftPcsInconsistencies(
       Pcs pcs, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
@@ -99,6 +98,37 @@ public class Merger {
     }
   }
 
+  private void handleContent(Pcs pcs, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
+    removeSoftContentInconsistencies(pcs.parent(), mergeChangeSet, baseChangeSet);
+    removeSoftContentInconsistencies(pcs.child(), mergeChangeSet, baseChangeSet);
+    removeSoftContentInconsistencies(pcs.successor(), mergeChangeSet, baseChangeSet);
+  }
+
+  private void removeSoftContentInconsistencies(
+      Tree tree, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
+    var contentTuples = getContentTuples(tree, mergeChangeSet);
+
+    // Short-circuit if there are no content tuples (this tree is basically a single linked list).
+    if (contentTuples.size() <= 1) return;
+
+    // Get all content tuples not in the base change set.
+    var nonBaseContentTuples =
+        contentTuples.stream()
+            .filter(contentTuple -> !baseChangeSet.contentTupleSet.contains(contentTuple))
+            .collect(Collectors.toUnmodifiableSet());
+
+    // Update content tuples with non-base content tuples.
+    setContentTuples(tree, nonBaseContentTuples, mergeChangeSet);
+
+    // Mark hard content inconsistencies.
+    if (nonBaseContentTuples.size() > 1) {
+      hardContentInconsistency(nonBaseContentTuples, mergeChangeSet);
+    }
+  }
+
+  // endregion
+
+  // region Spork-3DM helper methods.
   // TODO: Consider using "well formed" criteria for consistency.
 
   /**
@@ -237,48 +267,60 @@ public class Merger {
           inconsistentPcs.add(otherPcs);
         }
       }
-
-      //      // Check content tuple list for uniqueness.
-      //      boolean parentContentTupleFound = false;
-      //      boolean childContentTupleFound = false;
-      //      boolean successorContentTupleFound = false;
-      //      for (var contentTuple : changeSet.contentTupleSet) {
-      //        // Check if this is the parent's content tuple.
-      //        if (contentTuple.node().equals(otherPcs.parent())) {
-      //          // There's an inconsistency if the parent's content tuple is already found.
-      //          if (parentContentTupleFound) {
-      //            inconsistentPcs.add(otherPcs);
-      //            break;
-      //          }
-      //          // Otherwise, mark the parent's content tuple as found.
-      //          parentContentTupleFound = true;
-      //        }
-      //
-      //        // Check if this is the child's content tuple.
-      //        if (contentTuple.node().equals(otherPcs.child())) {
-      //          // There's an inconsistency if the child's content tuple is already found.
-      //          if (childContentTupleFound) {
-      //            inconsistentPcs.add(otherPcs);
-      //            break;
-      //          }
-      //          // Otherwise, mark the child's content tuple as found.
-      //          childContentTupleFound = true;
-      //        }
-      //
-      //        // Check if this is the successor's content tuple.
-      //        if (contentTuple.node().equals(otherPcs.successor())) {
-      //          // There's an inconsistency if the successor's content tuple is already found.
-      //          if (successorContentTupleFound) {
-      //            inconsistentPcs.add(otherPcs);
-      //            break;
-      //          }
-      //          // Otherwise, mark the successor's content tuple as found.
-      //          successorContentTupleFound = true;
-      //        }
-      //      }
     }
 
     return Collections.unmodifiableSet(inconsistentPcs);
+  }
+
+  /**
+   * Get all content tuples related to the tree according to the change set.
+   *
+   * @param tree The tree to get content tuples for.
+   * @param changeSet The change set to search in.
+   * @return The set of content tuples related to the tree.
+   */
+  private Set<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
+    var contentTuples = new HashSet<ContentTuple>();
+
+    // Get each content tuple in the tree.
+    tree.preOrder()
+        .forEach(
+            node -> {
+              for (var contentTuple : changeSet.contentTupleSet) {
+                if (contentTuple.node().equals(node)) {
+                  contentTuples.add(contentTuple);
+                }
+              }
+            });
+
+    return Collections.unmodifiableSet(contentTuples);
+  }
+
+  /**
+   * Set the content tuples associated with the tree in the change set.
+   *
+   * @param tree The tree to set content tuples for.
+   * @param contents The content tuples to set.
+   * @param changeSet The change set to update the content tuples in.
+   */
+  private void setContentTuples(Tree tree, Set<ContentTuple> contents, ChangeSet changeSet) {
+    // Get each content tuple in the tree.
+    tree.preOrder()
+        .forEach(
+            node -> {
+              for (var contentTuple : contents) {
+                // If the content tuple is part of this tree, replace it in the change set.
+                if (contentTuple.node().equals(node)) {
+                  if (changeSet.contentTupleSet.removeIf(
+                      changeSetContentTuple -> changeSetContentTuple.node().equals(node))) {
+                    changeSet.contentTupleSet.add(contentTuple);
+                  } else {
+                    // This node's content tuple had to have come from somewhere.
+                    throw new IllegalStateException("Content tuple not found in change set.");
+                  }
+                }
+              }
+            });
   }
 
   /**
@@ -306,6 +348,37 @@ public class Merger {
         new Pcs(otherPcs.parent(), otherPcs.child(), otherPcs.successor(), Optional.of(pcs));
     mergeChangeSet.pcsSet.remove(otherPcs);
     mergeChangeSet.pcsSet.add(updatedOtherPcs);
+  }
+
+  private void hardContentInconsistency(Set<ContentTuple> contentTuples, ChangeSet mergeChangeSet) {
+    // In a three-way merge, there are exactly 2 inconsistencies: left and right.
+    if (contentTuples.size() != 2) {
+      for (var contentTuple : contentTuples) {
+        System.out.println(contentTuple);
+      }
+      throw new IllegalStateException(
+          "Content inconsistency should only have 2 content tuples. "
+              + contentTuples.size()
+              + " found.");
+    }
+
+    var contentTuplesList = new ArrayList<>(contentTuples);
+    var first = contentTuplesList.get(0);
+    var second = contentTuplesList.get(1);
+
+    // Mark the first content tuple as inconsistent with the second and replace the original from
+    // the change set.
+    var updatedFirstContentTuple =
+        new ContentTuple(first.node(), first.content(), Optional.of(second));
+    mergeChangeSet.contentTupleSet.remove(first);
+    mergeChangeSet.contentTupleSet.add(updatedFirstContentTuple);
+
+    // Mark the second content tuple as inconsistent with the first and replace the original from
+    // the change set.
+    var updatedSecondContentTuple =
+        new ContentTuple(second.node(), second.content(), Optional.of(first));
+    mergeChangeSet.contentTupleSet.remove(second);
+    mergeChangeSet.contentTupleSet.add(updatedSecondContentTuple);
   }
   // endregion
 }

@@ -1,6 +1,7 @@
 package org.kjy5.spork;
 
 import com.github.gumtreediff.tree.Tree;
+import java.util.Optional;
 
 /**
  * A Spork content tuple.
@@ -11,7 +12,19 @@ import com.github.gumtreediff.tree.Tree;
  * @param content The content associated with the node.
  * @author Kenneth Yang
  */
-public record ContentTuple(Tree node, String content) {
+public record ContentTuple(
+    Tree node, String content, Optional<ContentTuple> hardInConsistencyWith) {
+
+  /**
+   * Construct a content tuple on required fields.
+   *
+   * @param node The node.
+   * @param content The content associated with the node.
+   */
+  public ContentTuple(Tree node, String content) {
+    this(node, content, Optional.empty());
+  }
+
   /**
    * Check for equality.
    *
