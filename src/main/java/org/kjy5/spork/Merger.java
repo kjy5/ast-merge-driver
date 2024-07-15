@@ -108,7 +108,8 @@ public class Merger {
       Tree tree, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     var contentTuples = getContentTuples(tree, mergeChangeSet);
 
-    // Short-circuit if there are no content tuples (this tree is basically a single linked list).
+    // Short-circuit if there are one or less content tuple (this tree is basically a single linked
+    // list).
     if (contentTuples.size() <= 1) return;
 
     // Get all content tuples not in the base change set.
@@ -280,20 +281,9 @@ public class Merger {
    * @return The set of content tuples related to the tree.
    */
   private Set<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
-    var contentTuples = new HashSet<ContentTuple>();
-
-    // Get each content tuple in the tree.
-    tree.preOrder()
-        .forEach(
-            node -> {
-              for (var contentTuple : changeSet.contentTupleSet) {
-                if (contentTuple.node().equals(node)) {
-                  contentTuples.add(contentTuple);
-                }
-              }
-            });
-
-    return Collections.unmodifiableSet(contentTuples);
+    return changeSet.contentTupleSet.stream()
+        .filter(contentTuple -> contentTuple.node().equals(tree))
+        .collect(Collectors.toUnmodifiableSet());
   }
 
   /**
@@ -304,23 +294,12 @@ public class Merger {
    * @param changeSet The change set to update the content tuples in.
    */
   private void setContentTuples(Tree tree, Set<ContentTuple> contents, ChangeSet changeSet) {
-    // Get each content tuple in the tree.
-    tree.preOrder()
-        .forEach(
-            node -> {
-              for (var contentTuple : contents) {
-                // If the content tuple is part of this tree, replace it in the change set.
-                if (contentTuple.node().equals(node)) {
-                  if (changeSet.contentTupleSet.removeIf(
-                      changeSetContentTuple -> changeSetContentTuple.node().equals(node))) {
-                    changeSet.contentTupleSet.add(contentTuple);
-                  } else {
-                    // This node's content tuple had to have come from somewhere.
-                    throw new IllegalStateException("Content tuple not found in change set.");
-                  }
-                }
-              }
-            });
+    // Remove all content tuples associated with the tree (they're to be replaced).
+    changeSet.contentTupleSet.removeIf(contentTuple -> contentTuple.node().equals(tree));
+
+    // Filter for content tuples associated with the tree and add them to the change set.
+    changeSet.contentTupleSet.addAll(
+        contents.stream().filter(contentTuple -> contentTuple.node().equals(tree)).toList());
   }
 
   /**

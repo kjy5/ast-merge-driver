@@ -89,6 +89,5 @@ public class Main {
         new Merger(baseChangeSet, leftChangeSet, rightChangeSet).getMergedChangeSet();
     System.out.println(mergedChangeSet.pcsSet.size());
     // endregion
-
   }
 }
