@@ -103,9 +103,7 @@ public class Main {
     // endregion
 
     // region Rebuild AST from merged change set.
-    for (var pcs : mergedChangeSet.pcsSet) {
-      System.out.println(pcs);
-    }
+
     // endregion
   }
 }

@@ -35,6 +35,6 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInc
    */
   @Override
   public String toString() {
-    return "PCS(" + parent + ", " + child + ", " + successor + ')';
+    return "PCS(" + parent + ", " + child + ", " + successor + ", " + hardInconsistencyWith + ')';
   }
 }

@@ -39,6 +39,10 @@ public class Merger {
     mergePcsSet.addAll(leftChangeSet.pcsSet);
     mergePcsSet.addAll(rightChangeSet.pcsSet);
 
+    for (var pcs : mergePcsSet) {
+      System.out.println(pcs.hashCode() + ": " + pcs);
+    }
+
     // Union the three content tuples.
     var mergeContentTupleSet = new HashSet<>(baseChangeSet.contentTupleSet);
     mergeContentTupleSet.addAll(leftChangeSet.contentTupleSet);
