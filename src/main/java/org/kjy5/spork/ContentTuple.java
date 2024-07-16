@@ -25,20 +25,6 @@ public record ContentTuple(
     this(node, content, Optional.empty());
   }
 
-  /**
-   * Check for equality.
-   *
-   * @param other The reference object with which to compare.
-   * @return True if the content tuples are equal, false otherwise.
-   */
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) return true;
-    if (!(other instanceof ContentTuple contentTuple)) return false;
-    return node.equals(contentTuple.node)
-        && content.equals(contentTuple.content)
-        && hardInconsistencyWith.equals(contentTuple.hardInconsistencyWith);
-  }
 
   /**
    * Print the content tuple.

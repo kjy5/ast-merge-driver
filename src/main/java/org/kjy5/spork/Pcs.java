@@ -29,22 +29,6 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInc
   }
 
   /**
-   * Check for equality.
-   *
-   * @param other The reference object with which to compare.
-   * @return True if the PCS triples are equal, false otherwise.
-   */
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) return true;
-    if (!(other instanceof Pcs pcs)) return false;
-    return parent.equals(pcs.parent)
-        && child.equals(pcs.child)
-        && successor.equals(pcs.successor)
-        && hardInconsistencyWith.equals(pcs.hardInconsistencyWith);
-  }
-
-  /**
    * Print the PCS triple.
    *
    * @return A string representation of the PCS triple.
