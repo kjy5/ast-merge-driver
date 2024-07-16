@@ -8,6 +8,7 @@ import com.github.gumtreediff.tree.Tree;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.kjy5.parser.HashableTree;
 
 /**
  * Class representatives for a merge.
@@ -37,7 +38,13 @@ public class ClassRepresentatives {
       MappingStore baseToRightMapping,
       MappingStore leftToRightMapping) {
     // Base nodes are mapped to themselves.
-    baseTree.preOrder().forEach(node -> classRepresentativesMap.put(node, node));
+    baseTree
+        .preOrder()
+        .forEach(
+            node -> {
+              final var hashableNode = new HashableTree(node);
+              classRepresentativesMap.put(hashableNode, hashableNode);
+            });
 
     /*
      * Left nodes are mapped to base if a matching exists, otherwise they're mapped to themselves.
@@ -47,12 +54,13 @@ public class ClassRepresentatives {
         .forEach(
             node -> {
               final var matchedBaseNode = baseToLeftMapping.getSrcForDst(node);
+              final var hashableNode = new HashableTree(node);
               if (matchedBaseNode != null) {
                 // A matching exists, map to it.
-                classRepresentativesMap.put(node, matchedBaseNode);
+                classRepresentativesMap.put(hashableNode, new HashableTree(matchedBaseNode));
               } else {
                 // No matching exists, map to self.
-                classRepresentativesMap.put(node, node);
+                classRepresentativesMap.put(hashableNode, hashableNode);
               }
             });
 
@@ -66,23 +74,24 @@ public class ClassRepresentatives {
         .forEach(
             node -> {
               final var matchedBaseNode = baseToRightMapping.getSrcForDst(node);
+              final var hashableNode = new HashableTree(node);
               if (matchedBaseNode != null) {
                 // A matching exists, map to it.
-                classRepresentativesMap.put(node, matchedBaseNode);
+                classRepresentativesMap.put(hashableNode, new HashableTree(matchedBaseNode));
               } else {
                 // No base matching, try left.
                 final var matchedLeftNode = leftToRightMapping.getSrcForDst(node);
                 if (matchedLeftNode != null
                     && !baseToLeftMapping.isSrcMapped(matchedLeftNode)
                     && classRepresentativesMap
-                        .get(matchedLeftNode.getParent())
+                        .get(new HashableTree(matchedLeftNode.getParent()))
                         .equals(classRepresentativesMap.get(node.getParent()))) {
                   // A matching to left exists, left node is not matched to base, and parents of
                   // left and right nodes are matched to the same class representative.
-                  classRepresentativesMap.put(node, matchedLeftNode);
+                  classRepresentativesMap.put(hashableNode, new HashableTree(matchedLeftNode));
                 } else {
                   // No matching exists, map to self.
-                  classRepresentativesMap.put(node, node);
+                  classRepresentativesMap.put(hashableNode, hashableNode);
                 }
               }
             });

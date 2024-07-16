@@ -3,11 +3,10 @@
  */
 package org.kjy5.spork;
 
-import com.github.gumtreediff.tree.DefaultTree;
-import com.github.gumtreediff.tree.ImmutableTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.Type;
 import java.util.*;
+import org.kjy5.parser.HashableTree;
 
 /**
  * A Spork change set.
@@ -38,7 +37,7 @@ public class ChangeSet {
 
     // Initialize an empty content tuple and virtual root.
     var localContentTupleSet = new HashSet<ContentTuple>();
-    final var treeClassRepresentative = classRepresentativesMapping.get(tree);
+    final var treeClassRepresentative = classRepresentativesMapping.get(new HashableTree(tree));
     final var virtualRoot = makeVirtualRootFor(treeClassRepresentative);
     var localPcsSet =
         new HashSet<>(
@@ -127,22 +126,22 @@ public class ChangeSet {
 
   // region Helper methods.
   private Tree getClassRepresentative(Tree node) {
-    var classRepresentative = classRepresentativesMapping.get(node);
+    var classRepresentative = classRepresentativesMapping.get(new HashableTree(node));
     if (classRepresentative == null)
       throw new IllegalStateException("Class representative not found for node: " + node);
-    return classRepresentative;
+    return new HashableTree(classRepresentative);
   }
 
   private Tree makeVirtualRootFor(Tree child) {
-    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualRoot for " + child));
+    return new HashableTree(Type.NO_TYPE, "virtualRoot for " + child);
   }
 
   private Tree makeVirtualChildListStartFor(Tree root) {
-    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListStart for " + root));
+    return new HashableTree(Type.NO_TYPE, "virtualChildListStart for " + root);
   }
 
   private Tree makeVirtualChildListEndFor(Tree root) {
-    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListEnd for " + root));
+    return new HashableTree(Type.NO_TYPE, "virtualChildListEnd for " + root);
   }
   // endregion
 }
