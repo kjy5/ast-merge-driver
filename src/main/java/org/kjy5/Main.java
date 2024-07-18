@@ -5,6 +5,8 @@ package org.kjy5;
 
 import com.github.gumtreediff.client.Run;
 import com.github.gumtreediff.matchers.Matchers;
+import com.github.gumtreediff.tree.Tree;
+import java.util.LinkedList;
 import org.kjy5.parser.JavaParserGenerator;
 import org.kjy5.spork.ChangeSet;
 import org.kjy5.spork.ClassRepresentatives;
@@ -82,6 +84,12 @@ public class Main {
     final var rightChangeSet = new ChangeSet(rightTree, classRepresentatives);
     System.out.println("State\tPCSs\tContentTuples");
     System.out.println(
+        "Base\t" + baseChangeSet.pcsSet.size() + "\t\t" + baseChangeSet.contentTupleSet.size());
+    System.out.println(
+        "Left\t" + leftChangeSet.pcsSet.size() + "\t\t" + leftChangeSet.contentTupleSet.size());
+    System.out.println(
+        "Right\t" + rightChangeSet.pcsSet.size() + "\t\t" + rightChangeSet.contentTupleSet.size());
+    System.out.println(
         "Total\t"
             + (baseChangeSet.pcsSet.size()
                 + leftChangeSet.pcsSet.size()
@@ -103,9 +111,30 @@ public class Main {
     // endregion
 
     // region Rebuild AST from merged change set.
+    var maybeRootPcs =
+        mergedChangeSet.pcsSet.stream()
+            .filter(
+                pcs ->
+                    pcs.parent().getLabel().contains("virtualRoot")
+                        && pcs.child().getLabel().contains("virtualChildListStart"))
+            .findFirst();
+    if (maybeRootPcs.isPresent()) {
+      var rootTree = maybeRootPcs.get().successor();
+      var rebuiltTree = rootTree.deepCopy();
+      var children = new LinkedList<Tree>();
 
-    for (var pcs : mergedChangeSet.pcsSet) {
-      System.out.println(pcs);
+      // Find the first child.
+      var maybeFirstChildPcs =
+          mergedChangeSet.pcsSet.stream()
+              .filter(
+                  pcs ->
+                      pcs.parent().equals(rootTree)
+                          && pcs.child().getLabel().contains("virtualChildListStart"))
+              .findFirst();
+      if (maybeFirstChildPcs.isPresent()) {
+        var firstChild = maybeFirstChildPcs.get().successor();
+        children.add(firstChild);
+      }
     }
     // endregion
   }

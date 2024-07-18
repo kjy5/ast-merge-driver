@@ -53,6 +53,10 @@ public class Merger {
             + "\t\t"
             + this.mergedChangeSet.contentTupleSet.size());
 
+    for (var pcs : this.mergedChangeSet.pcsSet) {
+      System.out.println(pcs);
+    }
+
     // Handle inconsistencies.
     for (var pcs : new LinkedHashSet<>(this.mergedChangeSet.pcsSet)) {
       // TODO: Algorithm doesn't say so but we should skip if the PCS is already removed.
