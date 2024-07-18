@@ -35,12 +35,12 @@ public class Merger {
    */
   public Merger(ChangeSet baseChangeSet, ChangeSet leftChangeSet, ChangeSet rightChangeSet) {
     // Union the three PCSs.
-    var mergePcsSet = new HashSet<>(baseChangeSet.pcsSet);
+    var mergePcsSet = new LinkedHashSet<>(baseChangeSet.pcsSet);
     mergePcsSet.addAll(leftChangeSet.pcsSet);
     mergePcsSet.addAll(rightChangeSet.pcsSet);
 
     // Union the three content tuples.
-    var mergeContentTupleSet = new HashSet<>(baseChangeSet.contentTupleSet);
+    var mergeContentTupleSet = new LinkedHashSet<>(baseChangeSet.contentTupleSet);
     mergeContentTupleSet.addAll(leftChangeSet.contentTupleSet);
     mergeContentTupleSet.addAll(rightChangeSet.contentTupleSet);
 
@@ -54,7 +54,7 @@ public class Merger {
             + this.mergedChangeSet.contentTupleSet.size());
 
     // Handle inconsistencies.
-    for (var pcs : new HashSet<>(this.mergedChangeSet.pcsSet)) {
+    for (var pcs : new LinkedHashSet<>(this.mergedChangeSet.pcsSet)) {
       // TODO: Algorithm doesn't say so but we should skip if the PCS is already removed.
       if (!this.mergedChangeSet.pcsSet.contains(pcs)) continue;
 
@@ -146,7 +146,7 @@ public class Merger {
    * @return The set of inconsistent PCSs.
    */
   private Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
-    var inconsistentPcs = new HashSet<Pcs>();
+    var inconsistentPcs = new LinkedHashSet<Pcs>();
 
     // Setup markers for found criteria.
     Tree parentFoundParent = FAKE_TREE,

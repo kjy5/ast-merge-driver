@@ -6,7 +6,7 @@ package org.kjy5.spork;
 import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.tree.Tree;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.kjy5.parser.HashableTree;
 
@@ -18,7 +18,7 @@ import org.kjy5.parser.HashableTree;
  * @author Kenneth Yang
  */
 public class ClassRepresentatives {
-  private final Map<Tree, Tree> classRepresentativesMap = new HashMap<>();
+  private final Map<Tree, Tree> classRepresentativesMap = new LinkedHashMap<>();
 
   /**
    * Map class representatives for a merge.

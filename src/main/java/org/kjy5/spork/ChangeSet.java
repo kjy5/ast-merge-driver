@@ -36,11 +36,11 @@ public class ChangeSet {
     this.classRepresentativesMapping = classRepresentativesMapping;
 
     // Initialize an empty content tuple and virtual root.
-    var localContentTupleSet = new HashSet<ContentTuple>();
+    var localContentTupleSet = new LinkedHashSet<ContentTuple>();
     final var treeClassRepresentative = classRepresentativesMapping.get(new HashableTree(tree));
     final var virtualRoot = makeVirtualRootFor(treeClassRepresentative);
     var localPcsSet =
-        new HashSet<>(
+        new LinkedHashSet<>(
             Arrays.asList(
                 new Pcs(
                     virtualRoot,
