@@ -25,7 +25,6 @@ public record ContentTuple(
     this(node, content, Optional.empty());
   }
 
-
   /**
    * Print the content tuple.
    *

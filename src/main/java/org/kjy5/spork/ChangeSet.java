@@ -3,75 +3,99 @@
  */
 package org.kjy5.spork;
 
+import com.github.gumtreediff.tree.DefaultTree;
+import com.github.gumtreediff.tree.ImmutableTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.Type;
 import java.util.*;
-import org.kjy5.parser.HashableTree;
 
 /**
  * A Spork change set.
  *
  * @author Kenneth Yang
  */
-public class ChangeSet {
-  // region Fields.
-  public final Set<Pcs> pcsSet;
-  public final Set<ContentTuple> contentTupleSet;
-  // endregion
-
-  // region Internal properties.
-  private final Map<Tree, Tree> classRepresentativesMapping;
-
-  // endregion
-
-  // region Constructors.
+public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
+  // region Factory.
   /**
    * Create a Spork change set from a tree.
    *
    * @param tree The tree to create the change set from.
    * @param classRepresentativesMapping The mapping of nodes to class representatives.
    */
-  public ChangeSet(Tree tree, Map<Tree, Tree> classRepresentativesMapping) {
-    // Initialize class representatives.
-    this.classRepresentativesMapping = classRepresentativesMapping;
+  public static ChangeSet from(
+      Tree tree,
+      Map<Tree, Tree> classRepresentativesMapping,
+      Map<Tree, Tree> virtualNodeMapping,
+      Map<Tree, ChildListVirtualNodes> virtualChildListMarkersMapping) {
+    // Initialize an empty content tuple.
+    var wipContentTupleSet = new LinkedHashSet<ContentTuple>();
 
-    // Initialize an empty content tuple and virtual root.
-    var localContentTupleSet = new LinkedHashSet<ContentTuple>();
-    final var treeClassRepresentative = classRepresentativesMapping.get(new HashableTree(tree));
-    final var virtualRoot = makeVirtualRootFor(treeClassRepresentative);
-    var localPcsSet =
+    // Build root of PCS set.
+    final var rootClassRepresentative = classRepresentativesMapping.get(tree);
+
+    final Tree virtualRoot;
+    if (virtualNodeMapping.containsKey(rootClassRepresentative)) {
+      virtualRoot = virtualNodeMapping.get(rootClassRepresentative);
+    } else {
+      virtualRoot = makeVirtualRootFor(tree);
+      virtualNodeMapping.put(rootClassRepresentative, virtualRoot);
+    }
+
+    final ChildListVirtualNodes virtualRootChildListVirtualNodes;
+    if (virtualChildListMarkersMapping.containsKey(rootClassRepresentative)) {
+      virtualRootChildListVirtualNodes =
+          virtualChildListMarkersMapping.get(rootClassRepresentative);
+    } else {
+      virtualRootChildListVirtualNodes =
+          new ChildListVirtualNodes(
+              makeVirtualChildListStartFor(rootClassRepresentative),
+              makeVirtualChildListEndFor(rootClassRepresentative));
+      virtualChildListMarkersMapping.put(rootClassRepresentative, virtualRootChildListVirtualNodes);
+    }
+
+    var wipPcsSet =
         new LinkedHashSet<>(
             Arrays.asList(
                 new Pcs(
                     virtualRoot,
-                    makeVirtualChildListStartFor(virtualRoot),
-                    treeClassRepresentative),
+                    virtualRootChildListVirtualNodes.childListStart(),
+                    rootClassRepresentative),
                 new Pcs(
                     virtualRoot,
-                    treeClassRepresentative,
-                    makeVirtualChildListEndFor(virtualRoot))));
+                    rootClassRepresentative,
+                    virtualRootChildListVirtualNodes.childListEnd())));
 
     // Traverse the tree and build.
     tree.breadthFirst()
         .forEach(
             node -> {
               // Get class representative.
-              var classRepresentative = getClassRepresentative(node);
+              var classRepresentative = classRepresentativesMapping.get(node);
 
               // Add content tuple (if it has content).
               if (classRepresentative.hasLabel())
-                localContentTupleSet.add(
+                wipContentTupleSet.add(
                     new ContentTuple(classRepresentative, classRepresentative.getLabel()));
 
-              // TODO: are we supposed to look at node's children or the classRepresentative's
-              // children?
-              // Short-circuit if classRepresentative is root.
+              // Get or create child list virtual nodes.
+              final ChildListVirtualNodes childListVirtualNodes;
+              if (virtualChildListMarkersMapping.containsKey(classRepresentative)) {
+                childListVirtualNodes = virtualChildListMarkersMapping.get(classRepresentative);
+              } else {
+                childListVirtualNodes =
+                    new ChildListVirtualNodes(
+                        makeVirtualChildListStartFor(classRepresentative),
+                        makeVirtualChildListEndFor(classRepresentative));
+                virtualChildListMarkersMapping.put(classRepresentative, childListVirtualNodes);
+              }
+
+              // Short-circuit if classRepresentative is leaf.
               if (node.getChildren().isEmpty()) {
-                localPcsSet.add(
+                wipPcsSet.add(
                     new Pcs(
                         classRepresentative,
-                        makeVirtualChildListStartFor(classRepresentative),
-                        makeVirtualChildListEndFor(classRepresentative)));
+                        childListVirtualNodes.childListStart(),
+                        childListVirtualNodes.childListEnd()));
                 return;
               }
 
@@ -79,69 +103,53 @@ public class ChangeSet {
               // (i.e. parameters, thrown exceptions).
 
               // Start children list (add virtual start).
-              localPcsSet.add(
+              wipPcsSet.add(
                   new Pcs(
                       classRepresentative,
-                      makeVirtualChildListStartFor(classRepresentative),
-                      getClassRepresentative(node.getChild(0))));
+                      childListVirtualNodes.childListStart(),
+                      classRepresentativesMapping.get(node.getChild(0))));
 
               // Loop through children (except last one which needs virtual end).
               for (int i = 0; i < node.getChildren().size() - 1; i++) {
-                localPcsSet.add(
+                wipPcsSet.add(
                     new Pcs(
                         classRepresentative,
-                        getClassRepresentative(node.getChild(i)),
-                        getClassRepresentative(node.getChild(i + 1))));
+                        classRepresentativesMapping.get(node.getChild(i)),
+                        classRepresentativesMapping.get(node.getChild(i + 1))));
               }
 
               // End children list (add virtual end).
-              localPcsSet.add(
+              wipPcsSet.add(
                   new Pcs(
                       classRepresentative,
-                      getClassRepresentative(node.getChild(node.getChildren().size() - 1)),
-                      makeVirtualChildListEndFor(classRepresentative)));
+                      classRepresentativesMapping.get(node.getChild(node.getChildren().size() - 1)),
+                      childListVirtualNodes.childListEnd()));
             });
 
     // Set the final change set.
-    this.pcsSet = Collections.unmodifiableSet(localPcsSet);
-    this.contentTupleSet = Collections.unmodifiableSet(localContentTupleSet);
-  }
-
-  /**
-   * Basic constructor for a Spork change set.
-   *
-   * @param pcsSet PCS set to build the change set from.
-   * @param contentTupleSet Content tuple set to build the change set from.
-   */
-  public ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
-    // TODO: Revert back to immutable sets later (mutable now to follow algorithm better).
-    this.pcsSet = pcsSet;
-    this.contentTupleSet = contentTupleSet;
-
-    // Use empty class representatives mapping (it's not used).
-    this.classRepresentativesMapping = new HashMap<>();
+    return new ChangeSet(
+        Collections.unmodifiableSet(wipPcsSet), Collections.unmodifiableSet(wipContentTupleSet));
   }
 
   // endregion
 
   // region Helper methods.
-  private Tree getClassRepresentative(Tree node) {
-    var classRepresentative = classRepresentativesMapping.get(new HashableTree(node));
-    if (classRepresentative == null)
-      throw new IllegalStateException("Class representative not found for node: " + node);
-    return new HashableTree(classRepresentative);
+  private static Tree makeVirtualRootFor(Tree child) {
+    var virtualRoot = new DefaultTree(Type.NO_TYPE, "virtualRoot");
+    virtualRoot.setMetadata("child", child);
+    return new ImmutableTree(virtualRoot);
   }
 
-  private Tree makeVirtualRootFor(Tree child) {
-    return new HashableTree(Type.NO_TYPE, "virtualRoot for " + child);
+  private static Tree makeVirtualChildListStartFor(Tree root) {
+    var virtualChildListStart = new DefaultTree(Type.NO_TYPE, "virtualChildListStart");
+    virtualChildListStart.setMetadata("root", root);
+    return new ImmutableTree(virtualChildListStart);
   }
 
-  private Tree makeVirtualChildListStartFor(Tree root) {
-    return new HashableTree(Type.NO_TYPE, "virtualChildListStart for " + root);
-  }
-
-  private Tree makeVirtualChildListEndFor(Tree root) {
-    return new HashableTree(Type.NO_TYPE, "virtualChildListEnd for " + root);
+  private static Tree makeVirtualChildListEndFor(Tree root) {
+    var virtualChildListEnd = new DefaultTree(Type.NO_TYPE, "virtualChildListEnd");
+    virtualChildListEnd.setMetadata("root", root);
+    return new ImmutableTree(virtualChildListEnd);
   }
   // endregion
 }

@@ -35,32 +35,32 @@ public class Merger {
    */
   public Merger(ChangeSet baseChangeSet, ChangeSet leftChangeSet, ChangeSet rightChangeSet) {
     // Union the three PCSs.
-    var mergePcsSet = new LinkedHashSet<>(baseChangeSet.pcsSet);
-    mergePcsSet.addAll(leftChangeSet.pcsSet);
-    mergePcsSet.addAll(rightChangeSet.pcsSet);
+    var mergePcsSet = new LinkedHashSet<>(baseChangeSet.pcsSet());
+    mergePcsSet.addAll(leftChangeSet.pcsSet());
+    mergePcsSet.addAll(rightChangeSet.pcsSet());
 
     // Union the three content tuples.
-    var mergeContentTupleSet = new LinkedHashSet<>(baseChangeSet.contentTupleSet);
-    mergeContentTupleSet.addAll(leftChangeSet.contentTupleSet);
-    mergeContentTupleSet.addAll(rightChangeSet.contentTupleSet);
+    var mergeContentTupleSet = new LinkedHashSet<>(baseChangeSet.contentTupleSet());
+    mergeContentTupleSet.addAll(leftChangeSet.contentTupleSet());
+    mergeContentTupleSet.addAll(rightChangeSet.contentTupleSet());
 
     // Merged change set.
     this.mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
 
     System.out.println(
         "Raw\t\t"
-            + this.mergedChangeSet.pcsSet.size()
+            + this.mergedChangeSet.pcsSet().size()
             + "\t\t"
-            + this.mergedChangeSet.contentTupleSet.size());
+            + this.mergedChangeSet.contentTupleSet().size());
 
-    for (var pcs : this.mergedChangeSet.pcsSet) {
+    for (var pcs : this.mergedChangeSet.pcsSet()) {
       System.out.println(pcs);
     }
 
     // Handle inconsistencies.
-    for (var pcs : new LinkedHashSet<>(this.mergedChangeSet.pcsSet)) {
+    for (var pcs : new LinkedHashSet<>(this.mergedChangeSet.pcsSet())) {
       // TODO: Algorithm doesn't say so but we should skip if the PCS is already removed.
-      if (!this.mergedChangeSet.pcsSet.contains(pcs)) continue;
+      if (!this.mergedChangeSet.pcsSet().contains(pcs)) continue;
 
       removeSoftPcsInconsistencies(pcs, this.mergedChangeSet, baseChangeSet);
       handleContent(pcs, this.mergedChangeSet, baseChangeSet);
@@ -92,15 +92,15 @@ public class Merger {
     if (inconsistentPcs.isEmpty()) return;
 
     // Short-circuit if this pcs is in the base change set (remove it from the merge change set).
-    if (baseChangeSet.pcsSet.contains(pcs)) {
-      mergeChangeSet.pcsSet.remove(pcs);
+    if (baseChangeSet.pcsSet().contains(pcs)) {
+      mergeChangeSet.pcsSet().remove(pcs);
       return;
     }
 
     // Remove all inconsistent PCSs from the merge change set if they were in the base change set.
     for (var otherPcs : inconsistentPcs) {
-      if (baseChangeSet.pcsSet.contains(otherPcs)) {
-        mergeChangeSet.pcsSet.remove(otherPcs);
+      if (baseChangeSet.pcsSet().contains(otherPcs)) {
+        mergeChangeSet.pcsSet().remove(otherPcs);
       } else {
         // Otherwise, mark the PCS as a hard inconsistency.
         hardPcsInconsistency(pcs, otherPcs, mergeChangeSet);
@@ -125,7 +125,7 @@ public class Merger {
     // Get all content tuples not in the base change set.
     var nonBaseContentTuples =
         contentTuples.stream()
-            .filter(contentTuple -> !baseChangeSet.contentTupleSet.contains(contentTuple))
+            .filter(contentTuple -> !baseChangeSet.contentTupleSet().contains(contentTuple))
             .collect(Collectors.toUnmodifiableSet());
 
     // Update content tuples with non-base content tuples.
@@ -160,7 +160,7 @@ public class Merger {
     Tree successorFoundSuccessor = FAKE_TREE;
 
     // Loop through change set and find inconsistencies.
-    for (var otherPcs : changeSet.pcsSet) {
+    for (var otherPcs : changeSet.pcsSet()) {
       // Skip if it's the same PCS.
       if (pcs.equals(otherPcs)) continue;
 
@@ -291,7 +291,7 @@ public class Merger {
    * @return The set of content tuples related to the tree.
    */
   private Set<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
-    return changeSet.contentTupleSet.stream()
+    return changeSet.contentTupleSet().stream()
         .filter(contentTuple -> contentTuple.node().equals(tree))
         .collect(Collectors.toUnmodifiableSet());
   }
@@ -305,11 +305,13 @@ public class Merger {
    */
   private void setContentTuples(Tree tree, Set<ContentTuple> contents, ChangeSet changeSet) {
     // Remove all content tuples associated with the tree (they're to be replaced).
-    changeSet.contentTupleSet.removeIf(contentTuple -> contentTuple.node().equals(tree));
+    changeSet.contentTupleSet().removeIf(contentTuple -> contentTuple.node().equals(tree));
 
     // Filter for content tuples associated with the tree and add them to the change set.
-    changeSet.contentTupleSet.addAll(
-        contents.stream().filter(contentTuple -> contentTuple.node().equals(tree)).toList());
+    changeSet
+        .contentTupleSet()
+        .addAll(
+            contents.stream().filter(contentTuple -> contentTuple.node().equals(tree)).toList());
   }
 
   /**
@@ -325,8 +327,8 @@ public class Merger {
 
     // Mark the PCS as inconsistent with the other PCS and replace the original from the change set.
     var updatedPcs = new Pcs(pcs.parent(), pcs.child(), pcs.successor(), Optional.of(otherPcs));
-    mergeChangeSet.pcsSet.remove(pcs);
-    mergeChangeSet.pcsSet.add(updatedPcs);
+    mergeChangeSet.pcsSet().remove(pcs);
+    mergeChangeSet.pcsSet().add(updatedPcs);
 
     // Short-circuit if the other PCS is already inconsistent.
     if (otherPcs.hardInconsistencyWith().isPresent()) return;
@@ -335,8 +337,8 @@ public class Merger {
     // set.
     var updatedOtherPcs =
         new Pcs(otherPcs.parent(), otherPcs.child(), otherPcs.successor(), Optional.of(pcs));
-    mergeChangeSet.pcsSet.remove(otherPcs);
-    mergeChangeSet.pcsSet.add(updatedOtherPcs);
+    mergeChangeSet.pcsSet().remove(otherPcs);
+    mergeChangeSet.pcsSet().add(updatedOtherPcs);
   }
 
   private void hardContentInconsistency(Set<ContentTuple> contentTuples, ChangeSet mergeChangeSet) {
@@ -359,15 +361,15 @@ public class Merger {
     // the change set.
     var updatedFirstContentTuple =
         new ContentTuple(first.node(), first.content(), Optional.of(second));
-    mergeChangeSet.contentTupleSet.remove(first);
-    mergeChangeSet.contentTupleSet.add(updatedFirstContentTuple);
+    mergeChangeSet.contentTupleSet().remove(first);
+    mergeChangeSet.contentTupleSet().add(updatedFirstContentTuple);
 
     // Mark the second content tuple as inconsistent with the first and replace the original from
     // the change set.
     var updatedSecondContentTuple =
         new ContentTuple(second.node(), second.content(), Optional.of(first));
-    mergeChangeSet.contentTupleSet.remove(second);
-    mergeChangeSet.contentTupleSet.add(updatedSecondContentTuple);
+    mergeChangeSet.contentTupleSet().remove(second);
+    mergeChangeSet.contentTupleSet().add(updatedSecondContentTuple);
   }
   // endregion
 }

@@ -8,7 +8,9 @@ import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import org.kjy5.spork.ChangeSet;
+import org.kjy5.spork.ChildListVirtualNodes;
 import org.kjy5.spork.ClassRepresentatives;
 
 /**
@@ -83,25 +85,39 @@ public class Main {
     // endregion
 
     // region Create change sets (PCS and content tuples).
-    final var baseChangeSet = new ChangeSet(baseTree, classRepresentatives);
-    final var leftChangeSet = new ChangeSet(leftTree, classRepresentatives);
-    final var rightChangeSet = new ChangeSet(rightTree, classRepresentatives);
+
+    // Virtual node mappings.
+    var virtualRootMapping = new LinkedHashMap<Tree, Tree>();
+    var ChildListVirtualNodesMapping = new LinkedHashMap<Tree, ChildListVirtualNodes>();
+
+    final var baseChangeSet =
+        ChangeSet.from(
+            baseTree, classRepresentatives, virtualRootMapping, ChildListVirtualNodesMapping);
+    final var leftChangeSet =
+        ChangeSet.from(
+            leftTree, classRepresentatives, virtualRootMapping, ChildListVirtualNodesMapping);
+    final var rightChangeSet =
+        ChangeSet.from(
+            rightTree, classRepresentatives, virtualRootMapping, ChildListVirtualNodesMapping);
     System.out.println("State\tPCSs\tContentTuples");
     System.out.println(
-        "Base\t" + baseChangeSet.pcsSet.size() + "\t\t" + baseChangeSet.contentTupleSet.size());
+        "Base\t" + baseChangeSet.pcsSet().size() + "\t\t" + baseChangeSet.contentTupleSet().size());
     System.out.println(
-        "Left\t" + leftChangeSet.pcsSet.size() + "\t\t" + leftChangeSet.contentTupleSet.size());
+        "Left\t" + leftChangeSet.pcsSet().size() + "\t\t" + leftChangeSet.contentTupleSet().size());
     System.out.println(
-        "Right\t" + rightChangeSet.pcsSet.size() + "\t\t" + rightChangeSet.contentTupleSet.size());
+        "Right\t"
+            + rightChangeSet.pcsSet().size()
+            + "\t\t"
+            + rightChangeSet.contentTupleSet().size());
     System.out.println(
         "Total\t"
-            + (baseChangeSet.pcsSet.size()
-                + leftChangeSet.pcsSet.size()
-                + rightChangeSet.pcsSet.size())
+            + (baseChangeSet.pcsSet().size()
+                + leftChangeSet.pcsSet().size()
+                + rightChangeSet.pcsSet().size())
             + "\t\t"
-            + (baseChangeSet.contentTupleSet.size()
-                + leftChangeSet.contentTupleSet.size()
-                + rightChangeSet.contentTupleSet.size()));
+            + (baseChangeSet.contentTupleSet().size()
+                + leftChangeSet.contentTupleSet().size()
+                + rightChangeSet.contentTupleSet().size()));
     // endregion
     //
     //    // region Merge.
