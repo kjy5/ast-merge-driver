@@ -25,8 +25,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   public static ChangeSet from(
       Tree tree,
       Map<Tree, Tree> classRepresentativesMapping,
-      Map<Tree, Tree> virtualNodeMapping,
-      Map<Tree, ChildListVirtualNodes> virtualChildListMarkersMapping) {
+      Map<Tree, Tree> virtualRootMapping,
+      Map<Tree, ChildListVirtualNodes> childListVirtualNodesMapping) {
     // Initialize an empty content tuple.
     var wipContentTupleSet = new LinkedHashSet<ContentTuple>();
 
@@ -34,23 +34,21 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     final var rootClassRepresentative = classRepresentativesMapping.get(tree);
 
     final Tree virtualRoot;
-    if (virtualNodeMapping.containsKey(rootClassRepresentative)) {
-      virtualRoot = virtualNodeMapping.get(rootClassRepresentative);
+    if (virtualRootMapping.containsKey(rootClassRepresentative)) {
+      virtualRoot = virtualRootMapping.get(rootClassRepresentative);
     } else {
-      virtualRoot = makeVirtualRootFor(tree);
-      virtualNodeMapping.put(rootClassRepresentative, virtualRoot);
+      virtualRoot = makeVirtualRootFor(rootClassRepresentative);
+      virtualRootMapping.put(rootClassRepresentative, virtualRoot);
     }
 
     final ChildListVirtualNodes virtualRootChildListVirtualNodes;
-    if (virtualChildListMarkersMapping.containsKey(rootClassRepresentative)) {
-      virtualRootChildListVirtualNodes =
-          virtualChildListMarkersMapping.get(rootClassRepresentative);
+    if (childListVirtualNodesMapping.containsKey(virtualRoot)) {
+      virtualRootChildListVirtualNodes = childListVirtualNodesMapping.get(virtualRoot);
     } else {
       virtualRootChildListVirtualNodes =
           new ChildListVirtualNodes(
-              makeVirtualChildListStartFor(rootClassRepresentative),
-              makeVirtualChildListEndFor(rootClassRepresentative));
-      virtualChildListMarkersMapping.put(rootClassRepresentative, virtualRootChildListVirtualNodes);
+              makeVirtualChildListStartFor(virtualRoot), makeVirtualChildListEndFor(virtualRoot));
+      childListVirtualNodesMapping.put(virtualRoot, virtualRootChildListVirtualNodes);
     }
 
     var wipPcsSet =
@@ -79,14 +77,14 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
 
               // Get or create child list virtual nodes.
               final ChildListVirtualNodes childListVirtualNodes;
-              if (virtualChildListMarkersMapping.containsKey(classRepresentative)) {
-                childListVirtualNodes = virtualChildListMarkersMapping.get(classRepresentative);
+              if (childListVirtualNodesMapping.containsKey(classRepresentative)) {
+                childListVirtualNodes = childListVirtualNodesMapping.get(classRepresentative);
               } else {
                 childListVirtualNodes =
                     new ChildListVirtualNodes(
                         makeVirtualChildListStartFor(classRepresentative),
                         makeVirtualChildListEndFor(classRepresentative));
-                virtualChildListMarkersMapping.put(classRepresentative, childListVirtualNodes);
+                childListVirtualNodesMapping.put(classRepresentative, childListVirtualNodes);
               }
 
               // Short-circuit if classRepresentative is leaf.

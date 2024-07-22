@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class Merger {
   // region Constants.
-  private static final Tree FAKE_TREE = new FakeTree();
+  private static final Tree NULL_TREE = new FakeTree();
   // endregion
 
   // region Fields.
@@ -52,10 +52,6 @@ public class Merger {
             + this.mergedChangeSet.pcsSet().size()
             + "\t\t"
             + this.mergedChangeSet.contentTupleSet().size());
-
-    for (var pcs : this.mergedChangeSet.pcsSet()) {
-      System.out.println(pcs);
-    }
 
     // Handle inconsistencies.
     for (var pcs : new LinkedHashSet<>(this.mergedChangeSet.pcsSet())) {
@@ -153,16 +149,16 @@ public class Merger {
     var inconsistentPcs = new LinkedHashSet<Pcs>();
 
     // Setup markers for found criteria.
-    Tree parentFoundParent = FAKE_TREE,
-        parentFoundPredecessor = FAKE_TREE,
-        parentFoundSuccessor = FAKE_TREE;
-    Tree childFoundPredecessor = FAKE_TREE;
-    Tree successorFoundSuccessor = FAKE_TREE;
+    Tree parentFoundParent = NULL_TREE,
+        parentFoundPredecessor = NULL_TREE,
+        parentFoundSuccessor = NULL_TREE;
+    Tree childFoundPredecessor = NULL_TREE;
+    Tree successorFoundSuccessor = NULL_TREE;
 
     // Loop through change set and find inconsistencies.
     for (var otherPcs : changeSet.pcsSet()) {
       // Skip if it's the same PCS.
-      if (pcs.equals(otherPcs)) continue;
+      if (pcs == otherPcs) continue;
 
       // Skip if it's already considered inconsistent.
       if (inconsistentPcs.contains(otherPcs)) continue;
@@ -171,12 +167,12 @@ public class Merger {
 
       // If the parent is a child or successor, ensure that the parent is the same as the found one
       // (or initialize it).
-      if (otherPcs.child().equals(pcs.parent()) || otherPcs.successor().equals(pcs.parent())) {
+      if (pcs.parent() == otherPcs.child() || pcs.parent() == otherPcs.successor()) {
         // Initialize found parent if not initialized.
-        if (parentFoundParent.equals(FAKE_TREE)) parentFoundParent = otherPcs.parent();
+        if (parentFoundParent == NULL_TREE) parentFoundParent = otherPcs.parent();
 
-        // There's an inconsistency if this is a different parent.
-        else if (!parentFoundParent.equals(otherPcs.parent())) {
+        // There's an inconsistency if this is a different parent than what was found.
+        else if (parentFoundParent != otherPcs.parent()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -184,12 +180,12 @@ public class Merger {
 
       // If the parent node is a successor, ensure that the predecessor is the same as the found one
       // (or initialize it).
-      if (otherPcs.successor().equals(pcs.parent())) {
+      if (pcs.parent() == otherPcs.successor()) {
         // Initialize found predecessor if not initialized.
-        if (parentFoundPredecessor.equals(FAKE_TREE)) parentFoundPredecessor = otherPcs.child();
+        if (parentFoundPredecessor == NULL_TREE) parentFoundPredecessor = otherPcs.child();
 
         // There's an inconsistency if this is a different predecessor.
-        else if (!parentFoundPredecessor.equals(otherPcs.child())) {
+        else if (parentFoundPredecessor != otherPcs.child()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -197,12 +193,12 @@ public class Merger {
 
       // If the parent node is a child, ensure that the successor is the same as the found one (or
       // initialize it).
-      if (otherPcs.child().equals(pcs.parent())) {
+      if (pcs.parent() == otherPcs.child()) {
         // Initialize found successor if not initialized.
-        if (parentFoundSuccessor.equals(FAKE_TREE)) parentFoundSuccessor = otherPcs.successor();
+        if (parentFoundSuccessor == NULL_TREE) parentFoundSuccessor = otherPcs.successor();
 
         // There's an inconsistency if this is a different successor.
-        else if (!parentFoundSuccessor.equals(otherPcs.successor())) {
+        else if (parentFoundSuccessor != otherPcs.successor()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -212,9 +208,9 @@ public class Merger {
 
       // If the child is a child or successor, ensure that the parent is the same as the current
       // one.
-      if (otherPcs.child().equals(pcs.child()) || otherPcs.successor().equals(pcs.child())) {
+      if (pcs.child() == otherPcs.child() || pcs.child() == otherPcs.successor()) {
         // There's an inconsistency if this is a different parent.
-        if (!otherPcs.parent().equals(pcs.parent())) {
+        if (otherPcs.parent() != pcs.parent()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -222,12 +218,12 @@ public class Merger {
 
       // If the child is a successor, ensure that the predecessor is the same as the found one (or
       // initialize it).
-      if (otherPcs.successor().equals(pcs.child())) {
+      if (pcs.child() == otherPcs.successor()) {
         // Initialize found predecessor if not initialized.
-        if (childFoundPredecessor.equals(FAKE_TREE)) childFoundPredecessor = otherPcs.child();
+        if (childFoundPredecessor == NULL_TREE) childFoundPredecessor = otherPcs.child();
 
         // There's an inconsistency if this is a different predecessor.
-        else if (!childFoundPredecessor.equals(otherPcs.child())) {
+        else if (childFoundPredecessor != otherPcs.child()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -235,9 +231,9 @@ public class Merger {
 
       // TODO: Cases might be redundant. There should only be one PCS where the child is the child.
       // If the child is a child, ensure that the successor is the same as the current one.
-      if (otherPcs.child().equals(pcs.child())) {
+      if (pcs.child() == otherPcs.child()) {
         // There's an inconsistency if this is a different successor.
-        if (!otherPcs.successor().equals(pcs.successor())) {
+        if (otherPcs.successor() != pcs.successor()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -247,10 +243,9 @@ public class Merger {
 
       // If the successor is a child or successor, ensure that the parent is the same as the current
       // one.
-      if (otherPcs.child().equals(pcs.successor())
-          || otherPcs.successor().equals(pcs.successor())) {
+      if (pcs.successor() == otherPcs.child() || pcs.successor() == otherPcs.successor()) {
         // There's an inconsistency if this is a different parent.
-        if (!otherPcs.parent().equals(pcs.parent())) {
+        if (otherPcs.parent() != pcs.parent()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -258,9 +253,9 @@ public class Merger {
 
       // If the successor is a successor, ensure that the predecessor is the same as the current
       // one.
-      if (otherPcs.successor().equals(pcs.successor())) {
+      if (otherPcs.successor() == pcs.successor()) {
         // There's an inconsistency if this is a different predecessor.
-        if (!otherPcs.child().equals(pcs.child())) {
+        if (otherPcs.child() != pcs.child()) {
           inconsistentPcs.add(otherPcs);
           continue;
         }
@@ -268,13 +263,12 @@ public class Merger {
 
       // If the successor is a child, ensure that the successor is the same as the found one (or
       // initialize it).
-      if (otherPcs.child().equals(pcs.successor())) {
+      if (pcs.successor() == otherPcs.child()) {
         // Initialize found successor if not initialized.
-        if (successorFoundSuccessor.equals(FAKE_TREE))
-          successorFoundSuccessor = otherPcs.successor();
+        if (successorFoundSuccessor == NULL_TREE) successorFoundSuccessor = otherPcs.successor();
 
         // There's an inconsistency if this is a different successor.
-        else if (!successorFoundSuccessor.equals(otherPcs.successor())) {
+        else if (successorFoundSuccessor != otherPcs.successor()) {
           inconsistentPcs.add(otherPcs);
         }
       }
