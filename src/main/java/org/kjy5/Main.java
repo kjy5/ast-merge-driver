@@ -8,10 +8,8 @@ import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
-import java.util.LinkedList;
 import org.kjy5.spork.ChangeSet;
 import org.kjy5.spork.ClassRepresentatives;
-import org.kjy5.spork.Merger;
 
 /**
  * Main class for the merge driver.
@@ -54,7 +52,7 @@ public class Main {
     final var javaParserGenerator = new JavaParserGenerator();
 
     // Create parsings.
-    Tree baseTree, leftTree, rightTree;
+    final Tree baseTree, leftTree, rightTree;
     try {
       baseTree = javaParserGenerator.generateFrom().file(fileBasePath).getRoot();
       leftTree = javaParserGenerator.generateFrom().file(fileLeftPath).getRoot();
@@ -105,43 +103,43 @@ public class Main {
                 + leftChangeSet.contentTupleSet.size()
                 + rightChangeSet.contentTupleSet.size()));
     // endregion
-
-    // region Merge.
-    final var mergedChangeSet =
-        new Merger(baseChangeSet, leftChangeSet, rightChangeSet).getMergedChangeSet();
-    System.out.println(
-        "Merged\t"
-            + mergedChangeSet.pcsSet.size()
-            + "\t\t"
-            + mergedChangeSet.contentTupleSet.size());
-    // endregion
-
-    // region Rebuild AST from merged change set.
-    var maybeRootPcs =
-        mergedChangeSet.pcsSet.stream()
-            .filter(
-                pcs ->
-                    pcs.parent().getLabel().contains("virtualRoot")
-                        && pcs.child().getLabel().contains("virtualChildListStart"))
-            .findFirst();
-    if (maybeRootPcs.isPresent()) {
-      var rootTree = maybeRootPcs.get().successor();
-      var rebuiltTree = rootTree.deepCopy();
-      var children = new LinkedList<Tree>();
-
-      // Find the first child.
-      var maybeFirstChildPcs =
-          mergedChangeSet.pcsSet.stream()
-              .filter(
-                  pcs ->
-                      pcs.parent().equals(rootTree)
-                          && pcs.child().getLabel().contains("virtualChildListStart"))
-              .findFirst();
-      if (maybeFirstChildPcs.isPresent()) {
-        var firstChild = maybeFirstChildPcs.get().successor();
-        children.add(firstChild);
-      }
-    }
+    //
+    //    // region Merge.
+    //    final var mergedChangeSet =
+    //        new Merger(baseChangeSet, leftChangeSet, rightChangeSet).getMergedChangeSet();
+    //    System.out.println(
+    //        "Merged\t"
+    //            + mergedChangeSet.pcsSet.size()
+    //            + "\t\t"
+    //            + mergedChangeSet.contentTupleSet.size());
+    //    // endregion
+    //
+    //    // region Rebuild AST from merged change set.
+    //    var maybeRootPcs =
+    //        mergedChangeSet.pcsSet.stream()
+    //            .filter(
+    //                pcs ->
+    //                    pcs.parent().getLabel().contains("virtualRoot")
+    //                        && pcs.child().getLabel().contains("virtualChildListStart"))
+    //            .findFirst();
+    //    if (maybeRootPcs.isPresent()) {
+    //      var rootTree = maybeRootPcs.get().successor();
+    //      var rebuiltTree = rootTree.deepCopy();
+    //      var children = new LinkedList<Tree>();
+    //
+    //      // Find the first child.
+    //      var maybeFirstChildPcs =
+    //          mergedChangeSet.pcsSet.stream()
+    //              .filter(
+    //                  pcs ->
+    //                      pcs.parent().equals(rootTree)
+    //                          && pcs.child().getLabel().contains("virtualChildListStart"))
+    //              .findFirst();
+    //      if (maybeFirstChildPcs.isPresent()) {
+    //        var firstChild = maybeFirstChildPcs.get().successor();
+    //        children.add(firstChild);
+    //      }
+    //    }
     // endregion
   }
 }
