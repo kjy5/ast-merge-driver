@@ -4,10 +4,11 @@
 package org.kjy5;
 
 import com.github.gumtreediff.client.Run;
+import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
+import java.io.IOException;
 import java.util.LinkedList;
-import org.kjy5.parser.JavaParserGenerator;
 import org.kjy5.spork.ChangeSet;
 import org.kjy5.spork.ClassRepresentatives;
 import org.kjy5.spork.Merger;
@@ -53,9 +54,14 @@ public class Main {
     final var javaParserGenerator = new JavaParserGenerator();
 
     // Create parsings.
-    final var baseTree = javaParserGenerator.ParseFileIntoTree(fileBasePath);
-    final var leftTree = javaParserGenerator.ParseFileIntoTree(fileLeftPath);
-    final var rightTree = javaParserGenerator.ParseFileIntoTree(fileRightPath);
+    Tree baseTree, leftTree, rightTree;
+    try {
+      baseTree = javaParserGenerator.generateFrom().file(fileBasePath).getRoot();
+      leftTree = javaParserGenerator.generateFrom().file(fileLeftPath).getRoot();
+      rightTree = javaParserGenerator.generateFrom().file(fileRightPath).getRoot();
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to read source code: " + e);
+    }
 
     // TODO: Consider mapping from left/right to base to better follow class representative logic.
     // Match the trees.

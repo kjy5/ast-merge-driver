@@ -19,13 +19,11 @@ application {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    
-    // GumTree Diff.
+
+    // GumTree Diff + JavaParser client.
     implementation 'com.github.gumtreediff:client:4.0.0-beta2'
     implementation 'com.github.gumtreediff:core:4.0.0-beta2'
-    
-    // JavaParser.
-    implementation 'com.github.javaparser:javaparser-core:3.26.1'
+    implementation 'com.github.gumtreediff:gen.javaparser:4.0.0-beta2'
 }
 
 test {
