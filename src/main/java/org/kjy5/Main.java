@@ -9,7 +9,6 @@ import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import org.kjy5.spork.ChangeSet;
 import org.kjy5.spork.ChildListVirtualNodes;
 import org.kjy5.spork.ClassRepresentatives;
@@ -130,35 +129,12 @@ public class Main {
             + mergedChangeSet.pcsSet().size()
             + "\t\t"
             + mergedChangeSet.contentTupleSet().size());
-    //    mergedChangeSet.pcsSet().forEach(System.out::println);
     // endregion
 
     // region Rebuild AST from merged change set.
-    var maybeRootPcs =
-        mergedChangeSet.pcsSet().stream()
-            .filter(
-                pcs ->
-                    pcs.parent().getLabel().contains("virtualRoot")
-                        && pcs.child().getLabel().contains("virtualChildListStart"))
-            .findFirst();
-    if (maybeRootPcs.isPresent()) {
-      var rootTree = maybeRootPcs.get().successor();
-      var rebuiltTree = rootTree.deepCopy();
-      var children = new LinkedList<Tree>();
+    final var mergedTree = mergedChangeSet.toTree();
+    mergedTree.preOrder().forEach(System.out::println);
 
-      // Find the first child.
-      var maybeFirstChildPcs =
-          mergedChangeSet.pcsSet().stream()
-              .filter(
-                  pcs ->
-                      pcs.parent().equals(rootTree)
-                          && pcs.child().getLabel().contains("virtualChildListStart"))
-              .findFirst();
-      if (maybeFirstChildPcs.isPresent()) {
-        var firstChild = maybeFirstChildPcs.get().successor();
-        children.add(firstChild);
-      }
-    }
     // endregion
   }
 }

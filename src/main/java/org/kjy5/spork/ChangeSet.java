@@ -37,7 +37,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     if (virtualRootMapping.containsKey(rootClassRepresentative)) {
       virtualRoot = virtualRootMapping.get(rootClassRepresentative);
     } else {
-      virtualRoot = makeVirtualRootFor(rootClassRepresentative);
+      virtualRoot = makeVirtualRoot();
       virtualRootMapping.put(rootClassRepresentative, virtualRoot);
     }
 
@@ -46,8 +46,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
       virtualRootChildListVirtualNodes = childListVirtualNodesMapping.get(virtualRoot);
     } else {
       virtualRootChildListVirtualNodes =
-          new ChildListVirtualNodes(
-              makeVirtualChildListStartFor(virtualRoot), makeVirtualChildListEndFor(virtualRoot));
+          new ChildListVirtualNodes(makeVirtualChildListStart(), makeVirtualChildListEnd());
       childListVirtualNodesMapping.put(virtualRoot, virtualRootChildListVirtualNodes);
     }
 
@@ -82,8 +81,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
               } else {
                 childListVirtualNodes =
                     new ChildListVirtualNodes(
-                        makeVirtualChildListStartFor(classRepresentative),
-                        makeVirtualChildListEndFor(classRepresentative));
+                        makeVirtualChildListStart(), makeVirtualChildListEnd());
                 childListVirtualNodesMapping.put(classRepresentative, childListVirtualNodes);
               }
 
@@ -131,23 +129,102 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
 
   // endregion
 
-  // region Helper methods.
-  private static Tree makeVirtualRootFor(Tree child) {
-    var virtualRoot = new DefaultTree(Type.NO_TYPE, "virtualRoot");
-    virtualRoot.setMetadata("child", child);
-    return new ImmutableTree(virtualRoot);
+  // region Virtual node factories.
+  private static Tree makeVirtualRoot() {
+    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualRoot"));
   }
 
-  private static Tree makeVirtualChildListStartFor(Tree root) {
-    var virtualChildListStart = new DefaultTree(Type.NO_TYPE, "virtualChildListStart");
-    virtualChildListStart.setMetadata("root", root);
-    return new ImmutableTree(virtualChildListStart);
+  private static Tree makeVirtualChildListStart() {
+    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListStart"));
   }
 
-  private static Tree makeVirtualChildListEndFor(Tree root) {
-    var virtualChildListEnd = new DefaultTree(Type.NO_TYPE, "virtualChildListEnd");
-    virtualChildListEnd.setMetadata("root", root);
-    return new ImmutableTree(virtualChildListEnd);
+  private static Tree makeVirtualChildListEnd() {
+    return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListEnd"));
+  }
+
+  // endregion
+
+  // region Tree conversion methods.
+  /**
+   * Convert this change set to an AST.
+   *
+   * @return The corresponding AST (as a GumTree Tree).
+   */
+  public Tree toTree() {
+    // Find root.
+    var maybeRootPcs =
+        pcsSet.stream()
+            .filter(
+                pcs ->
+                    pcs.parent().getLabel().equals("virtualRoot")
+                        && pcs.child().getLabel().equals("virtualChildListStart"))
+            .findFirst();
+    if (maybeRootPcs.isEmpty()) {
+      throw new RuntimeException("Unable to find root in merged change set.");
+    }
+
+    // Rebuild the tree.
+    return toTree(maybeRootPcs.get().successor());
+  }
+
+  private Tree toTree(Tree child) {
+    var rebuiltNode = child.deepCopy();
+
+    // Set the content of the rebuilt tree.
+    contentTupleSet.stream()
+        .filter(contentTuple -> contentTuple.node() == child)
+        .findFirst()
+        .ifPresent(contentTuple -> rebuiltNode.setLabel(contentTuple.content()));
+
+    // Set children of the rebuilt tree.
+    var children = new LinkedList<Tree>();
+
+    // Find the first child.
+    var maybeFirstChildPcs =
+        pcsSet.stream()
+            .filter(
+                pcs ->
+                    pcs.parent() == child && pcs.child().getLabel().equals("virtualChildListStart"))
+            .findFirst();
+
+    // Short-circuit if first child is not found.
+    if (maybeFirstChildPcs.isEmpty()) {
+      throw new RuntimeException(
+          "Unable to find first child of " + child + " in merged change set.");
+    }
+    var currentChild = maybeFirstChildPcs.get().successor();
+
+    // Ensure there is an end node.
+    if (pcsSet.stream()
+        .noneMatch(
+            pcs ->
+                pcs.parent() == child
+                    && pcs.successor().getLabel().equals("virtualChildListEnd"))) {
+      throw new RuntimeException("Unable to find end node of " + child + " in merged change set.");
+    }
+
+    // Iterate through children.
+    while (!currentChild.getLabel().equals("virtualChildListEnd")) {
+      // Recuse add this child to the list.
+      children.add(toTree(currentChild));
+
+      // Get next child.
+      var currentScopeChild = currentChild;
+      var maybeNextChildPcs =
+          pcsSet.stream()
+              .filter(pcs -> pcs.parent() == child && pcs.child() == currentScopeChild)
+              .findFirst();
+      if (maybeNextChildPcs.isEmpty()) {
+        throw new RuntimeException(
+            "Unable to find next child of " + currentChild + " in merged change set.");
+      }
+      currentChild = maybeNextChildPcs.get().successor();
+    }
+
+    // Set children of the rebuilt tree.
+    rebuiltNode.setChildren(children);
+
+    return rebuiltNode;
   }
   // endregion
 }
