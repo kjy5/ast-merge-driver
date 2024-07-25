@@ -7,7 +7,9 @@ import com.github.gumtreediff.client.Run;
 import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.LinkedHashMap;
 import org.kjy5.spork.*;
 
@@ -24,7 +26,7 @@ public class Main {
   private static final String BASE_FILE_PATH = "/file_base";
   private static final String LEFT_FILE_PATH = "/file_left";
   private static final String RIGHT_FILE_PATH = "/file_right";
-  //  private static final String MERGED_FILE_PATH = "/file_merged";
+  private static final String MERGED_FILE_PATH = "/file_merged";
   private static final String JAVA_FILE_EXTENSION = ".java";
 
   // endregion
@@ -44,8 +46,7 @@ public class Main {
     final var fileBasePath = ASSETS_FOLDER_PATH + folder + BASE_FILE_PATH + JAVA_FILE_EXTENSION;
     final var fileLeftPath = ASSETS_FOLDER_PATH + folder + LEFT_FILE_PATH + JAVA_FILE_EXTENSION;
     final var fileRightPath = ASSETS_FOLDER_PATH + folder + RIGHT_FILE_PATH + JAVA_FILE_EXTENSION;
-    //    final var fileMergedPath = ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH +
-    // JAVA_FILE_EXTENSION;
+    final var fileMergedPath = ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH + JAVA_FILE_EXTENSION;
     // endregion
 
     // region Create matching between branches.
@@ -135,8 +136,45 @@ public class Main {
 
     // region Rebuild AST from merged change set.
     final var mergedTree = mergedChangeSet.toTree();
-    mergedTree.preOrder().forEach(System.out::println);
+    // endregion
 
+    // region Write merged tree to file.
+
+    // Create output buffer with compilation unit length (may need expanding later).
+    var mergedBuffer = new byte[mergedTree.getLength()];
+
+    // Read from merged tree.
+    for (var node : mergedTree.preOrder()) {
+      try {
+        // Open file to read from.
+        var file = new RandomAccessFile(node.getMetadata("src").toString(), "r");
+        file.seek(node.getPos());
+
+        // Check if output buffer is large enough.
+        if (mergedBuffer.length < node.getPos() + node.getLength()) {
+          // Expand output buffer.
+          var newOutputBuffer = new byte[node.getPos() + node.getLength()];
+          System.arraycopy(mergedBuffer, 0, newOutputBuffer, 0, mergedBuffer.length);
+          mergedBuffer = newOutputBuffer;
+        }
+
+        // Read from file in output buffer.
+        file.read(mergedBuffer, node.getPos(), node.getLength());
+
+        file.close();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    // Write to file.
+    try {
+      var mergedFile = new FileOutputStream(fileMergedPath);
+      mergedFile.write(mergedBuffer);
+      mergedFile.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     // endregion
   }
 }

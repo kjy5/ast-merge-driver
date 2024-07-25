@@ -170,6 +170,11 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   private Tree toTree(Tree child) {
     var rebuiltNode = child.deepCopy();
 
+    // Copy metadata of the rebuilt tree.
+    child
+        .getMetadata()
+        .forEachRemaining(entry -> rebuiltNode.setMetadata(entry.getKey(), entry.getValue()));
+
     // Set the content of the rebuilt tree.
     contentTupleSet.stream()
         .filter(contentTuple -> contentTuple.node() == child)
