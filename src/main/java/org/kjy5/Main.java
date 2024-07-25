@@ -74,6 +74,7 @@ public class Main {
     final var baseToLeftMapping = matcher.match(baseTree, leftTree);
     final var baseToRightMapping = matcher.match(baseTree, rightTree);
     final var leftToRightMapping = matcher.match(leftTree, rightTree);
+    System.out.println(baseToLeftMapping);
     // endregion
 
     // region Create class representative mappings.
@@ -132,7 +133,6 @@ public class Main {
             + mergedChangeSet.pcsSet().size()
             + "\t\t"
             + mergedChangeSet.contentTupleSet().size());
-    mergedChangeSet.pcsSet().forEach(System.out::println);
     // endregion
 
     // region Rebuild AST from merged change set.
@@ -150,18 +150,24 @@ public class Main {
 
     // Read from merged tree.
     for (var node : mergedTree.preOrder()) {
+      // Expand output buffer if necessary.
+      if (node.getPos() + node.getLength() > mergedBuffer.length) {
+        var newOutputBuffer = new byte[node.getPos() + node.getLength()];
+        System.arraycopy(mergedBuffer, 0, newOutputBuffer, 0, mergedBuffer.length);
+        mergedBuffer = newOutputBuffer;
+      }
+      
+      // If node is a leaf and has content, use its content.
+      if (node.isLeaf() && node.hasLabel()) {
+        System.arraycopy(node.getLabel().getBytes(), 0, mergedBuffer, node.getPos(), node.getLabel().length());
+        continue;
+      }
+      
+      // Otherwise, read from file.
       try {
         // Open file to read from.
         var file = new RandomAccessFile(node.getMetadata("src").toString(), "r");
         file.seek(node.getPos());
-
-        // Check if output buffer is large enough.
-        if (mergedBuffer.length < node.getPos() + node.getLength()) {
-          // Expand output buffer.
-          var newOutputBuffer = new byte[node.getPos() + node.getLength()];
-          System.arraycopy(mergedBuffer, 0, newOutputBuffer, 0, mergedBuffer.length);
-          mergedBuffer = newOutputBuffer;
-        }
 
         // Read from file in output buffer.
         file.read(mergedBuffer, node.getPos(), node.getLength());
