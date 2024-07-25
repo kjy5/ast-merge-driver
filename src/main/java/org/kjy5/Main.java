@@ -136,6 +136,10 @@ public class Main {
 
     // region Rebuild AST from merged change set.
     final var mergedTree = mergedChangeSet.toTree();
+    System.out.println();
+    mergedTree
+        .preOrder()
+        .forEach(node -> System.out.println(node.getMetadata("src") + ": " + node));
     // endregion
 
     // region Write merged tree to file.
@@ -168,6 +172,8 @@ public class Main {
     }
 
     // Write to file.
+    System.out.println();
+    System.out.println(new String(mergedBuffer));
     try {
       var mergedFile = new FileOutputStream(fileMergedPath);
       mergedFile.write(mergedBuffer);
