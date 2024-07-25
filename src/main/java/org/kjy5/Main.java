@@ -9,7 +9,6 @@ import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
 import java.util.LinkedHashMap;
-
 import org.kjy5.spork.*;
 
 /**
@@ -78,14 +77,14 @@ public class Main {
 
     // region Create class representative mappings.
     final var classRepresentatives =
-        new ClassRepresentatives(
+        ClassRepresentatives.from(
                 baseTree,
                 leftTree,
                 rightTree,
                 baseToLeftMapping,
                 baseToRightMapping,
                 leftToRightMapping)
-            .getMapping();
+            .classRepresentativesMap();
     // endregion
 
     // region Create change sets (PCS and content tuples).

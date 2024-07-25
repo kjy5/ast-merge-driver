@@ -16,9 +16,7 @@ import java.util.Map;
  *
  * @author Kenneth Yang
  */
-public class ClassRepresentatives {
-  private final Map<Tree, Tree> classRepresentativesMap = new LinkedHashMap<>();
-
+public record ClassRepresentatives(Map<Tree, Tree> classRepresentativesMap) {
   /**
    * Map class representatives for a merge.
    *
@@ -29,15 +27,18 @@ public class ClassRepresentatives {
    * @param baseToRightMapping The match mapping from base to right.
    * @param leftToRightMapping The match mapping from left to right.
    */
-  public ClassRepresentatives(
+  public static ClassRepresentatives from(
       Tree baseTree,
       Tree leftTree,
       Tree rightTree,
       MappingStore baseToLeftMapping,
       MappingStore baseToRightMapping,
       MappingStore leftToRightMapping) {
+    // Initialize an empty class representatives mapping.
+    var wipMap = new LinkedHashMap<Tree, Tree>();
+
     // Base nodes are mapped to themselves.
-    baseTree.preOrder().forEach(node -> classRepresentativesMap.put(node, node));
+    baseTree.preOrder().forEach(node -> wipMap.put(node, node));
 
     // Left nodes are mapped to base if a matching exists, otherwise they're mapped to themselves.
     leftTree
@@ -46,11 +47,11 @@ public class ClassRepresentatives {
             leftNode -> {
               final var matchedBaseNode = baseToLeftMapping.getSrcForDst(leftNode);
               if (matchedBaseNode != null) {
-                // A matching exists, map to it.
-                classRepresentativesMap.put(leftNode, matchedBaseNode);
+                // A matching exists, classRepresentativesMap to it.
+                wipMap.put(leftNode, matchedBaseNode);
               } else {
-                // No matching exists, map to self.
-                classRepresentativesMap.put(leftNode, leftNode);
+                // No matching exists, classRepresentativesMap to self.
+                wipMap.put(leftNode, leftNode);
               }
             });
 
@@ -61,11 +62,11 @@ public class ClassRepresentatives {
             rightNode -> {
               final var matchedBaseNode = baseToRightMapping.getSrcForDst(rightNode);
               if (matchedBaseNode != null) {
-                // A matching exists, map to it.
-                classRepresentativesMap.put(rightNode, matchedBaseNode);
+                // A matching exists, classRepresentativesMap to it.
+                wipMap.put(rightNode, matchedBaseNode);
               } else {
-                // No matching exists, map to self.
-                classRepresentativesMap.put(rightNode, rightNode);
+                // No matching exists, classRepresentativesMap to self.
+                wipMap.put(rightNode, rightNode);
               }
             });
 
@@ -76,7 +77,7 @@ public class ClassRepresentatives {
         .forEach(
             leftNode -> {
               // Short-circuit if the left node is already mapped to base.
-              if (classRepresentativesMap.get(leftNode) != leftNode) return;
+              if (wipMap.get(leftNode) != leftNode) return;
 
               // Short-circuit if the left node is not mapped to right.
               if (!leftToRightMapping.isSrcMapped(leftNode)) return;
@@ -84,22 +85,15 @@ public class ClassRepresentatives {
               final var matchedRightNode = leftToRightMapping.getDstForSrc(leftNode);
 
               // Short-circuit if the matched right node is already mapped to base.
-              if (classRepresentativesMap.get(matchedRightNode) != matchedRightNode) return;
+              if (wipMap.get(matchedRightNode) != matchedRightNode) return;
 
               // Update the right node's mapping to the left node if the parents are also mapped.
-              if (classRepresentativesMap.get(leftNode.getParent())
-                  == classRepresentativesMap.get(matchedRightNode.getParent())) {
-                classRepresentativesMap.put(matchedRightNode, leftNode);
+              if (wipMap.get(leftNode.getParent()) == wipMap.get(matchedRightNode.getParent())) {
+                wipMap.put(matchedRightNode, leftNode);
               }
             });
-  }
 
-  /**
-   * Get a read-only reference to the class representatives mapping.
-   *
-   * @return Read-only class representatives mapping.
-   */
-  public Map<Tree, Tree> getMapping() {
-    return Collections.unmodifiableMap(classRepresentativesMap);
+    // Return the class representatives mapping.
+    return new ClassRepresentatives(Collections.unmodifiableMap(wipMap));
   }
 }
