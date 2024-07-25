@@ -70,9 +70,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
               var classRepresentative = classRepresentativesMapping.get(node);
 
               // Add content tuple (if it has content).
-              if (classRepresentative.hasLabel())
-                wipContentTupleSet.add(
-                    new ContentTuple(classRepresentative, classRepresentative.getLabel()));
+              if (node.hasLabel())
+                wipContentTupleSet.add(new ContentTuple(classRepresentative, node.getLabel()));
 
               // Get or create child list virtual nodes.
               final ChildListVirtualNodes childListVirtualNodes;

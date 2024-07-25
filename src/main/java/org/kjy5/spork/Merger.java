@@ -93,7 +93,7 @@ public class Merger {
       return;
     }
 
-    // Remove all inconsistent PCSs from the merge change set if they were in the base change set.
+    // Remove all inconsistent PCSs from the merge change set if they are in the base change set.
     for (var otherPcs : inconsistentPcs) {
       if (baseChangeSet.pcsSet().contains(otherPcs)) {
         mergeChangeSet.pcsSet().remove(otherPcs);
