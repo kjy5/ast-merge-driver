@@ -9,10 +9,8 @@ import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import org.kjy5.spork.ChangeSet;
-import org.kjy5.spork.ChildListVirtualNodes;
-import org.kjy5.spork.ClassRepresentatives;
-import org.kjy5.spork.Merger;
+
+import org.kjy5.spork.*;
 
 /**
  * Main class for the merge driver.
@@ -63,6 +61,11 @@ public class Main {
     } catch (IOException e) {
       throw new RuntimeException("Unable to read source code: " + e);
     }
+
+    // Annotate trees with their source files.
+    baseTree.preOrder().forEach(node -> node.setMetadata("src", fileBasePath));
+    leftTree.preOrder().forEach(node -> node.setMetadata("src", fileLeftPath));
+    rightTree.preOrder().forEach(node -> node.setMetadata("src", fileRightPath));
 
     // TODO: Consider mapping from left/right to base to better follow class representative logic.
     // Match the trees.
