@@ -133,6 +133,7 @@ public class Main {
             + mergedChangeSet.pcsSet().size()
             + "\t\t"
             + mergedChangeSet.contentTupleSet().size());
+    mergedChangeSet.pcsSet().forEach(System.out::println);
     // endregion
 
     // region Rebuild AST from merged change set.
