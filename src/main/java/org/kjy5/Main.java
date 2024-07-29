@@ -7,6 +7,7 @@ import com.github.gumtreediff.client.Run;
 import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -155,13 +156,61 @@ public class Main {
         System.arraycopy(mergedBuffer, 0, newOutputBuffer, 0, mergedBuffer.length);
         mergedBuffer = newOutputBuffer;
       }
-      
+
       // If node is a leaf and has content, use its content.
       if (node.isLeaf() && node.hasLabel()) {
-        System.arraycopy(node.getLabel().getBytes(), 0, mergedBuffer, node.getPos(), node.getLabel().length());
+        // Get content tuple for node.
+        var maybeContentTuple =
+            mergedChangeSet.contentTupleSet().stream()
+                .filter(contentTuple -> contentTuple.node() == node)
+                .findFirst();
+
+        // Short-circuit if no content.
+        if (maybeContentTuple.isEmpty()) continue;
+
+        // Get content as bytes.
+        var content = maybeContentTuple.get().content().getBytes();
+
+        // Replace old content with new content.
+
+        // Case 1: new content is longer. Need to expand buffer.
+        if (content.length > node.getLength()) {
+          // Make new buffer that is longer.
+          var expandedBuffer = new byte[mergedBuffer.length + content.length - node.getLength()];
+
+          // Copy old buffer up to content position.
+          System.arraycopy(mergedBuffer, 0, expandedBuffer, 0, node.getPos());
+
+          // Copy new content.
+          System.arraycopy(content, 0, expandedBuffer, node.getPos(), content.length);
+
+          // Copy old buffer after content position.
+          System.arraycopy(
+              mergedBuffer,
+              node.getPos() + node.getLength(),
+              expandedBuffer,
+              node.getPos() + content.length,
+              mergedBuffer.length - node.getPos() - node.getLength());
+
+          // Update buffer.
+          mergedBuffer = expandedBuffer;
+        }
+
+        // Case 2: new content is shorter or same length. Write-over old content and shrink buffer
+        // (if needed).
+        else {
+          // Copy content in.
+          System.arraycopy(content, 0, mergedBuffer, node.getPos(), content.length);
+
+          // Clear excess old content.
+          for (var i = node.getPos() + content.length; i < node.getPos() + node.getLength(); i++) {
+            mergedBuffer[i] = 0;
+          }
+        }
+
         continue;
       }
-      
+
       // Otherwise, read from file.
       try {
         // Open file to read from.
@@ -177,12 +226,18 @@ public class Main {
       }
     }
 
+    // Remove null bytes from buffer.
+    var cleanedBufferOutputStream = new ByteArrayOutputStream();
+    for (var b : mergedBuffer) {
+      if (b != 0) cleanedBufferOutputStream.write(b);
+    }
+
     // Write to file.
     System.out.println();
-    System.out.println(new String(mergedBuffer));
+    System.out.println(cleanedBufferOutputStream);
     try {
       var mergedFile = new FileOutputStream(fileMergedPath);
-      mergedFile.write(mergedBuffer);
+      mergedFile.write(cleanedBufferOutputStream.toByteArray());
       mergedFile.close();
     } catch (IOException e) {
       throw new RuntimeException(e);

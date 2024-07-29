@@ -166,21 +166,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     return toTree(maybeRootPcs.get().successor());
   }
 
-  private Tree toTree(Tree child) {
-    var rebuiltNode = child.deepCopy();
-
-    // Copy metadata of the rebuilt tree.
-    child
-        .getMetadata()
-        .forEachRemaining(entry -> rebuiltNode.setMetadata(entry.getKey(), entry.getValue()));
-
-    // Set the content of the rebuilt tree.
-    //    contentTupleSet.stream()
-    //        .filter(contentTuple -> contentTuple.node() == child)
-    //        .findFirst()
-    //        .ifPresent(contentTuple -> rebuiltNode.setLabel(contentTuple.content()));
-
-    // Set children of the rebuilt tree.
+  private Tree toTree(Tree node) {
+    // Create new children list.
     var children = new LinkedList<Tree>();
 
     // Find the first child.
@@ -188,13 +175,13 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
         pcsSet.stream()
             .filter(
                 pcs ->
-                    pcs.parent() == child && pcs.child().getLabel().equals("virtualChildListStart"))
+                    pcs.parent() == node && pcs.child().getLabel().equals("virtualChildListStart"))
             .findFirst();
 
     // Short-circuit if first child is not found.
     if (maybeFirstChildPcs.isEmpty()) {
       throw new RuntimeException(
-          "Unable to find first child of " + child + " in merged change set.");
+          "Unable to find first child of " + node + " in merged change set.");
     }
     var currentChild = maybeFirstChildPcs.get().successor();
 
@@ -202,9 +189,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     if (pcsSet.stream()
         .noneMatch(
             pcs ->
-                pcs.parent() == child
-                    && pcs.successor().getLabel().equals("virtualChildListEnd"))) {
-      throw new RuntimeException("Unable to find end node of " + child + " in merged change set.");
+                pcs.parent() == node && pcs.successor().getLabel().equals("virtualChildListEnd"))) {
+      throw new RuntimeException("Unable to find end node of " + node + " in merged change set.");
     }
 
     // Iterate through children.
@@ -216,7 +202,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
       var currentScopeChild = currentChild;
       var maybeNextChildPcs =
           pcsSet.stream()
-              .filter(pcs -> pcs.parent() == child && pcs.child() == currentScopeChild)
+              .filter(pcs -> pcs.parent() == node && pcs.child() == currentScopeChild)
               .findFirst();
       if (maybeNextChildPcs.isEmpty()) {
         throw new RuntimeException(
@@ -225,10 +211,10 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
       currentChild = maybeNextChildPcs.get().successor();
     }
 
-    // Set children of the rebuilt tree.
-    rebuiltNode.setChildren(children);
+    // Update the children set of the node.
+    node.setChildren(children);
 
-    return rebuiltNode;
+    return node;
   }
   // endregion
 }
