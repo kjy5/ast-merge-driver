@@ -35,6 +35,24 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInc
    */
   @Override
   public String toString() {
-    return "PCS(" + parent + ", " + child + ", " + successor + ", " + hardInconsistencyWith + ')';
+    return "PCS "
+        + Integer.toHexString(System.identityHashCode(this))
+        + ":\t"
+        + parent
+        + "("
+        + Integer.toHexString(System.identityHashCode(parent))
+        + ")"
+        + "\t"
+        + child
+        + "("
+        + Integer.toHexString(System.identityHashCode(child))
+        + ")"
+        + "\t"
+        + successor
+        + "("
+        + Integer.toHexString(System.identityHashCode(successor))
+        + ")"
+        + "\t"
+        + hardInconsistencyWith;
   }
 }

@@ -38,6 +38,8 @@ public class Merger {
     var mergePcsSet = new LinkedHashSet<>(baseChangeSet.pcsSet());
     mergePcsSet.addAll(leftChangeSet.pcsSet());
     mergePcsSet.addAll(rightChangeSet.pcsSet());
+    System.out.println();
+    mergePcsSet.forEach(System.out::println);
 
     // Union the three content tuples.
     var mergeContentTupleSet = new LinkedHashSet<>(baseChangeSet.contentTupleSet());
@@ -86,9 +88,12 @@ public class Merger {
 
     // Short-circuit if there are no inconsistencies.
     if (inconsistentPcs.isEmpty()) return;
+    System.out.println();
+    inconsistentPcs.forEach(System.out::println);
 
     // Short-circuit if this pcs is in the base change set (remove it from the merge change set).
     if (baseChangeSet.pcsSet().contains(pcs)) {
+      System.out.println("Removing: " + pcs);
       mergeChangeSet.pcsSet().remove(pcs);
       return;
     }
