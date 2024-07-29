@@ -114,8 +114,7 @@ public class Merger {
       Tree tree, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     var contentTuples = getContentTuples(tree, mergeChangeSet);
 
-    // Short-circuit if there are one or less content tuple (this tree is basically a single linked
-    // list).
+    // Short-circuit if there are one or less content tuples (no inconsistencies).
     if (contentTuples.size() <= 1) return;
 
     // Get all content tuples not in the base change set.

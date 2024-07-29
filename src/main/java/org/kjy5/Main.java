@@ -74,7 +74,6 @@ public class Main {
     final var baseToLeftMapping = matcher.match(baseTree, leftTree);
     final var baseToRightMapping = matcher.match(baseTree, rightTree);
     final var leftToRightMapping = matcher.match(leftTree, rightTree);
-    System.out.println(baseToLeftMapping);
     // endregion
 
     // region Create class representative mappings.

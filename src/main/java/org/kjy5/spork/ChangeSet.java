@@ -175,10 +175,10 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
         .forEachRemaining(entry -> rebuiltNode.setMetadata(entry.getKey(), entry.getValue()));
 
     // Set the content of the rebuilt tree.
-    contentTupleSet.stream()
-        .filter(contentTuple -> contentTuple.node() == child)
-        .findFirst()
-        .ifPresent(contentTuple -> rebuiltNode.setLabel(contentTuple.content()));
+    //    contentTupleSet.stream()
+    //        .filter(contentTuple -> contentTuple.node() == child)
+    //        .findFirst()
+    //        .ifPresent(contentTuple -> rebuiltNode.setLabel(contentTuple.content()));
 
     // Set children of the rebuilt tree.
     var children = new LinkedList<Tree>();
