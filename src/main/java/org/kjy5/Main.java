@@ -145,6 +145,9 @@ public class Main {
 
     // region Write merged tree to file.
 
+    // TODO: current implementation assumes old and new content start at the same place. Need to
+    // adjust for when they don't.
+
     // Create output buffer with compilation unit length (may need expanding later).
     var mergedBuffer = new byte[mergedTree.getLength()];
 
@@ -219,8 +222,51 @@ public class Main {
         var file = new RandomAccessFile(node.getMetadata("src").toString(), "r");
         file.seek(node.getPos());
 
-        // Read from file in output buffer.
-        file.read(mergedBuffer, node.getPos(), node.getLength());
+        // Get node this is replacing.
+        var replacingNode = (Tree) node.getMetadata("replacing");
+        if (replacingNode == null) {
+          // TODO: handle case where node is not replacing anything (i.e. more children in a list).
+          // Read from file in output buffer.
+          file.read(mergedBuffer, node.getPos(), node.getLength());
+        } else {
+          // Case 1: new content is longer than what it is replacing. Need to expand buffer.
+          if (node.getLength() > replacingNode.getLength()) {
+            // Make new buffer that is longer.
+            var expandedBuffer =
+                new byte[mergedBuffer.length + node.getLength() - replacingNode.getLength()];
+
+            // Copy old buffer up to content position.
+            System.arraycopy(mergedBuffer, 0, expandedBuffer, 0, node.getPos());
+
+            // Copy new content.
+            file.read(expandedBuffer, node.getPos(), node.getLength());
+
+            // Copy old buffer after content position.
+            System.arraycopy(
+                mergedBuffer,
+                node.getPos() + replacingNode.getLength(),
+                expandedBuffer,
+                node.getPos() + node.getLength(),
+                mergedBuffer.length - node.getPos() - replacingNode.getLength());
+
+            // Update buffer.
+            mergedBuffer = expandedBuffer;
+          }
+
+          // Case 2: new content is shorter or same length. Write-over old content and shrink buffer
+          // (if needed).
+          else {
+            // Copy content in.
+            file.read(mergedBuffer, node.getPos(), node.getLength());
+
+            // Clear excess old content.
+            for (var i = node.getPos() + node.getLength();
+                i < node.getPos() + replacingNode.getLength();
+                i++) {
+              mergedBuffer[i] = 0;
+            }
+          }
+        }
 
         file.close();
       } catch (IOException e) {

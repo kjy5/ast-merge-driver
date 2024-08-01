@@ -211,6 +211,11 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
       currentChild = maybeNextChildPcs.get().successor();
     }
 
+    // Set nodes new children are replacing in metadata.
+    for (int i = 0; i < children.size(); i++) {
+      children.get(i).setMetadata("replacing", node.getChild(i));
+    }
+
     // Update the children set of the node.
     node.setChildren(children);
 
