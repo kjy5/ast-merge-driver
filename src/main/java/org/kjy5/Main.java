@@ -211,6 +211,8 @@ public class Main {
         continue;
       }
 
+      // TODO: need to identify what a structure is replacing. Adding new structures in a list won't
+      // work though (e.g. adding new parameters to a method becuase the commas won't be generated).
       // Otherwise, read from file.
       try {
         // Open file to read from.
