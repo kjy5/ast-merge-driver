@@ -3,7 +3,6 @@
  */
 package org.kjy5.spork;
 
-import com.github.gumtreediff.tree.FakeTree;
 import com.github.gumtreediff.tree.Tree;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,10 +15,6 @@ import java.util.stream.Collectors;
  * @author Kenneth Yang
  */
 public class Merger {
-  // region Constants.
-  private static final Tree NULL_TREE = new FakeTree();
-  // endregion
-
   // region Fields.
   private final ChangeSet mergedChangeSet;
 
@@ -38,8 +33,6 @@ public class Merger {
     var mergePcsSet = new LinkedHashSet<>(baseChangeSet.pcsSet());
     mergePcsSet.addAll(leftChangeSet.pcsSet());
     mergePcsSet.addAll(rightChangeSet.pcsSet());
-    System.out.println();
-    mergePcsSet.forEach(System.out::println);
 
     // Union the three content tuples.
     var mergeContentTupleSet = new LinkedHashSet<>(baseChangeSet.contentTupleSet());
@@ -88,12 +81,9 @@ public class Merger {
 
     // Short-circuit if there are no inconsistencies.
     if (inconsistentPcs.isEmpty()) return;
-    System.out.println();
-    inconsistentPcs.forEach(System.out::println);
 
     // Short-circuit if this pcs is in the base change set (remove it from the merge change set).
     if (baseChangeSet.pcsSet().contains(pcs)) {
-      System.out.println("Removing: " + pcs);
       mergeChangeSet.pcsSet().remove(pcs);
       return;
     }
@@ -145,6 +135,9 @@ public class Merger {
   /**
    * Get all inconsistent PCSs inside a change set given a PCS.
    *
+   * <p>If two PCSs have the same parent, both children and both successors must be different. If
+   * two PCSs have different parents, all children and successors must be different.
+   *
    * @param pcs The PCS to find inconsistencies with.
    * @param changeSet The change set to search in.
    * @return The set of inconsistent PCSs.
@@ -152,129 +145,20 @@ public class Merger {
   private Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
     var inconsistentPcs = new LinkedHashSet<Pcs>();
 
-    // Setup markers for found criteria.
-    Tree parentFoundParent = NULL_TREE,
-        parentFoundPredecessor = NULL_TREE,
-        parentFoundSuccessor = NULL_TREE;
-    Tree childFoundPredecessor = NULL_TREE;
-    Tree successorFoundSuccessor = NULL_TREE;
-
     // Loop through change set and find inconsistencies.
     for (var otherPcs : changeSet.pcsSet()) {
       // Skip if it's the same PCS.
       if (pcs == otherPcs) continue;
 
-      // Skip if it's already considered inconsistent.
-      if (inconsistentPcs.contains(otherPcs)) continue;
-
-      // Check parent node.
-
-      // If the parent is a child or successor, ensure that the parent is the same as the found one
-      // (or initialize it).
-      if (pcs.parent() == otherPcs.child() || pcs.parent() == otherPcs.successor()) {
-        // Initialize found parent if not initialized.
-        if (parentFoundParent == NULL_TREE) parentFoundParent = otherPcs.parent();
-
-        // There's an inconsistency if this is a different parent than what was found.
-        else if (parentFoundParent != otherPcs.parent()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // If the parent node is a successor, ensure that the predecessor is the same as the found one
-      // (or initialize it).
-      if (pcs.parent() == otherPcs.successor()) {
-        // Initialize found predecessor if not initialized.
-        if (parentFoundPredecessor == NULL_TREE) parentFoundPredecessor = otherPcs.child();
-
-        // There's an inconsistency if this is a different predecessor.
-        else if (parentFoundPredecessor != otherPcs.child()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // If the parent node is a child, ensure that the successor is the same as the found one (or
-      // initialize it).
-      if (pcs.parent() == otherPcs.child()) {
-        // Initialize found successor if not initialized.
-        if (parentFoundSuccessor == NULL_TREE) parentFoundSuccessor = otherPcs.successor();
-
-        // There's an inconsistency if this is a different successor.
-        else if (parentFoundSuccessor != otherPcs.successor()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // Check child node.
-
-      // If the child is a child or successor, ensure that the parent is the same as the current
-      // one.
-      if (pcs.child() == otherPcs.child() || pcs.child() == otherPcs.successor()) {
-        // There's an inconsistency if this is a different parent.
-        if (otherPcs.parent() != pcs.parent()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // If the child is a successor, ensure that the predecessor is the same as the found one (or
-      // initialize it).
-      if (pcs.child() == otherPcs.successor()) {
-        // Initialize found predecessor if not initialized.
-        if (childFoundPredecessor == NULL_TREE) childFoundPredecessor = otherPcs.child();
-
-        // There's an inconsistency if this is a different predecessor.
-        else if (childFoundPredecessor != otherPcs.child()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // TODO: Cases might be redundant. There should only be one PCS where the child is the child.
-      // If the child is a child, ensure that the successor is the same as the current one.
-      if (pcs.child() == otherPcs.child()) {
-        // There's an inconsistency if this is a different successor.
-        if (otherPcs.successor() != pcs.successor()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // Check successor node.
-
-      // If the successor is a child or successor, ensure that the parent is the same as the current
-      // one.
-      if (pcs.successor() == otherPcs.child() || pcs.successor() == otherPcs.successor()) {
-        // There's an inconsistency if this is a different parent.
-        if (otherPcs.parent() != pcs.parent()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // If the successor is a successor, ensure that the predecessor is the same as the current
-      // one.
-      if (otherPcs.successor() == pcs.successor()) {
-        // There's an inconsistency if this is a different predecessor.
-        if (otherPcs.child() != pcs.child()) {
-          inconsistentPcs.add(otherPcs);
-          continue;
-        }
-      }
-
-      // If the successor is a child, ensure that the successor is the same as the found one (or
-      // initialize it).
-      if (pcs.successor() == otherPcs.child()) {
-        // Initialize found successor if not initialized.
-        if (successorFoundSuccessor == NULL_TREE) successorFoundSuccessor = otherPcs.successor();
-
-        // There's an inconsistency if this is a different successor.
-        else if (successorFoundSuccessor != otherPcs.successor()) {
-          inconsistentPcs.add(otherPcs);
-        }
+      // Check criteria and add.
+      if ((pcs.parent() == otherPcs.parent()
+              && (pcs.child() == otherPcs.child() || pcs.successor() == otherPcs.successor()))
+          || (pcs.parent() != otherPcs.parent()
+              && (pcs.child() == otherPcs.child()
+                  || pcs.child() == otherPcs.successor()
+                  || pcs.successor() == otherPcs.successor()
+                  || pcs.successor() == otherPcs.child()))) {
+        inconsistentPcs.add(otherPcs);
       }
     }
 
