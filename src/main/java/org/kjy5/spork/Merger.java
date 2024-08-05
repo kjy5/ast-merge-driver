@@ -94,6 +94,7 @@ public class Merger {
   private static void removeSoftContentInconsistencies(
       Tree tree, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     var contentTuples = getContentTuples(tree, mergeChangeSet);
+    System.out.println("cts: " + contentTuples);
 
     // Short-circuit if there are one or less content tuples (no inconsistencies).
     if (contentTuples.size() <= 1) return;
@@ -104,6 +105,7 @@ public class Merger {
             .filter(contentTuple -> !baseChangeSet.contentTupleSet().contains(contentTuple))
             .collect(Collectors.toUnmodifiableSet());
 
+    System.out.println("non base: " + nonBaseContentTuples);
     // Update content tuples with non-base content tuples.
     setContentTuples(tree, nonBaseContentTuples, mergeChangeSet);
 

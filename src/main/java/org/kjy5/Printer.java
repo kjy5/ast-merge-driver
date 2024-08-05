@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import org.kjy5.spork.ChangeSet;
 
 public class Printer {
@@ -12,18 +13,11 @@ public class Printer {
     // TODO: current implementation assumes old and new content start at the same place. Need to
     // adjust for when they don't.
 
-    // Create output buffer with compilation unit length (may need expanding later).
-    var mergedBuffer = new byte[mergedTree.getLength()];
+    // Create output buffer.
+    var mergedBuffer = new ArrayList<Byte>();
 
     // Read from merged tree.
     for (var node : mergedTree.preOrder()) {
-      // Expand output buffer if necessary.
-      if (node.getPos() + node.getLength() > mergedBuffer.length) {
-        var newOutputBuffer = new byte[node.getPos() + node.getLength()];
-        System.arraycopy(mergedBuffer, 0, newOutputBuffer, 0, mergedBuffer.length);
-        mergedBuffer = newOutputBuffer;
-      }
-
       // If node is a leaf and has content, use its content.
       if (node.isLeaf() && node.hasLabel()) {
         // Get content tuple for node.
@@ -37,56 +31,36 @@ public class Printer {
 
         // Get content tuple.
         var contentTuple = maybeContentTuple.get();
+        System.out.println(contentTuple);
 
         // Declare content as bytes.
-        var content = contentTuple.content().getBytes();
+        var contentBytes = contentTuple.content().getBytes();
 
         // Check for conflicts.
-        //        if (contentTuple.hardInconsistencyWith().isPresent()){
-        //          var conflict = contentTuple.hardInconsistencyWith().get();
-        //
-        //          // Update content string to show conflict.
-        //          content = ("<<<<<<< "+ contentTuple.src() + Arrays.toString(content) + " =======
-        // " + conflict.content() + " >>>>>>> " + conflict.src()).getBytes();
-        //        }
+        if (contentTuple.hardInconsistencyWith().isPresent()) {
+          var conflict = contentTuple.hardInconsistencyWith().get();
 
-        // Replace old content with new content.
-
-        // Case 1: new content is longer. Need to expand buffer.
-        if (content.length > node.getLength()) {
-          // Make new buffer that is longer.
-          var expandedBuffer = new byte[mergedBuffer.length + content.length - node.getLength()];
-
-          // Copy old buffer up to content position.
-          System.arraycopy(mergedBuffer, 0, expandedBuffer, 0, node.getPos());
-
-          // Copy new content.
-          System.arraycopy(content, 0, expandedBuffer, node.getPos(), content.length);
-
-          // Copy old buffer after content position.
-          System.arraycopy(
-              mergedBuffer,
-              node.getPos() + node.getLength(),
-              expandedBuffer,
-              node.getPos() + content.length,
-              mergedBuffer.length - node.getPos() - node.getLength());
-
-          // Update buffer.
-          mergedBuffer = expandedBuffer;
+          // Update content string to show conflict.
+          contentBytes =
+              ("<<<<<<< "
+                      + contentTuple.src()
+                      + contentTuple.content()
+                      + " =======         "
+                      + conflict.content()
+                      + " >>>>>>> "
+                      + conflict.src())
+                  .getBytes();
         }
 
-        // Case 2: new content is shorter or same length. Write-over old content and shrink buffer
-        // (if needed).
-        else {
-          // Copy content in.
-          System.arraycopy(content, 0, mergedBuffer, node.getPos(), content.length);
+        // Delete old content.
+        mergedBuffer.subList(node.getPos(), node.getPos() + node.getLength()).clear();
 
-          // Clear excess old content.
-          for (var i = node.getPos() + content.length; i < node.getPos() + node.getLength(); i++) {
-            mergedBuffer[i] = 0;
-          }
+        // Insert new content.
+        for (int i = 0; i < contentBytes.length; i++) {
+          mergedBuffer.add(node.getPos() + i, contentBytes[i]);
         }
 
+        // Skip to next node.
         continue;
       }
 
@@ -98,52 +72,32 @@ public class Printer {
         var file = new RandomAccessFile(node.getMetadata("src").toString(), "r");
         file.seek(node.getPos());
 
+        // Insertion index (changes to replacing node if there was a previous node).
+        var insertionIndex = node.getPos();
+
         // Get node this is replacing.
         var replacingNode = (Tree) node.getMetadata("replacing");
-        if (replacingNode == null) {
-          // TODO: handle case where node is not replacing anything (i.e. more children in a list).
-          // Read from file in output buffer.
-          file.read(mergedBuffer, node.getPos(), node.getLength());
-        } else {
-          // Case 1: new content is longer than what it is replacing. Need to expand buffer.
-          if (node.getLength() > replacingNode.getLength()) {
-            // Make new buffer that is longer.
-            var expandedBuffer =
-                new byte[mergedBuffer.length + node.getLength() - replacingNode.getLength()];
 
-            // Copy old buffer up to content position.
-            System.arraycopy(mergedBuffer, 0, expandedBuffer, 0, node.getPos());
+        // Delete old content if there is a node to be replaced.
+        if (replacingNode != null) {
+          mergedBuffer
+              .subList(replacingNode.getPos(), replacingNode.getPos() + replacingNode.getLength())
+              .clear();
 
-            // Copy new content.
-            file.read(expandedBuffer, node.getPos(), node.getLength());
-
-            // Copy old buffer after content position.
-            System.arraycopy(
-                mergedBuffer,
-                node.getPos() + replacingNode.getLength(),
-                expandedBuffer,
-                node.getPos() + node.getLength(),
-                mergedBuffer.length - node.getPos() - replacingNode.getLength());
-
-            // Update buffer.
-            mergedBuffer = expandedBuffer;
-          }
-
-          // Case 2: new content is shorter or same length. Write-over old content and shrink buffer
-          // (if needed).
-          else {
-            // Copy content in.
-            file.read(mergedBuffer, node.getPos(), node.getLength());
-
-            // Clear excess old content.
-            for (var i = node.getPos() + node.getLength();
-                i < node.getPos() + replacingNode.getLength();
-                i++) {
-              mergedBuffer[i] = 0;
-            }
-          }
+          // Update insertion index to be replacing node's position.
+          insertionIndex = replacingNode.getPos();
         }
 
+        // Get new content.
+        var newContent = new byte[node.getLength()];
+        file.read(newContent);
+
+        // Insert into buffer.
+        for (int i = 0; i < newContent.length; i++) {
+          mergedBuffer.add(insertionIndex + i, newContent[i]);
+        }
+
+        // Close file.
         file.close();
       } catch (IOException e) {
         throw new RuntimeException(e);

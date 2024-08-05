@@ -23,6 +23,14 @@ public record ContentTuple(
    */
   @Override
   public String toString() {
-    return "ContentTuple(" + node + ", " + content + ')';
+    return "ContentTuple("
+        + node
+        + ", "
+        + content
+        + ", "
+        + src
+        + ", "
+        + hardInconsistencyWith
+        + ')';
   }
 }

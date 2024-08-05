@@ -1,5 +1,5 @@
-class Test {
+class <<<<<<< ass<<<<<<< <<<<<<<<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<<<<<<<< <<<<<<<<<<< one + twossets/12/file_right.javathree =======         three >>>>>>> assets/12/file_left.javassets/12/file_right.javaint =======         int >>>>>>> assets/12/file_left.javaethree = 3e_left.javaprivate =======         private >>>>>>> assets/12/file_right.java int three = 3;ava2 =======         2 >>>>>>> assets/12/file_right.java assets/12/file_right.javatwo =======         two >>>>>>> assets/12/file_left.java assets/12/file_left.javaint =======         int >>>>>>> assets/12/file_right.javaetwo = 2ile_left.javaprivate =======         private >>>>>>> assets/12/file_right.java int two = 2;.java1 =======         1 >>>>>>> assets/12/file_right.java assets/12/file_right.javaone =======         one >>>>>>> assets/12/file_left.java assets/12/file_right.javaint =======         int >>>>>>> assets/12/file_left.javaeone = 1ile_right.javaprivate =======         private >>>>>>> assets/12/file_left.java int one = 1;vaTest =======         Test >>>>>>> assets/12/file_left.java {
     private int one = 1;
     private int two = 2;
-    private int three = one + two;
+    private int three = 3;
 }
