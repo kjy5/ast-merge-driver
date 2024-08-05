@@ -15,20 +15,15 @@ import java.util.stream.Collectors;
  * @author Kenneth Yang
  */
 public class Merger {
-  // region Fields.
-  private final ChangeSet mergedChangeSet;
-
-  // endregion
-
-  // region Constructor.
   /**
-   * Construct and perform Spork merge.
+   * Perform a Spork merge.
    *
    * @param baseChangeSet Base branch change set.
    * @param leftChangeSet Left branch change set.
    * @param rightChangeSet Right branch change set.
    */
-  public Merger(ChangeSet baseChangeSet, ChangeSet leftChangeSet, ChangeSet rightChangeSet) {
+  public static ChangeSet merge(
+      ChangeSet baseChangeSet, ChangeSet leftChangeSet, ChangeSet rightChangeSet) {
     // Union the three PCSs.
     var mergePcsSet = new LinkedHashSet<>(baseChangeSet.pcsSet());
     mergePcsSet.addAll(leftChangeSet.pcsSet());
@@ -40,33 +35,24 @@ public class Merger {
     mergeContentTupleSet.addAll(rightChangeSet.contentTupleSet());
 
     // Merged change set.
-    this.mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
+    var mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
 
     System.out.println(
         "Raw\t\t"
-            + this.mergedChangeSet.pcsSet().size()
+            + mergedChangeSet.pcsSet().size()
             + "\t\t"
-            + this.mergedChangeSet.contentTupleSet().size());
+            + mergedChangeSet.contentTupleSet().size());
 
     // Handle inconsistencies.
-    for (var pcs : new LinkedHashSet<>(this.mergedChangeSet.pcsSet())) {
+    for (var pcs : new LinkedHashSet<>(mergedChangeSet.pcsSet())) {
       // TODO: Algorithm doesn't say so but we should skip if the PCS is already removed.
-      if (!this.mergedChangeSet.pcsSet().contains(pcs)) continue;
+      if (!mergedChangeSet.pcsSet().contains(pcs)) continue;
 
-      removeSoftPcsInconsistencies(pcs, this.mergedChangeSet, baseChangeSet);
-      handleContent(pcs, this.mergedChangeSet, baseChangeSet);
+      removeSoftPcsInconsistencies(pcs, mergedChangeSet, baseChangeSet);
+      handleContent(pcs, mergedChangeSet, baseChangeSet);
     }
-  }
 
-  // endregion
-
-  // region Getters
-  /**
-   * Get the merged change set.
-   *
-   * @return The merged change set.
-   */
-  public ChangeSet getMergedChangeSet() {
+    // Return the merged change set.
     return mergedChangeSet;
   }
 
@@ -74,7 +60,7 @@ public class Merger {
 
   // region Spork-3DM methods.
 
-  private void removeSoftPcsInconsistencies(
+  private static void removeSoftPcsInconsistencies(
       Pcs pcs, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     // Get all inconsistent PCSs.
     var inconsistentPcs = getAllInconsistentPcs(pcs, mergeChangeSet);
@@ -99,13 +85,13 @@ public class Merger {
     }
   }
 
-  private void handleContent(Pcs pcs, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
+  private static void handleContent(Pcs pcs, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     removeSoftContentInconsistencies(pcs.parent(), mergeChangeSet, baseChangeSet);
     removeSoftContentInconsistencies(pcs.child(), mergeChangeSet, baseChangeSet);
     removeSoftContentInconsistencies(pcs.successor(), mergeChangeSet, baseChangeSet);
   }
 
-  private void removeSoftContentInconsistencies(
+  private static void removeSoftContentInconsistencies(
       Tree tree, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     var contentTuples = getContentTuples(tree, mergeChangeSet);
 
@@ -142,7 +128,7 @@ public class Merger {
    * @param changeSet The change set to search in.
    * @return The set of inconsistent PCSs.
    */
-  private Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
+  private static Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
     var inconsistentPcs = new LinkedHashSet<Pcs>();
 
     // Loop through change set and find inconsistencies.
@@ -172,7 +158,7 @@ public class Merger {
    * @param changeSet The change set to search in.
    * @return The set of content tuples related to the tree.
    */
-  private Set<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
+  private static Set<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
     return changeSet.contentTupleSet().stream()
         .filter(contentTuple -> contentTuple.node().equals(tree))
         .collect(Collectors.toUnmodifiableSet());
@@ -185,7 +171,7 @@ public class Merger {
    * @param contents The content tuples to set.
    * @param changeSet The change set to update the content tuples in.
    */
-  private void setContentTuples(Tree tree, Set<ContentTuple> contents, ChangeSet changeSet) {
+  private static void setContentTuples(Tree tree, Set<ContentTuple> contents, ChangeSet changeSet) {
     // Remove all content tuples associated with the tree (they're to be replaced).
     changeSet.contentTupleSet().removeIf(contentTuple -> contentTuple.node().equals(tree));
 
@@ -203,7 +189,7 @@ public class Merger {
    * @param otherPcs The PCS to mark as inconsistent with.
    * @param mergeChangeSet The change set these PCSs are in.
    */
-  private void hardPcsInconsistency(Pcs pcs, Pcs otherPcs, ChangeSet mergeChangeSet) {
+  private static void hardPcsInconsistency(Pcs pcs, Pcs otherPcs, ChangeSet mergeChangeSet) {
     // Short-circuit if this PCS already has a hard inconsistency.
     if (pcs.hardInconsistencyWith().isPresent()) return;
 
@@ -223,7 +209,8 @@ public class Merger {
     mergeChangeSet.pcsSet().add(updatedOtherPcs);
   }
 
-  private void hardContentInconsistency(Set<ContentTuple> contentTuples, ChangeSet mergeChangeSet) {
+  private static void hardContentInconsistency(
+      Set<ContentTuple> contentTuples, ChangeSet mergeChangeSet) {
     // In a three-way merge, there are exactly 2 inconsistencies: left and right.
     if (contentTuples.size() != 2) {
       for (var contentTuple : contentTuples) {
