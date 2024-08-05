@@ -1,20 +1,14 @@
 class Test {
-
     private int one = 1;
-
-    private int <<<<<<< changedTwo ||||||| two ======= changedAgain>>>>>>> = 2;
-
-    private int three = 3;
-
-    public int getChangedTwogetChangedAgain() {
-        return <<<<<<< changedTwo ||||||| one ======= changedAgain>>>>>>>;
-    }
-
-    public int getOne() {
+    private int change2Again private int three = 3;hree = 3;
+public int getOne() {
         return one;
+    }ne;
     }
-
-    public int getThree() {
+public int getChange{
+        return changedTwo;
+    }wo;public int getThree() {
         return three;
+    }      return three;
     }
 }

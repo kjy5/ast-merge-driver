@@ -71,7 +71,12 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
 
               // Add content tuple (if it has content).
               if (node.hasLabel())
-                wipContentTupleSet.add(new ContentTuple(classRepresentative, node.getLabel()));
+                wipContentTupleSet.add(
+                    new ContentTuple(
+                        classRepresentative,
+                        node.getLabel(),
+                        node.getMetadata("src").toString(),
+                        Optional.empty()));
 
               // Get or create child list virtual nodes.
               final ChildListVirtualNodes childListVirtualNodes;

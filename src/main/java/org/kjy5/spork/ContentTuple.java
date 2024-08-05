@@ -10,20 +10,11 @@ import java.util.Optional;
  *
  * @param node The node.
  * @param content The content associated with the node.
+ * @param src The source file of the content.
  * @author Kenneth Yang
  */
 public record ContentTuple(
-    Tree node, String content, Optional<ContentTuple> hardInconsistencyWith) {
-
-  /**
-   * Construct a content tuple on required fields.
-   *
-   * @param node The node.
-   * @param content The content associated with the node.
-   */
-  public ContentTuple(Tree node, String content) {
-    this(node, content, Optional.empty());
-  }
+    Tree node, String content, String src, Optional<ContentTuple> hardInconsistencyWith) {
 
   /**
    * Print the content tuple.

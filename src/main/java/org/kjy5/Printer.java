@@ -35,8 +35,20 @@ public class Printer {
         // Short-circuit if no content.
         if (maybeContentTuple.isEmpty()) continue;
 
-        // Get content as bytes.
-        var content = maybeContentTuple.get().content().getBytes();
+        // Get content tuple.
+        var contentTuple = maybeContentTuple.get();
+
+        // Declare content as bytes.
+        var content = contentTuple.content().getBytes();
+
+        // Check for conflicts.
+        //        if (contentTuple.hardInconsistencyWith().isPresent()){
+        //          var conflict = contentTuple.hardInconsistencyWith().get();
+        //
+        //          // Update content string to show conflict.
+        //          content = ("<<<<<<< "+ contentTuple.src() + Arrays.toString(content) + " =======
+        // " + conflict.content() + " >>>>>>> " + conflict.src()).getBytes();
+        //        }
 
         // Replace old content with new content.
 
