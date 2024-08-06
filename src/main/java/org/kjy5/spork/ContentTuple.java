@@ -10,11 +10,10 @@ import java.util.Optional;
  *
  * @param node The node.
  * @param content The content associated with the node.
- * @param src The source file of the content.
  * @author Kenneth Yang
  */
 public record ContentTuple(
-    Tree node, String content, String src, Optional<ContentTuple> hardInconsistencyWith) {
+    Tree node, String content, Optional<ContentTuple> hardInconsistencyWith) {
 
   /**
    * Print the content tuple.
@@ -23,14 +22,6 @@ public record ContentTuple(
    */
   @Override
   public String toString() {
-    return "ContentTuple("
-        + node
-        + ", "
-        + content
-        + ", "
-        + src
-        + ", "
-        + hardInconsistencyWith
-        + ')';
+    return "ContentTuple(" + node + ", " + content + ", " + hardInconsistencyWith + ')';
   }
 }

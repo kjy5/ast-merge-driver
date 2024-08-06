@@ -6,10 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Map;
 import org.kjy5.spork.ChangeSet;
 
 public class Printer {
-  public static void print(Tree mergedTree, ChangeSet mergedChangeSet, String outputFilePath) {
+  public static void print(
+      Tree mergedTree,
+      ChangeSet mergedChangeSet,
+      String outputFilePath,
+      Map<Tree, String> nodeToSourceFileMapping) {
     // TODO: current implementation assumes old and new content start at the same place. Need to
     // adjust for when they don't.
 
@@ -43,12 +48,10 @@ public class Printer {
           // Update content string to show conflict.
           contentBytes =
               ("<<<<<<< "
-                      + contentTuple.src()
                       + contentTuple.content()
                       + " =======         "
                       + conflict.content()
-                      + " >>>>>>> "
-                      + conflict.src())
+                      + " >>>>>>> ")
                   .getBytes();
         }
 
@@ -65,11 +68,11 @@ public class Printer {
       }
 
       // TODO: need to identify what a structure is replacing. Adding new structures in a list won't
-      // work though (e.g. adding new parameters to a method becuase the commas won't be generated).
+      // work though (e.g. adding new parameters to a method because the commas won't be generated).
       // Otherwise, read from file.
       try {
         // Open file to read from.
-        var file = new RandomAccessFile(node.getMetadata("src").toString(), "r");
+        var file = new RandomAccessFile(nodeToSourceFileMapping.get(node), "r");
         file.seek(node.getPos());
 
         // Insertion index (changes to replacing node if there was a previous node).

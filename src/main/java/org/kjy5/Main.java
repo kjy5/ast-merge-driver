@@ -8,6 +8,7 @@ import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.kjy5.spork.*;
 
@@ -61,9 +62,10 @@ public class Main {
     }
 
     // Annotate trees with their source files.
-    baseTree.preOrder().forEach(node -> node.setMetadata("src", fileBasePath));
-    leftTree.preOrder().forEach(node -> node.setMetadata("src", fileLeftPath));
-    rightTree.preOrder().forEach(node -> node.setMetadata("src", fileRightPath));
+    var nodeToSourceFileMapping = new HashMap<Tree, String>();
+    baseTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileBasePath));
+    leftTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileLeftPath));
+    rightTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileRightPath));
 
     // TODO: Consider mapping from left/right to base to better follow class representative logic.
     // Match the trees.
@@ -139,7 +141,7 @@ public class Main {
     // endregion
 
     // region Write merged tree to file.
-    Printer.print(mergedTree, mergedChangeSet, fileMergedPath);
+    Printer.print(mergedTree, mergedChangeSet, fileMergedPath, nodeToSourceFileMapping);
     // endregion
   }
 }

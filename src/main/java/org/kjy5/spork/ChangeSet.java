@@ -75,7 +75,6 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
                     new ContentTuple(
                         classRepresentative,
                         node.getLabel(),
-                        node.getMetadata("src").toString(),
                         Optional.empty()));
 
               // Get or create child list virtual nodes.
