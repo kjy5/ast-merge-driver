@@ -93,15 +93,33 @@ public class Main {
     var virtualRootMapping = new LinkedHashMap<Tree, Tree>();
     var ChildListVirtualNodesMapping = new LinkedHashMap<Tree, ChildListVirtualNodes>();
 
+    // Content tuple source file mapping.
+    var contentTupleToSourceFileMapping = new HashMap<ContentTuple, String>();
+
     final var baseChangeSet =
         ChangeSet.from(
-            baseTree, classRepresentatives, virtualRootMapping, ChildListVirtualNodesMapping);
+            baseTree,
+            classRepresentatives,
+            virtualRootMapping,
+            nodeToSourceFileMapping,
+            contentTupleToSourceFileMapping,
+            ChildListVirtualNodesMapping);
     final var leftChangeSet =
         ChangeSet.from(
-            leftTree, classRepresentatives, virtualRootMapping, ChildListVirtualNodesMapping);
+            leftTree,
+            classRepresentatives,
+            virtualRootMapping,
+            nodeToSourceFileMapping,
+            contentTupleToSourceFileMapping,
+            ChildListVirtualNodesMapping);
     final var rightChangeSet =
         ChangeSet.from(
-            rightTree, classRepresentatives, virtualRootMapping, ChildListVirtualNodesMapping);
+            rightTree,
+            classRepresentatives,
+            virtualRootMapping,
+            nodeToSourceFileMapping,
+            contentTupleToSourceFileMapping,
+            ChildListVirtualNodesMapping);
     System.out.println("State\tPCSs\tContentTuples");
     System.out.println(
         "Base\t" + baseChangeSet.pcsSet().size() + "\t\t" + baseChangeSet.contentTupleSet().size());
@@ -135,13 +153,19 @@ public class Main {
     // region Rebuild AST from merged change set.
     final var mergedTree = mergedChangeSet.toTree();
     System.out.println();
+    System.out.println("Merged tree:");
     mergedTree
         .preOrder()
-        .forEach(node -> System.out.println(node.getMetadata("src") + ": " + node));
+        .forEach(node -> System.out.println(nodeToSourceFileMapping.get(node) + ": " + node));
     // endregion
 
     // region Write merged tree to file.
-    Printer.print(mergedTree, mergedChangeSet, fileMergedPath, nodeToSourceFileMapping);
+    Printer.print(
+        mergedTree,
+        mergedChangeSet,
+        fileMergedPath,
+        nodeToSourceFileMapping,
+        contentTupleToSourceFileMapping);
     // endregion
   }
 }

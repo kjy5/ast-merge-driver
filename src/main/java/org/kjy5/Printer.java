@@ -8,13 +8,15 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Map;
 import org.kjy5.spork.ChangeSet;
+import org.kjy5.spork.ContentTuple;
 
 public class Printer {
   public static void print(
       Tree mergedTree,
       ChangeSet mergedChangeSet,
       String outputFilePath,
-      Map<Tree, String> nodeToSourceFileMapping) {
+      Map<Tree, String> nodeToSourceFileMapping,
+      Map<ContentTuple, String> contentTupleToSourceFileMapping) {
     // TODO: current implementation assumes old and new content start at the same place. Need to
     // adjust for when they don't.
 
@@ -36,7 +38,6 @@ public class Printer {
 
         // Get content tuple.
         var contentTuple = maybeContentTuple.get();
-        System.out.println(contentTuple);
 
         // Declare content as bytes.
         var contentBytes = contentTuple.content().getBytes();
@@ -48,10 +49,12 @@ public class Printer {
           // Update content string to show conflict.
           contentBytes =
               ("<<<<<<< "
+                      + contentTupleToSourceFileMapping.get(contentTuple)
                       + contentTuple.content()
-                      + " =======         "
+                      + " ======= "
                       + conflict.content()
-                      + " >>>>>>> ")
+                      + " >>>>>>> "
+                      + contentTupleToSourceFileMapping.get(conflict))
                   .getBytes();
         }
 
@@ -115,6 +118,7 @@ public class Printer {
 
     // Write to file.
     System.out.println();
+    System.out.println("Merged result:");
     System.out.println(cleanedBufferOutputStream);
     try {
       var mergedFile = new FileOutputStream(outputFilePath);

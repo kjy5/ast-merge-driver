@@ -26,6 +26,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
       Tree tree,
       Map<Tree, Tree> classRepresentativesMapping,
       Map<Tree, Tree> virtualRootMapping,
+      Map<Tree, String> nodeToSourceFileMapping,
+      Map<ContentTuple, String> contentTupleToSourceFileMapping,
       Map<Tree, ChildListVirtualNodes> childListVirtualNodesMapping) {
     // Initialize an empty content tuple.
     var wipContentTupleSet = new LinkedHashSet<ContentTuple>();
@@ -70,12 +72,17 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
               var classRepresentative = classRepresentativesMapping.get(node);
 
               // Add content tuple (if it has content).
-              if (node.hasLabel())
-                wipContentTupleSet.add(
-                    new ContentTuple(
-                        classRepresentative,
-                        node.getLabel(),
-                        Optional.empty()));
+              if (node.hasLabel()) {
+                var contentTuple =
+                    new ContentTuple(classRepresentative, node.getLabel(), Optional.empty());
+
+                // Add to set.
+                wipContentTupleSet.add(contentTuple);
+
+                // Add to source file mapping.
+                contentTupleToSourceFileMapping.put(
+                    contentTuple, nodeToSourceFileMapping.get(node));
+              }
 
               // Get or create child list virtual nodes.
               final ChildListVirtualNodes childListVirtualNodes;
