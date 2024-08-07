@@ -12,6 +12,8 @@ import org.kjy5.spork.ContentTuple;
 
 public class Printer {
   public static void print(
+      // Why does the name contain "merged"?  Is it necessary for a tree to be a merged tree in
+      // order for it to be printed?  If so, why?  Have you tested this with input trees?
       Tree mergedTree,
       ChangeSet mergedChangeSet,
       String outputFilePath,
@@ -20,13 +22,20 @@ public class Printer {
     // TODO: current implementation assumes old and new content start at the same place. Need to
     // adjust for when they don't.
 
+    // Why is this an array?  Wouldn't a StringBuilder or StringBuffer suffice?
+    // Why does this code manipulate bytes instead of characters?
     // Create output buffer.
+    // What is the invariant about the value of mergedBuffer?  That is, at every point in the code,
+    // how much content has been copied into `mergedBuffer`?
     var mergedBuffer = new ArrayList<Byte>();
 
     // Read from merged tree.
+    // If "node" must come from a merged tre, I would name it "mergedNode".
     for (var node : mergedTree.preOrder()) {
       // If node is a leaf and has content, use its content.
       if (node.isLeaf() && node.hasLabel()) {
+        // Abstract this body into a method, to make the implementation of `print()` shorter and
+        // easier to read.
         // Get content tuple for node.
         var maybeContentTuple =
             mergedChangeSet.contentTupleSet().stream()
@@ -39,6 +48,7 @@ public class Printer {
         // Get content tuple.
         var contentTuple = maybeContentTuple.get();
 
+        // What does it mean to "Declare"?
         // Declare content as bytes.
         var contentBytes = contentTuple.content().getBytes();
 
@@ -59,9 +69,21 @@ public class Printer {
         }
 
         // Delete old content.
+        // I am concerned about the use of `node.getPos()`.  Is the value constantly updated to
+        // account for all previous insertions and deletions?
+        // A better design choice than writing everything to mergedBuffer in advance (if that is
+        // what the invariant for mergedBuffer is) would be to fill it up on demand.
+        // An alternative but probably uglier approach would be to make mergedBuffer an array of
+        // strings.  Initially every string is a single character.  You ensure that the i'th element
+        // of merge is always the i'th character of the file, by doing replacements like such:  to
+        // replace characters 22 through 25, set those array elements to "", then do the insertion
+        // all at character 22.
         mergedBuffer.subList(node.getPos(), node.getPos() + node.getLength()).clear();
 
         // Insert new content.
+        // Minor: inserting into the middle of a String is very inefficient.  A StringBuilder or
+        // StringBuffer can be efficiently inserted into the middle of.  But perhaps you don't need
+        // to do any inserting into the middle, only appending to the end.
         for (int i = 0; i < contentBytes.length; i++) {
           mergedBuffer.add(node.getPos() + i, contentBytes[i]);
         }
@@ -70,6 +92,7 @@ public class Printer {
         continue;
       }
 
+      // What is a "structure"?
       // TODO: need to identify what a structure is replacing. Adding new structures in a list won't
       // work though (e.g. adding new parameters to a method because the commas won't be generated).
       // Otherwise, read from file.
@@ -81,6 +104,7 @@ public class Printer {
         // Insertion index (changes to replacing node if there was a previous node).
         var insertionIndex = node.getPos();
 
+        // Is the replaced node in the left?  In the right?
         // Get node this is replacing.
         var replacingNode = (Tree) node.getMetadata("replacing");
 
@@ -110,6 +134,7 @@ public class Printer {
       }
     }
 
+    // How do null bytes arise in the buffer?
     // Remove null bytes from buffer.
     var cleanedBufferOutputStream = new ByteArrayOutputStream();
     for (var b : mergedBuffer) {

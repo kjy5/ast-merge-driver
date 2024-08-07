@@ -9,11 +9,15 @@ import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.Type;
 import java.util.*;
 
+// What is the definition of "A Spork change set"?  That comment, on its own, is not descriptive.
 /**
  * A Spork change set.
  *
  * @author Kenneth Yang
  */
+// I realize that Spork calls the data structure a "change set", but I think "PcsSet" would be more
+// descriptive, or even "something along the lines of "Java file representation".  (The comment here
+// could say that Spork calls it a "change set", without using that naming throughout.)
 public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   // region Factory.
   /**
@@ -29,12 +33,16 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
       Map<Tree, String> nodeToSourceFileMapping,
       Map<ContentTuple, String> contentTupleToSourceFileMapping,
       Map<Tree, ChildListVirtualNodes> childListVirtualNodesMapping) {
+    // This isn't "an empty content tuple", but a set.
+    // Why does this need to be a set as opposed to (say) a list?
     // Initialize an empty content tuple.
     var wipContentTupleSet = new LinkedHashSet<ContentTuple>();
 
     // Build root of PCS set.
+    // What is a "class representative"?
     final var rootClassRepresentative = classRepresentativesMapping.get(tree);
 
+    // What does "virtual" mean?
     final Tree virtualRoot;
     if (virtualRootMapping.containsKey(rootClassRepresentative)) {
       virtualRoot = virtualRootMapping.get(rootClassRepresentative);
@@ -144,6 +152,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualRoot"));
   }
 
+  // These methods return a fresh value every time.  Could they return the same value every time,
+  // for efficiency?  Or is use of a fresh value important?
   private static Tree makeVirtualChildListStart() {
     return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListStart"));
   }
@@ -156,10 +166,12 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
 
   // region Tree conversion methods.
   /**
-   * Convert this change set to an AST.
+   * Convert this change set to a GumTree AST.
    *
-   * @return The corresponding AST (as a GumTree Tree).
+   * @return the corresponding GumTree AST
    */
+  // Consider naming this "toGtTree()" to emphasize that it returns a GumTree tree rather than some
+  // other type.
   public Tree toTree() {
     // Find root.
     var maybeRootPcs =

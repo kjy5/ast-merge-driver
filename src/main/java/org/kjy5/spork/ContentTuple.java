@@ -3,6 +3,7 @@ package org.kjy5.spork;
 import com.github.gumtreediff.tree.Tree;
 import java.util.Optional;
 
+// This comment does not mention `hardInconsistencyWith`.
 /**
  * A Spork content tuple.
  *
@@ -12,6 +13,7 @@ import java.util.Optional;
  * @param content The content associated with the node.
  * @author Kenneth Yang
  */
+// It's a bit inconsistent that the type of `node` is `Tree`.  Why not name the field `tree`?
 public record ContentTuple(
     Tree node, String content, Optional<ContentTuple> hardInconsistencyWith) {
 

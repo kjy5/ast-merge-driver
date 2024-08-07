@@ -12,7 +12,7 @@ import java.util.Optional;
  * @param parent The parent node.
  * @param child The child node.
  * @param successor The successor node.
- * @param hardInconsistencyWith The hard inconsistency with another PCS triple.
+ * @param hardInconsistencyWith the hard inconsistency with another PCS triple, if any
  * @author Kenneth Yang
  */
 public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInconsistencyWith) {
@@ -35,6 +35,10 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInc
    */
   @Override
   public String toString() {
+    // Note that `System.identityHashCode()` is not unique.  Two different values may have the same
+    // identity hash code.  If it's important that the values are unique (or if it would be
+    // convenient that they are small in-order values), use
+    // https://plumelib.org/plume-util/api/org/plumelib/util/UniqueId.html .
     return "PCS "
         + Integer.toHexString(System.identityHashCode(this))
         + ":\t"

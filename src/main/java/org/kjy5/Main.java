@@ -30,15 +30,19 @@ public class Main {
 
   // endregion
 
+  // What is the "full pipeline"?
+  // What does the given folder contain?
+  // Document that the folder name must be relative, not absolute.
   /**
    * Entry point of the program.
    *
-   * <p>Runs the full pipeline
+   * <p>Runs the full pipeline.
    *
    * @param args Command line arguments (folder name)
    */
   public static void main(String[] args) {
     // region File path specifications.
+    // This should err if more than one command-line argument is provided.
     final var folder = args.length > 0 ? args[0] : "0";
 
     // Source files.
@@ -58,6 +62,7 @@ public class Main {
       leftTree = javaParserGenerator.generateFrom().file(fileLeftPath).getRoot();
       rightTree = javaParserGenerator.generateFrom().file(fileRightPath).getRoot();
     } catch (IOException e) {
+      // Should this be "parse" rather than "read"?
       throw new RuntimeException("Unable to read source code: " + e);
     }
 
@@ -67,6 +72,7 @@ public class Main {
     leftTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileLeftPath));
     rightTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileRightPath));
 
+    // What is "class representative logic"?
     // TODO: Consider mapping from left/right to base to better follow class representative logic.
     // Match the trees.
     Run.initMatchers();
@@ -76,6 +82,9 @@ public class Main {
     final var leftToRightMapping = matcher.match(leftTree, rightTree);
     // endregion
 
+    // It seems inconsistent that the variables above have "Mapping" in their name but this one does
+    // not.  In general, I don't think "Mapping" is necessary; a name like "baseToLeft" is
+    // sufficiently expressive.  In any event, please be consistent.
     // region Create class representative mappings.
     final var classRepresentatives =
         ClassRepresentatives.from(
@@ -93,6 +102,8 @@ public class Main {
     var virtualRootMapping = new LinkedHashMap<Tree, Tree>();
     var ChildListVirtualNodesMapping = new LinkedHashMap<Tree, ChildListVirtualNodes>();
 
+    // Would it be better to include the string in the ContentTuple?  Why or why not?  Also, is a
+    // String necessary, or could it be an enum (BASE, LEFT, RIGHT, maybe MERGED)?
     // Content tuple source file mapping.
     var contentTupleToSourceFileMapping = new HashMap<ContentTuple, String>();
 
@@ -120,8 +131,10 @@ public class Main {
             nodeToSourceFileMapping,
             contentTupleToSourceFileMapping,
             ChildListVirtualNodesMapping);
-    System.out.println("State\tPCSs\tContentTuples");
+    System.out.println("State\t# PCSs\t# ContentTuples");
     System.out.println(
+        // Why are there two "\t" in a row here, but there was only one in the header line that was
+        // printed just above?
         "Base\t" + baseChangeSet.pcsSet().size() + "\t\t" + baseChangeSet.contentTupleSet().size());
     System.out.println(
         "Left\t" + leftChangeSet.pcsSet().size() + "\t\t" + leftChangeSet.contentTupleSet().size());

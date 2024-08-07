@@ -37,12 +37,14 @@ public class Merger {
     // Merged change set.
     var mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
 
+    // Why are there two tabs here?
     System.out.println(
         "Raw\t\t"
             + mergedChangeSet.pcsSet().size()
             + "\t\t"
             + mergedChangeSet.contentTupleSet().size());
 
+    // What does it mean to "handle"?  Is it resolving them?  Removing them?  Something else?
     // Handle inconsistencies.
     for (var pcs : new LinkedHashSet<>(mergedChangeSet.pcsSet())) {
       // TODO: Algorithm doesn't say so but we should skip if the PCS is already removed.
@@ -60,6 +62,8 @@ public class Merger {
 
   // region Spork-3DM methods.
 
+  // Document, and explain "hard" vs. "soft".  Consider using more descriptive names than are used
+  // in the Spork paper.
   private static void removeSoftPcsInconsistencies(
       Pcs pcs, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     // Get all inconsistent PCSs.
@@ -95,7 +99,7 @@ public class Merger {
       Tree tree, ChangeSet mergeChangeSet, ChangeSet baseChangeSet) {
     var contentTuples = getContentTuples(tree, mergeChangeSet);
 
-    // Short-circuit if there are one or less content tuples (no inconsistencies).
+    // Short-circuit if there are one or fewer content tuples (no inconsistencies).
     if (contentTuples.size() <= 1) return;
 
     // Get all content tuples not in the base change set.
@@ -118,6 +122,8 @@ public class Merger {
   // region Spork-3DM helper methods.
   // TODO: Consider using "well formed" criteria for consistency.
 
+  // I don't think this gets "all inconsistent PCSs", but only the PCSs that are inconsistent with
+  // the given one.  Clarify and improve naming, such as to "getInconsistentWith()".
   /**
    * Get all inconsistent PCSs inside a change set given a PCS.
    *
@@ -129,10 +135,12 @@ public class Merger {
    * @return The set of inconsistent PCSs.
    */
   private static Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
+    // Why is this a set?  Can duplicates exist?
     var inconsistentPcs = new LinkedHashSet<Pcs>();
 
     // Loop through change set and find inconsistencies.
     for (var otherPcs : changeSet.pcsSet()) {
+      // Abstract the following into a helper method `isInconsistent()`, for clarity.
       // Skip if it's the same PCS.
       if (pcs == otherPcs) continue;
 
@@ -159,11 +167,16 @@ public class Merger {
    * @return The set of content tuples related to the tree.
    */
   private static Set<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
+    // Minor: This would be more efficient (and marginally shorter) as:
+    // return CollectionsPlume.filter(
+    //     changeSet.contentTupleSet(), contentTuple -> contentTuple.node().equals(tree));
+
     return changeSet.contentTupleSet().stream()
         .filter(contentTuple -> contentTuple.node().equals(tree))
         .collect(Collectors.toUnmodifiableSet());
   }
 
+  // What does it mean to set a content tuple?
   /**
    * Set the content tuples associated with the tree in the change set.
    *
@@ -182,6 +195,8 @@ public class Merger {
             contents.stream().filter(contentTuple -> contentTuple.node().equals(tree)).toList());
   }
 
+  // What does it mean to "register"?
+  // Document that both `pcs` and `mergeChangeSet` may be side-effected by this method.
   /**
    * Register PCS and other has a hard inconsistency.
    *
