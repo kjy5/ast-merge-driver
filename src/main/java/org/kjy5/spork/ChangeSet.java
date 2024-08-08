@@ -7,7 +7,12 @@ import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.ImmutableTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A Spork change set.

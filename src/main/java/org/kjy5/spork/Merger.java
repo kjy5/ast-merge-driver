@@ -4,7 +4,12 @@
 package org.kjy5.spork;
 
 import com.github.gumtreediff.tree.Tree;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -147,7 +152,7 @@ public class Merger {
    * @param changeSet the change set to search in
    * @return the set of inconsistent PCSs
    */
-  private static Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
+  private static Collection<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
     var inconsistentPcs = new LinkedHashSet<Pcs>();
 
     // Loop through change set and find inconsistencies.
@@ -188,7 +193,7 @@ public class Merger {
    * @param changeSet the change set to search in
    * @return the set of content tuples related to the tree
    */
-  private static Set<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
+  private static Collection<ContentTuple> getContentTuples(Tree tree, ChangeSet changeSet) {
     return changeSet.contentTupleSet().stream()
         .filter(contentTuple -> contentTuple.node().equals(tree))
         .collect(Collectors.toUnmodifiableSet());

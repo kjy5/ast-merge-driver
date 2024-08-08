@@ -10,7 +10,11 @@ import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import org.kjy5.spork.*;
+import org.kjy5.spork.ChangeSet;
+import org.kjy5.spork.ChildListVirtualNodes;
+import org.kjy5.spork.ClassRepresentatives;
+import org.kjy5.spork.ContentTuple;
+import org.kjy5.spork.Merger;
 
 /**
  * Main class for the merge driver.
