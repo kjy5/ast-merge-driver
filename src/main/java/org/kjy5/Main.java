@@ -3,10 +3,9 @@
  */
 package org.kjy5;
 
-import com.github.gumtreediff.client.Run;
-import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import java.util.LinkedHashMap;
+import org.kjy5.driver.Matching;
 import org.kjy5.driver.Parsings;
 import org.kjy5.spork.ChangeSet;
 import org.kjy5.spork.ChildListVirtualNodes;
@@ -73,12 +72,7 @@ public class Main {
     // endregion
 
     // region Create matching between branches.
-    // TODO: Consider mapping from left/right to base to better follow usage direction later.
-    Run.initMatchers();
-    final var matcher = Matchers.getInstance().getMatcher();
-    final var baseToLeft = matcher.match(parsings.baseTree(), parsings.leftTree());
-    final var baseToRight = matcher.match(parsings.baseTree(), parsings.rightTree());
-    final var leftToRight = matcher.match(parsings.leftTree(), parsings.rightTree());
+    final var matchings = Matching.from(parsings);
     // endregion
 
     // region Create class representative mappings.
@@ -87,9 +81,9 @@ public class Main {
             parsings.baseTree(),
             parsings.leftTree(),
             parsings.rightTree(),
-            baseToLeft,
-            baseToRight,
-            leftToRight);
+            matchings.baseToLeft(),
+            matchings.baseToRight(),
+            matchings.leftToRight());
     // endregion
 
     // region Create change sets (PCS and content tuples).
