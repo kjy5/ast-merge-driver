@@ -20,9 +20,9 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInc
   /**
    * Construct a PCS triple on required fields.
    *
-   * @param parent The parent node.
-   * @param child The child node.
-   * @param successor The successor node.
+   * @param parent the parent node.
+   * @param child the child node.
+   * @param successor the successor node.
    */
   public Pcs(Tree parent, Tree child, Tree successor) {
     this(parent, child, successor, Optional.empty());
@@ -31,14 +31,10 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInc
   /**
    * Print the PCS triple.
    *
-   * @return A string representation of the PCS triple.
+   * @return a string representation of the PCS triple
    */
   @Override
   public String toString() {
-    // Note that `System.identityHashCode()` is not unique.  Two different values may have the same
-    // identity hash code.  If it's important that the values are unique (or if it would be
-    // convenient that they are small in-order values), use
-    // https://plumelib.org/plume-util/api/org/plumelib/util/UniqueId.html .
     return "PCS "
         + Integer.toHexString(System.identityHashCode(this))
         + ":\t"

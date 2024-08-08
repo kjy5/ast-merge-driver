@@ -18,7 +18,7 @@ public record ContentTuple(Tree node, String content, ContentTuple hardInconsist
   /**
    * Print the content tuple.
    *
-   * @return A string representation of the content tuple.
+   * @return a string representation of the content tuple
    */
   @Override
   public String toString() {

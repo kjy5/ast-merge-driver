@@ -18,9 +18,9 @@ public class Merger {
   /**
    * Perform a Spork merge.
    *
-   * @param baseChangeSet Base branch change set.
-   * @param leftChangeSet Left branch change set.
-   * @param rightChangeSet Right branch change set.
+   * @param baseChangeSet base branch change set
+   * @param leftChangeSet left branch change set
+   * @param rightChangeSet right branch change set
    */
   public static ChangeSet merge(
       ChangeSet baseChangeSet, ChangeSet leftChangeSet, ChangeSet rightChangeSet) {
@@ -143,9 +143,9 @@ public class Merger {
    * <p>If two PCSs have the same parent, both children and both successors must be different. If
    * two PCSs have different parents, all children and successors must be different.
    *
-   * @param pcs The PCS to find inconsistencies with.
-   * @param changeSet The change set to search in.
-   * @return The set of inconsistent PCSs.
+   * @param pcs the PCS to find inconsistencies with
+   * @param changeSet the change set to search in
+   * @return the set of inconsistent PCSs
    */
   private static Set<Pcs> getAllInconsistentPcs(Pcs pcs, ChangeSet changeSet) {
     var inconsistentPcs = new LinkedHashSet<Pcs>();
@@ -167,9 +167,9 @@ public class Merger {
   /**
    * Check if two PCSs are inconsistent.
    *
-   * @param pcs The first PCS.
-   * @param otherPcs The second PCS.
-   * @return True if the PCSs are inconsistent, false otherwise.
+   * @param pcs the first PCS
+   * @param otherPcs the second PCS
+   * @return true if the PCSs are inconsistent, false otherwise
    */
   private static boolean isInconsistent(Pcs pcs, Pcs otherPcs) {
     return (pcs.parent() == otherPcs.parent()
@@ -212,10 +212,8 @@ public class Merger {
             contents.stream().filter(contentTuple -> contentTuple.node().equals(node)).toList());
   }
 
-  // What does it mean to "register"?
-  // Document that both `pcs` and `mergeChangeSet` may be side-effected by this method.
   /**
-   * Update this PCS and another one as being in conflict with each other.
+   * Update two PCSs as being in conflict with each other.
    *
    * @param pcs the PCS to mark as inconsistent
    * @param otherPcs the PCS to mark as inconsistent with
@@ -241,6 +239,12 @@ public class Merger {
     mergeChangeSet.pcsSet().add(updatedOtherPcs);
   }
 
+  /**
+   * Update two content tuples as being in conflict with each other.
+   *
+   * @param contentTuples the content tuples to mark as inconsistent with each other
+   * @param mergeChangeSet the change set these content tuples are in
+   */
   private static void hardContentInconsistency(
       Set<ContentTuple> contentTuples, ChangeSet mergeChangeSet) {
     // In a three-way merge, there are exactly 2 inconsistencies: left and right.

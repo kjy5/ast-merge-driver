@@ -28,8 +28,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
    * used between matching branches. Virtual nodes are added to mark the root of the tree and the
    * start and end of child lists.
    *
-   * @param tree The tree to create the change set from.
-   * @param nodeToClassRepresentatives The mapping of nodes to class representatives.
+   * @param tree the tree to create the change set from
+   * @param nodeToClassRepresentatives the mapping of nodes to class representatives
    */
   public static ChangeSet from(
       Tree tree,
@@ -149,14 +149,30 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   // endregion
 
   // region Virtual node factories.
+
+  /**
+   * Create a virtual root node to mark the root of an AST in a PCS set.
+   *
+   * @return a new virtual root node
+   */
   private static Tree makeVirtualRoot() {
     return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualRoot"));
   }
 
+  /**
+   * Create a virtual child list start node to mark the start of a child list in a PCS set.
+   *
+   * @return a new virtual child list start node
+   */
   private static Tree makeVirtualChildListStart() {
     return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListStart"));
   }
 
+  /**
+   * Create a virtual child list end node to mark the end of a child list in a PCS set.
+   *
+   * @return a new virtual child list end node
+   */
   private static Tree makeVirtualChildListEnd() {
     return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListEnd"));
   }
@@ -167,7 +183,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   /**
    * Convert this change set to a GumTree AST.
    *
-   * @return The corresponding GumTree AST.
+   * @return the corresponding GumTree AST
    */
   public Tree toGumTreeTree() {
     // Find root.
@@ -189,8 +205,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   /**
    * Convert a node and its children to a GumTree AST.
    *
-   * @param node The node to convert.
-   * @return The corresponding GumTree AST.
+   * @param node the node to convert
+   * @return the corresponding GumTree AST
    */
   private Tree toGumTreeTree(Tree node) {
     // Create new children list.

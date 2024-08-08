@@ -15,11 +15,11 @@ public class Printer {
   /**
    * Print a GumTree AST to a file.
    *
-   * @param tree The AST to print.
-   * @param contentTuples The set of content tuples associated with this AST.
-   * @param outputFilePath The path to the output file.
-   * @param nodeToSourceFile A mapping from nodes to source files.
-   * @param contentTupleToSourceFile A mapping from content tuples to source files.
+   * @param tree the AST to print
+   * @param contentTuples the set of content tuples associated with this AST
+   * @param outputFilePath the path to the output file
+   * @param nodeToSourceFile a mapping from nodes to source files
+   * @param contentTupleToSourceFile a mapping from content tuples to source files
    */
   public static void print(
       Tree tree,

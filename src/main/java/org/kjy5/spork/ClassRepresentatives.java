@@ -22,12 +22,12 @@ public class ClassRepresentatives {
   /**
    * Create mapping from nodes in the three branches to their class representatives.
    *
-   * @param baseTree The base tree.
-   * @param leftTree The left tree.
-   * @param rightTree The right tree.
-   * @param baseToLeft The match mapping from base to left.
-   * @param baseToRight The match mapping from base to right.
-   * @param leftToRight The match mapping from left to right.
+   * @param baseTree the base tree
+   * @param leftTree the left tree
+   * @param rightTree the right tree
+   * @param baseToLeft the match mapping from base to left
+   * @param baseToRight the match mapping from base to right
+   * @param leftToRight the match mapping from left to right
    */
   public static Map<Tree, Tree> from(
       Tree baseTree,
@@ -79,9 +79,9 @@ public class ClassRepresentatives {
    *
    * <p>This will update the nodeToClassRepresentative mapping.
    *
-   * @param tree The tree to map.
-   * @param baseToBranch The mapping from base to this tree.
-   * @param nodeToClassRepresentative The mapping from nodes to their class representatives.
+   * @param tree the tree to map
+   * @param baseToBranch the mapping from base to this tree
+   * @param nodeToClassRepresentative the mapping from nodes to their class representatives
    */
   private static void mapToBaseOrToSelf(
       Tree tree, MappingStore baseToBranch, Map<Tree, Tree> nodeToClassRepresentative) {

@@ -37,7 +37,7 @@ public class Main {
    *
    * <p>Runs the full Spork algorithm.
    *
-   * @param args Command line arguments (test folder name relative to the "resources/" directory)
+   * @param args command line arguments (test folder name relative to the "resources/" directory)
    */
   public static void main(String[] args) {
     // region File path specifications.
