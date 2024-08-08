@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -226,20 +225,19 @@ public class Merger {
    */
   private static void hardPcsInconsistency(Pcs pcs, Pcs otherPcs, ChangeSet mergeChangeSet) {
     // Short-circuit if this PCS already has a hard inconsistency.
-    if (pcs.hardInconsistencyWith().isPresent()) return;
+    if (pcs.hardInconsistencyWith() != null) return;
 
     // Mark the PCS as inconsistent with the other PCS and replace the original from the change set.
-    var updatedPcs = new Pcs(pcs.parent(), pcs.child(), pcs.successor(), Optional.of(otherPcs));
+    var updatedPcs = new Pcs(pcs.parent(), pcs.child(), pcs.successor(), otherPcs);
     mergeChangeSet.pcsSet().remove(pcs);
     mergeChangeSet.pcsSet().add(updatedPcs);
 
     // Short-circuit if the other PCS is already inconsistent.
-    if (otherPcs.hardInconsistencyWith().isPresent()) return;
+    if (otherPcs.hardInconsistencyWith() != null) return;
 
     // Mark the other PCS as inconsistent with this PCS and replace the original from the change
     // set.
-    var updatedOtherPcs =
-        new Pcs(otherPcs.parent(), otherPcs.child(), otherPcs.successor(), Optional.of(pcs));
+    var updatedOtherPcs = new Pcs(otherPcs.parent(), otherPcs.child(), otherPcs.successor(), pcs);
     mergeChangeSet.pcsSet().remove(otherPcs);
     mergeChangeSet.pcsSet().add(updatedOtherPcs);
   }

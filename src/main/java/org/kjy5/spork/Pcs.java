@@ -4,7 +4,6 @@
 package org.kjy5.spork;
 
 import com.github.gumtreediff.tree.Tree;
-import java.util.Optional;
 
 /**
  * A Spork parent-child-successor triple.
@@ -15,7 +14,7 @@ import java.util.Optional;
  * @param hardInconsistencyWith the hard inconsistency with another PCS triple, if any
  * @author Kenneth Yang
  */
-public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInconsistencyWith) {
+public record Pcs(Tree parent, Tree child, Tree successor, Pcs hardInconsistencyWith) {
 
   /**
    * Construct a PCS triple on required fields.
@@ -25,7 +24,7 @@ public record Pcs(Tree parent, Tree child, Tree successor, Optional<Pcs> hardInc
    * @param successor the successor node.
    */
   public Pcs(Tree parent, Tree child, Tree successor) {
-    this(parent, child, successor, Optional.empty());
+    this(parent, child, successor, null);
   }
 
   /**
