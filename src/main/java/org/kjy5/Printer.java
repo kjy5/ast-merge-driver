@@ -59,8 +59,8 @@ public class Printer {
         var contentBytes = contentTuple.content().getBytes();
 
         // Check for conflicts.
-        if (contentTuple.hardInconsistencyWith().isPresent()) {
-          var conflict = contentTuple.hardInconsistencyWith().get();
+        if (contentTuple.hardInconsistencyWith() != null) {
+          var conflict = contentTuple.hardInconsistencyWith();
 
           // Update content string to show conflict.
           contentBytes =

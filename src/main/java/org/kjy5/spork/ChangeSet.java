@@ -83,8 +83,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
 
               // Add content tuple (if it has content).
               if (node.hasLabel()) {
-                var contentTuple =
-                    new ContentTuple(classRepresentative, node.getLabel(), Optional.empty());
+                var contentTuple = new ContentTuple(classRepresentative, node.getLabel(), null);
 
                 // Add to set.
                 wipContentTupleSet.add(contentTuple);

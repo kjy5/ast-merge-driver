@@ -9,9 +9,9 @@ import java.util.Optional;
 /**
  * A Spork parent-child-successor triple.
  *
- * @param parent The parent node.
- * @param child The child node.
- * @param successor The successor node.
+ * @param parent the parent node
+ * @param child the child node
+ * @param successor the successor node
  * @param hardInconsistencyWith the hard inconsistency with another PCS triple, if any
  * @author Kenneth Yang
  */

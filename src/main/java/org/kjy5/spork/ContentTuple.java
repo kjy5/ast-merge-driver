@@ -1,21 +1,19 @@
 package org.kjy5.spork;
 
 import com.github.gumtreediff.tree.Tree;
-import java.util.Optional;
 
-// This comment does not mention `hardInconsistencyWith`.
 /**
  * A Spork content tuple.
  *
- * <p>Contains a node and its content (i.e. value for a literal, name for variable).
+ * <p>Contains a node, its content (i.e. value for a literal, name for variable), and a reference to
+ * the content tuple it is hard inconsistent with (if any)
  *
- * @param node The node.
- * @param content The content associated with the node.
+ * @param node the node for which the content is associated with
+ * @param content the content associated with the node
+ * @param hardInconsistencyWith the content tuple it is hard inconsistent with
  * @author Kenneth Yang
  */
-// It's a bit inconsistent that the type of `node` is `Tree`.  Why not name the field `tree`?
-public record ContentTuple(
-    Tree node, String content, Optional<ContentTuple> hardInconsistencyWith) {
+public record ContentTuple(Tree node, String content, ContentTuple hardInconsistencyWith) {
 
   /**
    * Print the content tuple.
