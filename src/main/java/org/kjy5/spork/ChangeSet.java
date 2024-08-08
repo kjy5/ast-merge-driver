@@ -9,40 +9,42 @@ import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.Type;
 import java.util.*;
 
-// What is the definition of "A Spork change set"?  That comment, on its own, is not descriptive.
 /**
  * A Spork change set.
  *
+ * <p>Represents an AST as a set of PCSs triples and a set of content tuples. There is potential for
+ * this change set to be not-well-formed (meaning it does not resolve into a complete AST).
+ *
+ * @see org.kjy5.spork.Pcs
+ * @see org.kjy5.spork.ContentTuple
  * @author Kenneth Yang
  */
-// I realize that Spork calls the data structure a "change set", but I think "PcsSet" would be more
-// descriptive, or even "something along the lines of "Java file representation".  (The comment here
-// could say that Spork calls it a "change set", without using that naming throughout.)
 public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   // region Factory.
   /**
    * Create a Spork change set from a tree.
    *
+   * <p>Nodes from the tree are converted to their class representatives so that a common node is
+   * used between matching branches. Virtual nodes are added to mark the root of the tree and the
+   * start and end of child lists.
+   *
    * @param tree The tree to create the change set from.
-   * @param classRepresentativesMapping The mapping of nodes to class representatives.
+   * @param nodeToClassRepresentatives The mapping of nodes to class representatives.
    */
   public static ChangeSet from(
       Tree tree,
-      Map<Tree, Tree> classRepresentativesMapping,
+      Map<Tree, Tree> nodeToClassRepresentatives,
       Map<Tree, Tree> virtualRootMapping,
       Map<Tree, String> nodeToSourceFileMapping,
       Map<ContentTuple, String> contentTupleToSourceFileMapping,
       Map<Tree, ChildListVirtualNodes> childListVirtualNodesMapping) {
-    // This isn't "an empty content tuple", but a set.
-    // Why does this need to be a set as opposed to (say) a list?
-    // Initialize an empty content tuple.
+    // Initialize an empty content tuple set.
     var wipContentTupleSet = new LinkedHashSet<ContentTuple>();
 
     // Build root of PCS set.
-    // What is a "class representative"?
-    final var rootClassRepresentative = classRepresentativesMapping.get(tree);
+    final var rootClassRepresentative = nodeToClassRepresentatives.get(tree);
 
-    // What does "virtual" mean?
+    // Create the virtual root for this PCS set.
     final Tree virtualRoot;
     if (virtualRootMapping.containsKey(rootClassRepresentative)) {
       virtualRoot = virtualRootMapping.get(rootClassRepresentative);
@@ -77,7 +79,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
         .forEach(
             node -> {
               // Get class representative.
-              var classRepresentative = classRepresentativesMapping.get(node);
+              var classRepresentative = nodeToClassRepresentatives.get(node);
 
               // Add content tuple (if it has content).
               if (node.hasLabel()) {
@@ -121,22 +123,22 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
                   new Pcs(
                       classRepresentative,
                       childListVirtualNodes.childListStart(),
-                      classRepresentativesMapping.get(node.getChild(0))));
+                      nodeToClassRepresentatives.get(node.getChild(0))));
 
               // Loop through children (except last one which needs virtual end).
               for (int i = 0; i < node.getChildren().size() - 1; i++) {
                 wipPcsSet.add(
                     new Pcs(
                         classRepresentative,
-                        classRepresentativesMapping.get(node.getChild(i)),
-                        classRepresentativesMapping.get(node.getChild(i + 1))));
+                        nodeToClassRepresentatives.get(node.getChild(i)),
+                        nodeToClassRepresentatives.get(node.getChild(i + 1))));
               }
 
               // End children list (add virtual end).
               wipPcsSet.add(
                   new Pcs(
                       classRepresentative,
-                      classRepresentativesMapping.get(node.getChild(node.getChildren().size() - 1)),
+                      nodeToClassRepresentatives.get(node.getChild(node.getChildren().size() - 1)),
                       childListVirtualNodes.childListEnd()));
             });
 
@@ -152,8 +154,6 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualRoot"));
   }
 
-  // These methods return a fresh value every time.  Could they return the same value every time,
-  // for efficiency?  Or is use of a fresh value important?
   private static Tree makeVirtualChildListStart() {
     return new ImmutableTree(new DefaultTree(Type.NO_TYPE, "virtualChildListStart"));
   }
@@ -168,11 +168,9 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
   /**
    * Convert this change set to a GumTree AST.
    *
-   * @return the corresponding GumTree AST
+   * @return The corresponding GumTree AST.
    */
-  // Consider naming this "toGtTree()" to emphasize that it returns a GumTree tree rather than some
-  // other type.
-  public Tree toTree() {
+  public Tree toGumTreeTree() {
     // Find root.
     var maybeRootPcs =
         pcsSet.stream()
@@ -186,10 +184,16 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     }
 
     // Rebuild the tree.
-    return toTree(maybeRootPcs.get().successor());
+    return toGumTreeTree(maybeRootPcs.get().successor());
   }
 
-  private Tree toTree(Tree node) {
+  /**
+   * Convert a node and its children to a GumTree AST.
+   *
+   * @param node The node to convert.
+   * @return The corresponding GumTree AST.
+   */
+  private Tree toGumTreeTree(Tree node) {
     // Create new children list.
     var children = new LinkedList<Tree>();
 
@@ -219,7 +223,7 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
     // Iterate through children.
     while (!currentChild.getLabel().equals("virtualChildListEnd")) {
       // Recuse add this child to the list.
-      children.add(toTree(currentChild));
+      children.add(toGumTreeTree(currentChild));
 
       // Get next child.
       var currentScopeChild = currentChild;

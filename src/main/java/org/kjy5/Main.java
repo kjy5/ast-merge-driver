@@ -163,7 +163,7 @@ public class Main {
     // endregion
 
     // region Rebuild AST from merged change set.
-    final var mergedTree = mergedChangeSet.toTree();
+    final var mergedTree = mergedChangeSet.toGumTreeTree();
     System.out.println();
     System.out.println("Merged tree:");
     mergedTree
