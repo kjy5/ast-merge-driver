@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import org.kjy5.utils.Branch;
 
 /**
  * A Spork change set.
@@ -40,8 +41,8 @@ public record ChangeSet(Set<Pcs> pcsSet, Set<ContentTuple> contentTupleSet) {
       Tree tree,
       Map<Tree, Tree> nodeToClassRepresentatives,
       Map<Tree, Tree> virtualRootMapping,
-      Map<Tree, String> nodeToSourceFileMapping,
-      Map<ContentTuple, String> contentTupleToSourceFileMapping,
+      Map<Tree, Branch> nodeToSourceFileMapping,
+      Map<ContentTuple, Branch> contentTupleToSourceFileMapping,
       Map<Tree, ChildListVirtualNodes> childListVirtualNodesMapping) {
     // Initialize an empty content tuple set.
     var wipContentTupleSet = new LinkedHashSet<ContentTuple>();

@@ -4,17 +4,17 @@
 package org.kjy5;
 
 import com.github.gumtreediff.client.Run;
-import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import org.kjy5.driver.Parsings;
 import org.kjy5.spork.ChangeSet;
 import org.kjy5.spork.ChildListVirtualNodes;
 import org.kjy5.spork.ClassRepresentatives;
 import org.kjy5.spork.ContentTuple;
 import org.kjy5.spork.Merger;
+import org.kjy5.utils.Branch;
+import org.kjy5.utils.Printer;
 
 /**
  * Main class for the merge driver.
@@ -61,40 +61,35 @@ public class Main {
         RESOURCES_FOLDER_PATH + folder + RIGHT_FILE_PATH + JAVA_FILE_EXTENSION;
     final var fileMergedPath =
         RESOURCES_FOLDER_PATH + folder + MERGED_FILE_PATH + JAVA_FILE_EXTENSION;
+
+    final var branchToSourceFile = new LinkedHashMap<Branch, String>();
+    branchToSourceFile.put(Branch.BASE, fileBasePath);
+    branchToSourceFile.put(Branch.LEFT, fileLeftPath);
+    branchToSourceFile.put(Branch.RIGHT, fileRightPath);
+    // endregion
+
+    // region Parse source files.
+    final var parsings = Parsings.from(fileBasePath, fileLeftPath, fileRightPath);
     // endregion
 
     // region Create matching between branches.
-    final var javaParserGenerator = new JavaParserGenerator();
-
-    // Create parsings.
-    final Tree baseTree, leftTree, rightTree;
-    try {
-      baseTree = javaParserGenerator.generateFrom().file(fileBasePath).getRoot();
-      leftTree = javaParserGenerator.generateFrom().file(fileLeftPath).getRoot();
-      rightTree = javaParserGenerator.generateFrom().file(fileRightPath).getRoot();
-    } catch (IOException e) {
-      throw new RuntimeException("Unable to parse source code: " + e);
-    }
-
-    // Annotate trees with their source files.
-    var nodeToSourceFile = new HashMap<Tree, String>();
-    baseTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileBasePath));
-    leftTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileLeftPath));
-    rightTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileRightPath));
-
     // TODO: Consider mapping from left/right to base to better follow usage direction later.
-    // Match the trees.
     Run.initMatchers();
     final var matcher = Matchers.getInstance().getMatcher();
-    final var baseToLeft = matcher.match(baseTree, leftTree);
-    final var baseToRight = matcher.match(baseTree, rightTree);
-    final var leftToRight = matcher.match(leftTree, rightTree);
+    final var baseToLeft = matcher.match(parsings.baseTree(), parsings.leftTree());
+    final var baseToRight = matcher.match(parsings.baseTree(), parsings.rightTree());
+    final var leftToRight = matcher.match(parsings.leftTree(), parsings.rightTree());
     // endregion
 
     // region Create class representative mappings.
     final var nodeToClassRepresentatives =
         ClassRepresentatives.from(
-            baseTree, leftTree, rightTree, baseToLeft, baseToRight, leftToRight);
+            parsings.baseTree(),
+            parsings.leftTree(),
+            parsings.rightTree(),
+            baseToLeft,
+            baseToRight,
+            leftToRight);
     // endregion
 
     // region Create change sets (PCS and content tuples).
@@ -104,32 +99,34 @@ public class Main {
     var nodeToChildListVirtualNodes = new LinkedHashMap<Tree, ChildListVirtualNodes>();
 
     // Content tuple source file mapping.
-    var contentTupleToSourceFile = new HashMap<ContentTuple, String>();
+    var contentTupleToSourceBranch = new LinkedHashMap<ContentTuple, Branch>();
 
     final var baseChangeSet =
         ChangeSet.from(
-            baseTree,
+            parsings.baseTree(),
             nodeToClassRepresentatives,
             astRootToVirtualRoot,
-            nodeToSourceFile,
-            contentTupleToSourceFile,
+            parsings.treeToSourceBranch(),
+            contentTupleToSourceBranch,
             nodeToChildListVirtualNodes);
     final var leftChangeSet =
         ChangeSet.from(
-            leftTree,
+            parsings.leftTree(),
             nodeToClassRepresentatives,
             astRootToVirtualRoot,
-            nodeToSourceFile,
-            contentTupleToSourceFile,
+            parsings.treeToSourceBranch(),
+            contentTupleToSourceBranch,
             nodeToChildListVirtualNodes);
     final var rightChangeSet =
         ChangeSet.from(
-            rightTree,
+            parsings.rightTree(),
             nodeToClassRepresentatives,
             astRootToVirtualRoot,
-            nodeToSourceFile,
-            contentTupleToSourceFile,
+            parsings.treeToSourceBranch(),
+            contentTupleToSourceBranch,
             nodeToChildListVirtualNodes);
+
+    // Print counts.
     System.out.format(MERGE_TABLE_FORMAT, "State", "# PCSs", "# ContentTuples");
     System.out.format(
         MERGE_TABLE_FORMAT,
@@ -172,7 +169,7 @@ public class Main {
     System.out.println("Merged tree:");
     mergedTree
         .preOrder()
-        .forEach(node -> System.out.println(nodeToSourceFile.get(node) + ": " + node));
+        .forEach(node -> System.out.println(parsings.treeToSourceBranch().get(node) + ": " + node));
     // endregion
 
     // region Write merged tree to file.
@@ -180,8 +177,9 @@ public class Main {
         mergedTree,
         mergedChangeSet.contentTupleSet(),
         fileMergedPath,
-        nodeToSourceFile,
-        contentTupleToSourceFile);
+        branchToSourceFile,
+        parsings.treeToSourceBranch(),
+        contentTupleToSourceBranch);
     // endregion
   }
 }

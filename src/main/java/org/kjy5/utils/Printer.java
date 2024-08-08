@@ -1,4 +1,4 @@
-package org.kjy5;
+package org.kjy5.utils;
 
 import com.github.gumtreediff.tree.Tree;
 import java.io.ByteArrayOutputStream;
@@ -18,6 +18,7 @@ public class Printer {
    * @param tree the AST to print
    * @param contentTuples the set of content tuples associated with this AST
    * @param outputFilePath the path to the output file
+   * @param branchToSourceFile a mapping from branches to source files
    * @param nodeToSourceFile a mapping from nodes to source files
    * @param contentTupleToSourceFile a mapping from content tuples to source files
    */
@@ -25,8 +26,9 @@ public class Printer {
       Tree tree,
       Set<ContentTuple> contentTuples,
       String outputFilePath,
-      Map<Tree, String> nodeToSourceFile,
-      Map<ContentTuple, String> contentTupleToSourceFile) {
+      Map<Branch, String> branchToSourceFile,
+      Map<Tree, Branch> nodeToSourceFile,
+      Map<ContentTuple, Branch> contentTupleToSourceFile) {
     // TODO: current implementation assumes old and new content start at the same place. Need to
     // adjust for when they don't.
 
@@ -104,7 +106,7 @@ public class Printer {
       // Otherwise, read from file.
       try {
         // Open file to read from.
-        var file = new RandomAccessFile(nodeToSourceFile.get(node), "r");
+        var file = new RandomAccessFile(branchToSourceFile.get(nodeToSourceFile.get(node)), "r");
         file.seek(node.getPos());
 
         // Insertion index (changes to replacing node if there was a previous node).
