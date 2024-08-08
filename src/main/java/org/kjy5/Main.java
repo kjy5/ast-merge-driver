@@ -1,79 +1,187 @@
+/*
+ * Copyright (c) 2024 Kenneth Yang (kjy5@uw.edu)
+ */
 package org.kjy5;
 
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
+import com.github.gumtreediff.client.Run;
+import com.github.gumtreediff.gen.javaparser.JavaParserGenerator;
+import com.github.gumtreediff.matchers.Matchers;
+import com.github.gumtreediff.tree.Tree;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import org.kjy5.spork.ChangeSet;
+import org.kjy5.spork.ChildListVirtualNodes;
+import org.kjy5.spork.ClassRepresentatives;
+import org.kjy5.spork.ContentTuple;
+import org.kjy5.spork.Merger;
 
+/**
+ * Main class for the merge driver.
+ *
+ * <p>Reimplements Spork by Larsén et al. (2022) in Java.
+ *
+ * @author Kenneth Yang
+ */
 public class Main {
-  public static void main(String[] args) {
-    // region File path specifications
-    var folder = args.length > 0 ? args[0] : "0";
+  // region Constants.
+  private static final String RESOURCES_FOLDER_PATH = "resources/";
+  private static final String BASE_FILE_PATH = "/file_base";
+  private static final String LEFT_FILE_PATH = "/file_left";
+  private static final String RIGHT_FILE_PATH = "/file_right";
+  private static final String MERGED_FILE_PATH = "/file_merged";
+  private static final String JAVA_FILE_EXTENSION = ".java";
 
-    // Constants for the file paths.
-    var assetsPath = "assets/";
-    var fileBaseName = "/file_base";
-    var fileLeftName = "/file_left";
-    var fileRightName = "/file_right";
-    var fileMergeName = "/file_merged";
-    var javaExtension = ".java";
-    var xmlExtension = ".xml";
+  private static final String MERGE_TABLE_FORMAT = "%-10s%-10s%-15s%n";
+
+  // endregion
+
+  /**
+   * Entry point of the program.
+   *
+   * <p>Runs the full Spork algorithm.
+   *
+   * @param args command line arguments (test folder name relative to the "resources/" directory)
+   */
+  public static void main(String[] args) {
+    // region File path specifications.
+
+    // Throw error if the number of arguments is not 1.
+    if (args.length != 1) {
+      throw new IllegalArgumentException("Expected 1 argument, but got " + args.length);
+    }
+
+    // Get the folder name from the command line arguments.
+    final var folder = args[0];
 
     // Source files.
-    var fileBasePath = assetsPath + folder + fileBaseName + javaExtension;
-    var fileLeftPath = assetsPath + folder + fileLeftName + javaExtension;
-    var fileRightPath = assetsPath + folder + fileRightName + javaExtension;
-    var fileMergedPath = assetsPath + folder + fileMergeName + javaExtension;
-
-    // XML output files.
-    var fileBaseXmlPath = assetsPath + folder + fileBaseName + xmlExtension;
-    var fileLeftXmlPath = assetsPath + folder + fileLeftName + xmlExtension;
-    var fileRightXmlPath = assetsPath + folder + fileRightName + xmlExtension;
-    var fileMergedXmlPath = assetsPath + folder + fileMergeName + xmlExtension;
+    final var fileBasePath = RESOURCES_FOLDER_PATH + folder + BASE_FILE_PATH + JAVA_FILE_EXTENSION;
+    final var fileLeftPath = RESOURCES_FOLDER_PATH + folder + LEFT_FILE_PATH + JAVA_FILE_EXTENSION;
+    final var fileRightPath =
+        RESOURCES_FOLDER_PATH + folder + RIGHT_FILE_PATH + JAVA_FILE_EXTENSION;
+    final var fileMergedPath =
+        RESOURCES_FOLDER_PATH + folder + MERGED_FILE_PATH + JAVA_FILE_EXTENSION;
     // endregion
 
-    // region Parse source files
-    CompilationUnit fileBaseParsing, fileLeftParsing, fileRightParsing;
+    // region Create matching between branches.
+    final var javaParserGenerator = new JavaParserGenerator();
+
+    // Create parsings.
+    final Tree baseTree, leftTree, rightTree;
     try {
-      fileBaseParsing = StaticJavaParser.parse(Paths.get(fileBasePath));
-      fileLeftParsing = StaticJavaParser.parse(Paths.get(fileLeftPath));
-      fileRightParsing = StaticJavaParser.parse(Paths.get(fileRightPath));
+      baseTree = javaParserGenerator.generateFrom().file(fileBasePath).getRoot();
+      leftTree = javaParserGenerator.generateFrom().file(fileLeftPath).getRoot();
+      rightTree = javaParserGenerator.generateFrom().file(fileRightPath).getRoot();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Unable to parse source code: " + e);
     }
+
+    // Annotate trees with their source files.
+    var nodeToSourceFile = new HashMap<Tree, String>();
+    baseTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileBasePath));
+    leftTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileLeftPath));
+    rightTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileRightPath));
+
+    // TODO: Consider mapping from left/right to base to better follow usage direction later.
+    // Match the trees.
+    Run.initMatchers();
+    final var matcher = Matchers.getInstance().getMatcher();
+    final var baseToLeft = matcher.match(baseTree, leftTree);
+    final var baseToRight = matcher.match(baseTree, rightTree);
+    final var leftToRight = matcher.match(leftTree, rightTree);
     // endregion
 
-    // region Serialize parsed files to XML
-    var fileBaseXmlSerializer = new JavaParserToXML(fileBaseParsing);
-    fileBaseXmlSerializer.getXmlDocument().writeToFile(fileBaseXmlPath);
-
-    var fileLeftXmlSerializer = new JavaParserToXML(fileLeftParsing);
-    fileLeftXmlSerializer.getXmlDocument().writeToFile(fileLeftXmlPath);
-
-    var fileRightXmlSerializer = new JavaParserToXML(fileRightParsing);
-    fileRightXmlSerializer.getXmlDocument().writeToFile(fileRightXmlPath);
+    // region Create class representative mappings.
+    final var nodeToClassRepresentatives =
+        ClassRepresentatives.from(
+            baseTree, leftTree, rightTree, baseToLeft, baseToRight, leftToRight);
     // endregion
 
-    // region Deserialize XML files to Java
-    if (!Files.exists(Paths.get(fileMergedXmlPath))) {
-      return;
-    }
-    XMLDocument mergedXMLDocument = new XMLDocument(fileMergedXmlPath);
-    var fileMergeXmlDeserializer = new XMLToJavaParser(mergedXMLDocument);
-    var fileMergedNode = fileMergeXmlDeserializer.getAstRoot();
+    // region Create change sets (PCS and content tuples).
 
-    // Setup LexicalPreservingPrinter
-    LexicalPreservingPrinter.setup(fileMergedNode);
-    
-    // Write the deserialized node to a file.
-    try {
-      Files.write(
-          Paths.get(fileMergedPath), fileMergedNode.toString().getBytes());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    // Virtual node mappings.
+    var astRootToVirtualRoot = new LinkedHashMap<Tree, Tree>();
+    var nodeToChildListVirtualNodes = new LinkedHashMap<Tree, ChildListVirtualNodes>();
+
+    // Content tuple source file mapping.
+    var contentTupleToSourceFile = new HashMap<ContentTuple, String>();
+
+    final var baseChangeSet =
+        ChangeSet.from(
+            baseTree,
+            nodeToClassRepresentatives,
+            astRootToVirtualRoot,
+            nodeToSourceFile,
+            contentTupleToSourceFile,
+            nodeToChildListVirtualNodes);
+    final var leftChangeSet =
+        ChangeSet.from(
+            leftTree,
+            nodeToClassRepresentatives,
+            astRootToVirtualRoot,
+            nodeToSourceFile,
+            contentTupleToSourceFile,
+            nodeToChildListVirtualNodes);
+    final var rightChangeSet =
+        ChangeSet.from(
+            rightTree,
+            nodeToClassRepresentatives,
+            astRootToVirtualRoot,
+            nodeToSourceFile,
+            contentTupleToSourceFile,
+            nodeToChildListVirtualNodes);
+    System.out.format(MERGE_TABLE_FORMAT, "State", "# PCSs", "# ContentTuples");
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Base",
+        baseChangeSet.pcsSet().size(),
+        baseChangeSet.contentTupleSet().size());
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Left",
+        leftChangeSet.pcsSet().size(),
+        leftChangeSet.contentTupleSet().size());
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Right",
+        rightChangeSet.pcsSet().size(),
+        rightChangeSet.contentTupleSet().size());
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Total",
+        baseChangeSet.pcsSet().size()
+            + leftChangeSet.pcsSet().size()
+            + rightChangeSet.pcsSet().size(),
+        baseChangeSet.contentTupleSet().size()
+            + leftChangeSet.contentTupleSet().size()
+            + rightChangeSet.contentTupleSet().size());
+    // endregion
+
+    // region Merge.
+    final var mergedChangeSet = Merger.merge(baseChangeSet, leftChangeSet, rightChangeSet);
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Merged",
+        mergedChangeSet.pcsSet().size(),
+        mergedChangeSet.contentTupleSet().size());
+    // endregion
+
+    // region Rebuild AST from merged change set.
+    final var mergedTree = mergedChangeSet.toGumTreeTree();
+    System.out.println();
+    System.out.println("Merged tree:");
+    mergedTree
+        .preOrder()
+        .forEach(node -> System.out.println(nodeToSourceFile.get(node) + ": " + node));
+    // endregion
+
+    // region Write merged tree to file.
+    Printer.print(
+        mergedTree,
+        mergedChangeSet.contentTupleSet(),
+        fileMergedPath,
+        nodeToSourceFile,
+        contentTupleToSourceFile);
     // endregion
   }
 }

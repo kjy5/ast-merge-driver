@@ -19,12 +19,11 @@ application {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    
-    // JavaParser.
-    implementation 'com.github.javaparser:javaparser-core:3.26.0'
-    implementation 'com.github.javaparser:javaparser-core-serialization:3.26.0'
-    implementation 'jakarta.json:jakarta.json-api:2.1.3'
-    implementation 'org.eclipse.parsson:parsson:1.1.6'
+
+    // GumTree Diff + JavaParser client.
+    implementation 'com.github.gumtreediff:client:4.0.0-beta2'
+    implementation 'com.github.gumtreediff:core:4.0.0-beta2'
+    implementation 'com.github.gumtreediff:gen.javaparser:4.0.0-beta2'
 }
 
 test {
@@ -32,8 +31,7 @@ test {
 }
 
 // Configuration for Javac-parse.
-run {
-}
+run {}
 compileJava {
     // Enable preview features.
     options.compilerArgs += '--enable-preview'   
