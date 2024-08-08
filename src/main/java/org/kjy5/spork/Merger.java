@@ -37,12 +37,9 @@ public class Merger {
     // Merged change set.
     var mergedChangeSet = new ChangeSet(mergePcsSet, mergeContentTupleSet);
 
-    // Why are there two tabs here?
-    System.out.println(
-        "Raw\t\t"
-            + mergedChangeSet.pcsSet().size()
-            + "\t\t"
-            + mergedChangeSet.contentTupleSet().size());
+    System.out.format(
+        "%-10s%-10s%-15s%n",
+        "Raw", mergedChangeSet.pcsSet().size(), mergedChangeSet.contentTupleSet().size());
 
     // What does it mean to "handle"?  Is it resolving them?  Removing them?  Something else?
     // Handle inconsistencies.

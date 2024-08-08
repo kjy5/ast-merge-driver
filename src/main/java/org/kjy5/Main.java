@@ -15,41 +15,48 @@ import org.kjy5.spork.*;
 /**
  * Main class for the merge driver.
  *
- * <p>Reimplements Spork by Larsén et al. (2022) in Java with JavaParser.
+ * <p>Reimplements Spork by Larsén et al. (2022) in Java.
  *
  * @author Kenneth Yang
  */
 public class Main {
-  // region File path constants.
-  private static final String ASSETS_FOLDER_PATH = "assets/";
+  // region Constants.
+  private static final String RESOURCES_FOLDER_PATH = "resources/";
   private static final String BASE_FILE_PATH = "/file_base";
   private static final String LEFT_FILE_PATH = "/file_left";
   private static final String RIGHT_FILE_PATH = "/file_right";
   private static final String MERGED_FILE_PATH = "/file_merged";
   private static final String JAVA_FILE_EXTENSION = ".java";
 
+  private static final String MERGE_TABLE_FORMAT = "%-10s%-10s%-15s%n";
+
   // endregion
 
-  // What is the "full pipeline"?
-  // What does the given folder contain?
-  // Document that the folder name must be relative, not absolute.
   /**
    * Entry point of the program.
    *
-   * <p>Runs the full pipeline.
+   * <p>Runs the full Spork algorithm.
    *
-   * @param args Command line arguments (folder name)
+   * @param args Command line arguments (test folder name relative to the "resources/" directory)
    */
   public static void main(String[] args) {
     // region File path specifications.
-    // This should err if more than one command-line argument is provided.
-    final var folder = args.length > 0 ? args[0] : "0";
+
+    // Throw error if the number of arguments is not 1.
+    if (args.length != 1) {
+      throw new IllegalArgumentException("Expected 1 argument, but got " + args.length);
+    }
+
+    // Get the folder name from the command line arguments.
+    final var folder = args[0];
 
     // Source files.
-    final var fileBasePath = ASSETS_FOLDER_PATH + folder + BASE_FILE_PATH + JAVA_FILE_EXTENSION;
-    final var fileLeftPath = ASSETS_FOLDER_PATH + folder + LEFT_FILE_PATH + JAVA_FILE_EXTENSION;
-    final var fileRightPath = ASSETS_FOLDER_PATH + folder + RIGHT_FILE_PATH + JAVA_FILE_EXTENSION;
-    final var fileMergedPath = ASSETS_FOLDER_PATH + folder + MERGED_FILE_PATH + JAVA_FILE_EXTENSION;
+    final var fileBasePath = RESOURCES_FOLDER_PATH + folder + BASE_FILE_PATH + JAVA_FILE_EXTENSION;
+    final var fileLeftPath = RESOURCES_FOLDER_PATH + folder + LEFT_FILE_PATH + JAVA_FILE_EXTENSION;
+    final var fileRightPath =
+        RESOURCES_FOLDER_PATH + folder + RIGHT_FILE_PATH + JAVA_FILE_EXTENSION;
+    final var fileMergedPath =
+        RESOURCES_FOLDER_PATH + folder + MERGED_FILE_PATH + JAVA_FILE_EXTENSION;
     // endregion
 
     // region Create matching between branches.
@@ -62,105 +69,97 @@ public class Main {
       leftTree = javaParserGenerator.generateFrom().file(fileLeftPath).getRoot();
       rightTree = javaParserGenerator.generateFrom().file(fileRightPath).getRoot();
     } catch (IOException e) {
-      // Should this be "parse" rather than "read"?
-      throw new RuntimeException("Unable to read source code: " + e);
+      throw new RuntimeException("Unable to parse source code: " + e);
     }
 
     // Annotate trees with their source files.
-    var nodeToSourceFileMapping = new HashMap<Tree, String>();
-    baseTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileBasePath));
-    leftTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileLeftPath));
-    rightTree.preOrder().forEach(node -> nodeToSourceFileMapping.put(node, fileRightPath));
+    var nodeToSourceFile = new HashMap<Tree, String>();
+    baseTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileBasePath));
+    leftTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileLeftPath));
+    rightTree.preOrder().forEach(node -> nodeToSourceFile.put(node, fileRightPath));
 
-    // What is "class representative logic"?
-    // TODO: Consider mapping from left/right to base to better follow class representative logic.
+    // TODO: Consider mapping from left/right to base to better follow usage direction later.
     // Match the trees.
     Run.initMatchers();
     final var matcher = Matchers.getInstance().getMatcher();
-    final var baseToLeftMapping = matcher.match(baseTree, leftTree);
-    final var baseToRightMapping = matcher.match(baseTree, rightTree);
-    final var leftToRightMapping = matcher.match(leftTree, rightTree);
+    final var baseToLeft = matcher.match(baseTree, leftTree);
+    final var baseToRight = matcher.match(baseTree, rightTree);
+    final var leftToRight = matcher.match(leftTree, rightTree);
     // endregion
 
-    // It seems inconsistent that the variables above have "Mapping" in their name but this one does
-    // not.  In general, I don't think "Mapping" is necessary; a name like "baseToLeft" is
-    // sufficiently expressive.  In any event, please be consistent.
     // region Create class representative mappings.
-    final var classRepresentatives =
+    final var nodeToClassRepresentatives =
         ClassRepresentatives.from(
-            baseTree,
-            leftTree,
-            rightTree,
-            baseToLeftMapping,
-            baseToRightMapping,
-            leftToRightMapping);
+            baseTree, leftTree, rightTree, baseToLeft, baseToRight, leftToRight);
     // endregion
 
     // region Create change sets (PCS and content tuples).
 
     // Virtual node mappings.
-    var virtualRootMapping = new LinkedHashMap<Tree, Tree>();
-    var ChildListVirtualNodesMapping = new LinkedHashMap<Tree, ChildListVirtualNodes>();
+    var astRootToVirtualRoot = new LinkedHashMap<Tree, Tree>();
+    var nodeToChildListVirtualNodes = new LinkedHashMap<Tree, ChildListVirtualNodes>();
 
-    // Would it be better to include the string in the ContentTuple?  Why or why not?  Also, is a
-    // String necessary, or could it be an enum (BASE, LEFT, RIGHT, maybe MERGED)?
     // Content tuple source file mapping.
-    var contentTupleToSourceFileMapping = new HashMap<ContentTuple, String>();
+    var contentTupleToSourceFile = new HashMap<ContentTuple, String>();
 
     final var baseChangeSet =
         ChangeSet.from(
             baseTree,
-            classRepresentatives,
-            virtualRootMapping,
-            nodeToSourceFileMapping,
-            contentTupleToSourceFileMapping,
-            ChildListVirtualNodesMapping);
+            nodeToClassRepresentatives,
+            astRootToVirtualRoot,
+            nodeToSourceFile,
+            contentTupleToSourceFile,
+            nodeToChildListVirtualNodes);
     final var leftChangeSet =
         ChangeSet.from(
             leftTree,
-            classRepresentatives,
-            virtualRootMapping,
-            nodeToSourceFileMapping,
-            contentTupleToSourceFileMapping,
-            ChildListVirtualNodesMapping);
+            nodeToClassRepresentatives,
+            astRootToVirtualRoot,
+            nodeToSourceFile,
+            contentTupleToSourceFile,
+            nodeToChildListVirtualNodes);
     final var rightChangeSet =
         ChangeSet.from(
             rightTree,
-            classRepresentatives,
-            virtualRootMapping,
-            nodeToSourceFileMapping,
-            contentTupleToSourceFileMapping,
-            ChildListVirtualNodesMapping);
-    System.out.println("State\t# PCSs\t# ContentTuples");
-    System.out.println(
-        // Why are there two "\t" in a row here, but there was only one in the header line that was
-        // printed just above?
-        "Base\t" + baseChangeSet.pcsSet().size() + "\t\t" + baseChangeSet.contentTupleSet().size());
-    System.out.println(
-        "Left\t" + leftChangeSet.pcsSet().size() + "\t\t" + leftChangeSet.contentTupleSet().size());
-    System.out.println(
-        "Right\t"
-            + rightChangeSet.pcsSet().size()
-            + "\t\t"
+            nodeToClassRepresentatives,
+            astRootToVirtualRoot,
+            nodeToSourceFile,
+            contentTupleToSourceFile,
+            nodeToChildListVirtualNodes);
+    System.out.format(MERGE_TABLE_FORMAT, "State", "# PCSs", "# ContentTuples");
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Base",
+        baseChangeSet.pcsSet().size(),
+        baseChangeSet.contentTupleSet().size());
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Left",
+        leftChangeSet.pcsSet().size(),
+        leftChangeSet.contentTupleSet().size());
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Right",
+        rightChangeSet.pcsSet().size(),
+        rightChangeSet.contentTupleSet().size());
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Total",
+        baseChangeSet.pcsSet().size()
+            + leftChangeSet.pcsSet().size()
+            + rightChangeSet.pcsSet().size(),
+        baseChangeSet.contentTupleSet().size()
+            + leftChangeSet.contentTupleSet().size()
             + rightChangeSet.contentTupleSet().size());
-    System.out.println(
-        "Total\t"
-            + (baseChangeSet.pcsSet().size()
-                + leftChangeSet.pcsSet().size()
-                + rightChangeSet.pcsSet().size())
-            + "\t\t"
-            + (baseChangeSet.contentTupleSet().size()
-                + leftChangeSet.contentTupleSet().size()
-                + rightChangeSet.contentTupleSet().size()));
     // endregion
 
     // region Merge.
     final var mergedChangeSet = Merger.merge(baseChangeSet, leftChangeSet, rightChangeSet);
-    System.out.println(
-        "Merged\t"
-            + mergedChangeSet.pcsSet().size()
-            + "\t\t"
-            + mergedChangeSet.contentTupleSet().size());
+    System.out.format(
+        MERGE_TABLE_FORMAT,
+        "Merged",
+        mergedChangeSet.pcsSet().size(),
+        mergedChangeSet.contentTupleSet().size());
     // endregion
 
     // region Rebuild AST from merged change set.
@@ -169,16 +168,12 @@ public class Main {
     System.out.println("Merged tree:");
     mergedTree
         .preOrder()
-        .forEach(node -> System.out.println(nodeToSourceFileMapping.get(node) + ": " + node));
+        .forEach(node -> System.out.println(nodeToSourceFile.get(node) + ": " + node));
     // endregion
 
     // region Write merged tree to file.
     Printer.print(
-        mergedTree,
-        mergedChangeSet,
-        fileMergedPath,
-        nodeToSourceFileMapping,
-        contentTupleToSourceFileMapping);
+        mergedTree, mergedChangeSet, fileMergedPath, nodeToSourceFile, contentTupleToSourceFile);
     // endregion
   }
 }
