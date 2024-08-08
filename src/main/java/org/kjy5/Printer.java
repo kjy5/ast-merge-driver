@@ -7,18 +7,26 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Map;
-import org.kjy5.spork.ChangeSet;
+import java.util.Set;
 import org.kjy5.spork.ContentTuple;
 
+/** Printer for GumTree ASTs. */
 public class Printer {
+  /**
+   * Print a GumTree AST to a file.
+   *
+   * @param tree The AST to print.
+   * @param contentTuples The set of content tuples associated with this AST.
+   * @param outputFilePath The path to the output file.
+   * @param nodeToSourceFile A mapping from nodes to source files.
+   * @param contentTupleToSourceFile A mapping from content tuples to source files.
+   */
   public static void print(
-      // Why does the name contain "merged"?  Is it necessary for a tree to be a merged tree in
-      // order for it to be printed?  If so, why?  Have you tested this with input trees?
-      Tree mergedTree,
-      ChangeSet mergedChangeSet,
+      Tree tree,
+      Set<ContentTuple> contentTuples,
       String outputFilePath,
-      Map<Tree, String> nodeToSourceFileMapping,
-      Map<ContentTuple, String> contentTupleToSourceFileMapping) {
+      Map<Tree, String> nodeToSourceFile,
+      Map<ContentTuple, String> contentTupleToSourceFile) {
     // TODO: current implementation assumes old and new content start at the same place. Need to
     // adjust for when they don't.
 
@@ -31,16 +39,14 @@ public class Printer {
 
     // Read from merged tree.
     // If "node" must come from a merged tre, I would name it "mergedNode".
-    for (var node : mergedTree.preOrder()) {
+    for (var node : tree.preOrder()) {
       // If node is a leaf and has content, use its content.
       if (node.isLeaf() && node.hasLabel()) {
         // Abstract this body into a method, to make the implementation of `print()` shorter and
         // easier to read.
         // Get content tuple for node.
         var maybeContentTuple =
-            mergedChangeSet.contentTupleSet().stream()
-                .filter(contentTuple -> contentTuple.node() == node)
-                .findFirst();
+            contentTuples.stream().filter(contentTuple -> contentTuple.node() == node).findFirst();
 
         // Short-circuit if no content.
         if (maybeContentTuple.isEmpty()) continue;
@@ -59,12 +65,12 @@ public class Printer {
           // Update content string to show conflict.
           contentBytes =
               ("<<<<<<< "
-                      + contentTupleToSourceFileMapping.get(contentTuple)
+                      + contentTupleToSourceFile.get(contentTuple)
                       + contentTuple.content()
                       + " ======= "
                       + conflict.content()
                       + " >>>>>>> "
-                      + contentTupleToSourceFileMapping.get(conflict))
+                      + contentTupleToSourceFile.get(conflict))
                   .getBytes();
         }
 
@@ -98,7 +104,7 @@ public class Printer {
       // Otherwise, read from file.
       try {
         // Open file to read from.
-        var file = new RandomAccessFile(nodeToSourceFileMapping.get(node), "r");
+        var file = new RandomAccessFile(nodeToSourceFile.get(node), "r");
         file.seek(node.getPos());
 
         // Insertion index (changes to replacing node if there was a previous node).

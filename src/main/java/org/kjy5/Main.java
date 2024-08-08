@@ -173,7 +173,11 @@ public class Main {
 
     // region Write merged tree to file.
     Printer.print(
-        mergedTree, mergedChangeSet, fileMergedPath, nodeToSourceFile, contentTupleToSourceFile);
+        mergedTree,
+        mergedChangeSet.contentTupleSet(),
+        fileMergedPath,
+        nodeToSourceFile,
+        contentTupleToSourceFile);
     // endregion
   }
 }
