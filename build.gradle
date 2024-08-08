@@ -31,9 +31,7 @@ test {
 }
 
 // Configuration for Javac-parse.
-run {
-    args = ['9']
-}
+run {}
 compileJava {
     // Enable preview features.
     options.compilerArgs += '--enable-preview'   
