@@ -72,21 +72,20 @@ public record Parsings(
     }
 
     // For each child, update the position of their children first before updating themselves.
-    for (int i = 0; i < tree.getChildren().size(); i++) {
+    for (int i = tree.getChildren().size() - 1; i > 0; --i) {
+      // Get this child (start from the back and work to front).
       var child = tree.getChild(i);
 
       // Update the child's children first.
       changeTreeSourceCodePositionToRelative(child);
 
-      // Update the child's position to be relative.
-      if (i == 0) {
-        // If this is the first child, set the position relative to the parent.
-        child.setPos(child.getPos() - tree.getPos() - tree.getLength());
-      } else {
-        // Otherwise, set the position relative to the previous child.
-        var previousChild = tree.getChild(i - 1);
-        child.setPos(child.getPos() - previousChild.getPos() - previousChild.getLength());
-      }
+      // Set this child's position to be relative to the previous child.
+      var previousChild = tree.getChild(i - 1);
+      child.setPos(child.getPos() - previousChild.getPos() - previousChild.getLength());
     }
+
+    // First child's position is relative to the parent.
+    var firstChild = tree.getChild(0);
+    firstChild.setPos(firstChild.getPos() - tree.getPos());
   }
 }
