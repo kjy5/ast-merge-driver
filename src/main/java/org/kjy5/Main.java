@@ -5,7 +5,7 @@ package org.kjy5;
 
 import com.github.gumtreediff.tree.Tree;
 import java.util.LinkedHashMap;
-import org.kjy5.driver.Matching;
+import org.kjy5.driver.Matchings;
 import org.kjy5.driver.Parsings;
 import org.kjy5.spork.ChangeSet;
 import org.kjy5.spork.ChildListVirtualNodes;
@@ -72,18 +72,11 @@ public class Main {
     // endregion
 
     // region Create matching between branches.
-    final var matchings = Matching.from(parsings);
+    final var matchings = Matchings.from(parsings);
     // endregion
 
     // region Create class representative mappings.
-    final var nodeToClassRepresentatives =
-        ClassRepresentatives.from(
-            parsings.baseTree(),
-            parsings.leftTree(),
-            parsings.rightTree(),
-            matchings.baseToLeft(),
-            matchings.baseToRight(),
-            matchings.leftToRight());
+    final var nodeToClassRepresentatives = ClassRepresentatives.from(parsings, matchings);
     // endregion
 
     // region Create change sets (PCS and content tuples).

@@ -11,7 +11,7 @@ import com.github.gumtreediff.matchers.Matchers;
  * @param baseToRight the mapping from the base tree to the right tree
  * @param leftToRight the mapping from the left tree to the right tree
  */
-public record Matching(
+public record Matchings(
     MappingStore baseToLeft, MappingStore baseToRight, MappingStore leftToRight) {
   /**
    * Create a Matching object from a set of parsings.
@@ -20,7 +20,7 @@ public record Matching(
    * @return a new Matching object
    * @see org.kjy5.driver.Parsings
    */
-  public static Matching from(Parsings parsings) {
+  public static Matchings from(Parsings parsings) {
     // TODO: Consider mapping from left/right to base to better follow usage direction later.
     Run.initMatchers();
     final var matcher = Matchers.getInstance().getMatcher();
@@ -28,6 +28,6 @@ public record Matching(
     final var baseToRight = matcher.match(parsings.baseTree(), parsings.rightTree());
     final var leftToRight = matcher.match(parsings.leftTree(), parsings.rightTree());
 
-    return new Matching(baseToLeft, baseToRight, leftToRight);
+    return new Matchings(baseToLeft, baseToRight, leftToRight);
   }
 }

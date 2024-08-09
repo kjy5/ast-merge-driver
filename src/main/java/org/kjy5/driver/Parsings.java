@@ -49,10 +49,11 @@ public record Parsings(
 
     // Mark down the source branch for each node.
     var nodeToSourceBranch = new LinkedHashMap<Tree, Branch>();
-    nodeToSourceBranch.put(baseTree, Branch.BASE);
-    nodeToSourceBranch.put(leftTree, Branch.LEFT);
-    nodeToSourceBranch.put(rightTree, Branch.RIGHT);
+    baseTree.preOrder().forEach(tree -> nodeToSourceBranch.put(tree, Branch.BASE));
+    leftTree.preOrder().forEach(tree -> nodeToSourceBranch.put(tree, Branch.LEFT));
+    rightTree.preOrder().forEach(tree -> nodeToSourceBranch.put(tree, Branch.RIGHT));
 
+    // Return the parsings and the mapping of nodes to their source branches.
     return new Parsings(baseTree, leftTree, rightTree, nodeToSourceBranch);
   }
 
