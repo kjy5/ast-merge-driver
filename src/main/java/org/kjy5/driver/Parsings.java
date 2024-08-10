@@ -61,7 +61,8 @@ public record Parsings(
    * Change a tree's source code position to be relative to its previous sibling or parent (if the
    * first child).
    *
-   * <p>Update the given tree's children's position instead of itself.
+   * <p>Starting from the leafs, work up the tree to ensure that the position of each node is
+   * relative to its previous sibling or if it's the first child, relative to the parent.
    *
    * @param tree the tree to change the position of
    */
@@ -71,7 +72,16 @@ public record Parsings(
       return;
     }
 
-    // For each child, update the position of their children first before updating themselves.
+    // Ensure own position range covers children's range.
+    tree.setPos(Math.min(tree.getChild(0).getPos(), tree.getPos()));
+    tree.setLength(
+        Math.max(
+            tree.getChild(tree.getChildren().size() - 1).getPos()
+                + tree.getChild(tree.getChildren().size() - 1).getLength()
+                - tree.getPos(),
+            tree.getLength()));
+
+    // Loop through each child in reverse order.
     for (int i = tree.getChildren().size() - 1; i >= 0; --i) {
       // Get this child (start from the back and work to front).
       var child = tree.getChild(i);
